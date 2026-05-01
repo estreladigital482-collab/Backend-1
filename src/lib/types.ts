@@ -37,6 +37,8 @@ export type Project = {
   createdAt: string;
 };
 
+export type AiMode = "Chat" | "Código" | "Projetos" | "Memória" | "Imagem" | "Voz" | "Automação" | "Dev Mode";
+
 export const VOICE_OPTIONS = [
   { id: "pt-female", label: "Aurora (PT-BR feminina)", lang: "pt-BR", gender: "female" },
   { id: "pt-male", label: "Atlas (PT-BR masculina)", lang: "pt-BR", gender: "male" },

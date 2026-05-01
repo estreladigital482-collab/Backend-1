@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import Login from "./Login";
 import Onboarding from "./Onboarding";
-import Chat from "./Chat";
+import AIOnShell from "@/components/AIOnShell";
 
 type Profile = {
   ai_name: string | null;
@@ -62,7 +62,7 @@ const Index = () => {
   }
 
   return (
-    <Chat
+    <AIOnShell
       userId={user.id}
       aiName={profile.ai_name || "Aurora"}
       voiceId={profile.voice_id || "pt-female"}

@@ -36,6 +36,8 @@ Projeto Aura Sphere com frontend em Vite/React e backend bridge em FastAPI.
 - O `.env` é ignorado e não deve ser commitado.
 - Use `VITE_API_URL` para apontar o frontend ao bridge.
 - O chat inclui agora busca na conversa e limpeza de histórico diretamente na interface.
+- O app traz um sistema AI ON com sidebar de modos para Chat, Código, Projetos, Memória, Imagem, Voz, Automação e Dev Mode.
+- Use comandos especiais no chat para alternar entre modos rapidamente, como `@imagem`, `@código`, `@memória`, `@voz` e `@automação`.
 - O chat também suporta múltiplos provedores: `Lovable`, `Anthropic / Claude` e `OpenAI` via configurações de função do Supabase.
 - Configure `LOVABLE_API_KEY`, `ANTHROPIC_API_KEY` ou `OPENAI_API_KEY` no ambiente, e use `AI_PROVIDER` para definir um provedor padrão.
 - O `packages/mempalace` é um stub de memória local que pode ser substituído por um submodule real posteriormente.

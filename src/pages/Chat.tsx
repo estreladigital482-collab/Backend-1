@@ -6,11 +6,27 @@ import { Input } from "@/components/ui/input";
 import { ParticleSphere } from "@/components/ParticleSphere";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import type { AiProvider, ChatMessage, ParticleShape, SphereState, VoiceId } from "@/lib/types";
+import type { AiMode, AiProvider, ChatMessage, ParticleShape, SphereState, VoiceId } from "@/lib/types";
 import { createRecognition, getVoiceConfig, speak, stopSpeaking } from "@/lib/speech";
 import { inferShape } from "@/lib/shapes";
 import { useVoiceActivity } from "@/hooks/useVoiceActivity";
 import { toast } from "sonner";
+
+const detectModeCommand = (text: string): AiMode | undefined => {
+  const normalized = text.toLowerCase().trim();
+  const commands: Array<{ triggers: string[]; mode: AiMode }> = [
+    { triggers: ["@chat", "/chat", "modo chat"], mode: "Chat" },
+    { triggers: ["@código", "/codigo", "@codigo", "modo código", "modo code"], mode: "Código" },
+    { triggers: ["@projetos", "/projetos", "modo projetos"], mode: "Projetos" },
+    { triggers: ["@memória", "@memoria", "/memória", "/memoria", "modo memória"], mode: "Memória" },
+    { triggers: ["@imagem", "/imagem", "modo imagem"], mode: "Imagem" },
+    { triggers: ["@voz", "/voz", "modo voz"], mode: "Voz" },
+    { triggers: ["@automação", "@automacao", "/automação", "/automacao", "modo automação"], mode: "Automação" },
+    { triggers: ["@dev", "/dev", "modo dev", "dev mode"], mode: "Dev Mode" },
+  ];
+
+  return commands.find((command) => command.triggers.some((trigger) => normalized.startsWith(trigger)))?.mode;
+};
 
 const STATE_LABELS: Record<SphereState, string> = {
   idle: "Pronta",
@@ -49,12 +65,14 @@ export default function Chat({
   voiceId,
   onSignOut,
   onEditProfile,
+  onRequestMode,
 }: {
   userId: string;
   aiName: string;
   voiceId: VoiceId | string;
   onSignOut: () => void;
   onEditProfile: () => void;
+  onRequestMode?: (mode: AiMode) => void;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -191,6 +209,14 @@ export default function Chat({
     const trimmed = text.trim();
     if (!trimmed) return;
     stopSpeaking();
+
+    const requestedMode = detectModeCommand(trimmed);
+    if (requestedMode) {
+      onRequestMode?.(requestedMode);
+      setInput("");
+      setState("idle");
+      return;
+    }
 
     const userMsg: ChatMessage = { role: "user", content: trimmed };
     const next = [...messages, userMsg];
