@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ParticleSphere } from "@/components/ParticleSphere";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { getApiBase, getAuthHeaders } from "@/lib/api";
 import type { AiMode, AiProvider, ChatMessage, ParticleShape, SphereState, VoiceId } from "@/lib/types";
 import { createRecognition, getVoiceConfig, speak, stopSpeaking } from "@/lib/speech";
 import { inferShape } from "@/lib/shapes";
@@ -41,23 +42,8 @@ const AI_PROVIDER_OPTIONS: { id: AiProvider; label: string }[] = [
   { id: "openai", label: "OpenAI" },
 ];
 
-const getDefaultApiBase = () => {
-  if (typeof window === "undefined") return "http://localhost:8000";
-
-  const ua = navigator.userAgent || "";
-  const isAndroidWebView = /Android/i.test(ua) && /\bwv\b|WebView/i.test(ua);
-
-  if (isAndroidWebView) {
-    return "http://10.0.2.2:8000";
-  }
-
-  return "http://localhost:8000";
-};
-
-const API_BASE = import.meta.env.VITE_API_URL || getDefaultApiBase();
-const AUTH_HEADERS = import.meta.env.VITE_API_KEY
-  ? { Authorization: `Bearer ${import.meta.env.VITE_API_KEY}` }
-  : {};
+const API_BASE = getApiBase();
+const AUTH_HEADERS = getAuthHeaders();
 
 export default function Chat({
   userId,
@@ -165,6 +151,23 @@ export default function Chat({
     }
   };
 
+  const saveMemory = async (msg: ChatMessage, category: string = "chat") => {
+    try {
+      await fetch(`${API_BASE}/api/v1/memory`, {
+        method: "POST",
+        headers: AUTH_HEADERS,
+        body: JSON.stringify({
+          user_id: userId,
+          role: msg.role,
+          content: msg.content,
+          category,
+        }),
+      });
+    } catch (e) {
+      console.warn("Memory save failed", e);
+    }
+  };
+
   const searchMessages = async (query = searchQuery) => {
     const trimmed = query.trim();
     if (!trimmed) {
@@ -173,22 +176,44 @@ export default function Chat({
     }
 
     setSearching(true);
-    const { data, error } = await supabase
-      .from("chat_messages")
-      .select("id, role, content")
-      .ilike("content", `%${trimmed}%`)
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(20);
+    try {
+      const response = await fetch(
+        `${API_BASE}/api/v1/search?user_id=${encodeURIComponent(userId)}&q=${encodeURIComponent(trimmed)}`,
+        {
+          headers: AUTH_HEADERS,
+        },
+      );
 
-    setSearching(false);
-    if (error) {
+      if (response.ok) {
+        const result = (await response.json()) as { results?: Array<{ id: string; role: "user" | "assistant" | "system"; content: string }> };
+        setSearchResults(
+          (result.results ?? []).map((item) => ({
+            id: item.id,
+            role: item.role,
+            content: item.content,
+          })),
+        );
+      } else {
+        throw new Error(`Search request failed: ${response.status}`);
+      }
+    } catch (error) {
       console.error("Search error", error);
-      toast.error("Erro ao buscar na conversa.");
-      return;
-    }
+      toast.error("Erro ao buscar na conversa. Usando fallback local.");
+      const { data, error: supabaseError } = await supabase
+        .from("chat_messages")
+        .select("id, role, content")
+        .ilike("content", `%${trimmed}%`)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(20);
 
-    setSearchResults(data ?? []);
+      if (supabaseError) {
+        console.error("Fallback search error", supabaseError);
+      }
+      setSearchResults(data ?? []);
+    } finally {
+      setSearching(false);
+    }
   };
 
   const clearChat = async () => {
@@ -223,6 +248,7 @@ export default function Chat({
     setMessages(next);
     setInput("");
     persist(userMsg);
+    saveMemory(userMsg, "user");
 
     setState("thinking");
 
@@ -297,7 +323,9 @@ export default function Chat({
       }
 
       if (assistantText) {
-        await persist({ role: "assistant", content: assistantText });
+        const assistantMsg = { role: "assistant", content: assistantText };
+        await persist(assistantMsg);
+        await saveMemory(assistantMsg, "assistant");
         speak(assistantText, voiceId, () => setState("idle"));
       } else {
         setState("idle");

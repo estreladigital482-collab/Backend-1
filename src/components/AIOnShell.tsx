@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ParticleSphere } from "@/components/ParticleSphere";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarSeparator, SidebarTrigger } from "@/components/ui/sidebar";
 import Chat from "@/pages/Chat";
-import { supabase } from "@/integrations/supabase/client";
+import { getApiBase, getAuthHeaders } from "@/lib/api";
 import { speak, getVoiceConfig } from "@/lib/speech";
-import type { AiMode, ChatMessage, Project, VoiceId } from "@/lib/types";
+import type { AiMode, ChatMessage, Project, SphereState, VoiceId } from "@/lib/types";
 
 const AI_MODES: { id: AiMode; label: string; description: string }[] = [
   { id: "Chat", label: "Chat", description: "Converse naturalmente com a IA para ideias, respostas e ações rápidas." },
@@ -88,29 +89,6 @@ export default function AIOnShell({
     setProjectName("");
   };
 
-  const searchMemory = async () => {
-    const trimmed = memoryQuery.trim();
-    if (!trimmed) {
-      setMemoryResults([]);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("chat_messages")
-      .select("id, role, content")
-      .ilike("content", `%${trimmed}%`)
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(25);
-
-    if (error) {
-      console.error("Erro ao buscar memória", error);
-      return;
-    }
-
-    setMemoryResults(data ?? []);
-  };
-
   const generateImage = () => {
     const prompt = imagePrompt.trim() || "Nano Banana";
     setImagePreview(`https://placehold.co/640x420/0a0d1a/ffffff?text=${encodeURIComponent(prompt)}`);
@@ -121,9 +99,55 @@ export default function AIOnShell({
     speak(voiceText, voiceId, () => setIsSpeaking(false));
   };
 
+  const apiBase = getApiBase();
+  const authHeaders = getAuthHeaders();
+
   const addFlowStep = () => {
     setFlowSteps((current) => [...current, `Nova etapa criada em ${new Date().toLocaleTimeString()}`]);
   };
+
+  const searchMemory = async () => {
+    const trimmed = memoryQuery.trim();
+    if (!trimmed) {
+      setMemoryResults([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${apiBase}/api/v1/search?user_id=${encodeURIComponent(userId)}&q=${encodeURIComponent(trimmed)}`,
+        { headers: authHeaders },
+      );
+      if (!response.ok) {
+        throw new Error(`Search failed ${response.status}`);
+      }
+      const data = (await response.json()) as { results?: Array<{ id: string; role: "user" | "assistant" | "system"; content: string }> };
+      setMemoryResults(
+        (data.results ?? []).map((item) => ({
+          id: item.id,
+          role: item.role,
+          content: item.content,
+        })),
+      );
+    } catch (error) {
+      console.error("Memory search failed", error);
+      setMemoryResults([]);
+    }
+  };
+
+  const sphereState: SphereState = activeMode === "Voz" ? "listening" : activeMode === "Chat" ? "responding" : "idle";
+  const sphereShape =
+    activeMode === "Imagem"
+      ? "galaxy"
+      : activeMode === "Código"
+      ? "cube"
+      : activeMode === "Projetos"
+      ? "torus"
+      : activeMode === "Memória"
+      ? "wave"
+      : activeMode === "Automação"
+      ? "question"
+      : "sphere";
 
   const renderModeContent = () => {
     switch (activeMode) {
@@ -457,6 +481,11 @@ export default function AIOnShell({
         </Sidebar>
         <main className="min-h-[100dvh] overflow-hidden bg-background">{renderModeContent()}</main>
         <SidebarTrigger className="md:hidden" />
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20 flex justify-end p-4 md:p-8">
+          <div className="h-44 w-44 rounded-full bg-background/20 backdrop-blur-xl shadow-2xl shadow-black/20 ring-1 ring-white/10 md:h-56 md:w-56">
+            <ParticleSphere state={sphereState} shape={sphereShape} volume={0.08} />
+          </div>
+        </div>
       </div>
     </SidebarProvider>
   );
