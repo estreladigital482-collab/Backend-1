@@ -32,6 +32,7 @@ from schemas import (
 from packages.mempalace.memory import MemoryEngine
 from llm_service import get_llm_service
 from embedding_service import get_embedding_service
+from agent import get_agent_service
 
 ENV = os.getenv("ENV", "development")
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
@@ -52,6 +53,7 @@ app.add_middleware(
 
 init_db()
 memory_engine = MemoryEngine()
+agent_service = get_agent_service()
 
 
 def get_current_user(authorization: str | None = Header(None)) -> dict[str, Any]:
@@ -79,6 +81,194 @@ def rate_limit_handler(request: Request, exc: RateLimitExceeded):
 @app.get("/api/v1/health")
 def health():
     return {"status": "ok", "env": ENV}
+
+
+@app.get("/api/v1/agent/session")
+def get_agent_session(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Retorna o estado atual da sessão do agente."""
+    return agent_service.get_session_report()
+
+
+@app.post("/api/v1/agent/task")
+def add_agent_task(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Adiciona uma nova tarefa à sessão do agente."""
+    description = payload.get("description", "Tarefa sem descrição")
+    task = agent_service.add_session_task(description)
+    return {"task_id": task.id, "status": task.status, "description": task.description}
+
+
+@app.post("/api/v1/agent/task/{task_id}/complete")
+def complete_agent_task(
+    task_id: str,
+    payload: dict = {},
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Marca uma tarefa de agente como concluída."""
+    details = payload.get("details") if isinstance(payload, dict) else None
+    success = agent_service.complete_session_task(task_id, details)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+    return {"task_id": task_id, "completed": True}
+
+
+@app.post("/api/v1/agent/sandbox")
+def execute_agent_sandbox(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Executa código em sandbox com validações de permissão."""
+    code = payload.get("code", "")
+    inputs = payload.get("inputs", {})
+    if not code:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing code payload")
+    result = agent_service.run_code_in_sandbox(code=code, inputs=inputs, user_id=current_user.get("sub", "dev-user"))
+    return result
+
+
+@app.post("/api/v1/agent/modification")
+def submit_agent_modification(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Submete uma proposta de modificação para aprovação do usuário."""
+    description = payload.get("description")
+    target_files = payload.get("target_files", [])
+    patch_summary = payload.get("patch_summary", "")
+    detailed_changes = payload.get("detailed_changes", {})
+    file_patches = payload.get("file_patches", {})
+
+    if not description or not target_files or not patch_summary:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="description, target_files and patch_summary are required"
+        )
+
+    if not isinstance(file_patches, dict):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="file_patches must be a dict matching target_files"
+        )
+
+    proposal = agent_service.submit_modification_proposal(
+        description=description,
+        target_files=target_files,
+        patch_summary=patch_summary,
+        file_patches=file_patches,
+        detailed_changes=detailed_changes,
+        user_id=current_user.get("sub", "dev-user")
+    )
+    return {"proposal": proposal}
+
+
+@app.get("/api/v1/agent/modification")
+def list_agent_modifications(
+    status: str | None = None,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Lista propostas de modificação do agente."""
+    proposals = agent_service.get_modification_proposals(status=status)
+    return {"proposals": proposals}
+
+
+@app.post("/api/v1/agent/modification/{proposal_id}/approve")
+def approve_agent_modification(
+    proposal_id: str,
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Aprova uma proposta de modificação pendente."""
+    approval_comment = payload.get("comment")
+    proposal = agent_service.approve_modification_proposal(
+        proposal_id=proposal_id,
+        approved_by=current_user.get("sub", "dev-user"),
+        approval_comment=approval_comment
+    )
+    if not proposal:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proposal not found or cannot be approved")
+    return {"proposal": proposal}
+
+
+@app.post("/api/v1/agent/modification/{proposal_id}/reject")
+def reject_agent_modification(
+    proposal_id: str,
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Rejeita uma proposta de modificação pendente."""
+    reason = payload.get("reason")
+    proposal = agent_service.reject_modification_proposal(
+        proposal_id=proposal_id,
+        rejected_by=current_user.get("sub", "dev-user"),
+        reason=reason
+    )
+    if not proposal:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proposal not found or cannot be rejected")
+    return {"proposal": proposal}
+
+
+@app.get("/api/v1/agent/modification/{proposal_id}")
+def get_agent_modification(proposal_id: str, current_user: dict[str, Any] = Depends(get_current_user)):
+    """Retorna uma proposta de modificação específica."""
+    proposals = agent_service.get_modification_proposals()
+    for proposal in proposals:
+        if proposal["id"] == proposal_id:
+            return {"proposal": proposal}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proposal not found")
+
+
+@app.get("/api/v1/agent/offline_mode")
+def get_agent_offline_mode(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Retorna o modo offline do agente."""
+    return {"offline_mode": agent_service.offline_mode}
+
+
+@app.post("/api/v1/agent/offline_mode")
+def set_agent_offline_mode(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Ativa ou desativa o modo offline do agente."""
+    enabled = payload.get("enabled")
+    if enabled is None or not isinstance(enabled, bool):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="enabled must be a boolean")
+    agent_service.set_offline_mode(enabled)
+    return {"offline_mode": agent_service.offline_mode}
+
+
+@app.post("/api/v1/agent/offline_candidate")
+def create_agent_offline_candidate(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Cria um candidato de evolução offline e valida em sandbox."""
+    description = payload.get("description")
+    candidate_code = payload.get("candidate_code")
+    target_files = payload.get("target_files", [])
+    patch_summary = payload.get("patch_summary")
+    detailed_changes = payload.get("detailed_changes", {})
+
+    if not description:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="description is required")
+
+    result = agent_service.run_offline_evolution_candidate(
+        description=description,
+        candidate_code=candidate_code,
+        target_files=target_files,
+        patch_summary=patch_summary,
+        detailed_changes=detailed_changes,
+        user_id=current_user.get("sub", "dev-user")
+    )
+
+    return {"offline_candidate": result}
+
+
+@app.get("/api/v1/agent/supervisor")
+def get_agent_supervisor(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Retorna o estado do supervisor do agente."""
+    return agent_service.get_supervisor_status()
 
 
 @app.post("/api/v1/conversations", response_model=ConversationResponse)

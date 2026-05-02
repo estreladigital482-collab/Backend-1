@@ -279,6 +279,9 @@ class CoreValidator:
         if any(op in operation for op in sandbox_ops):
             return PermissionLevel.LEVEL_2_EXECUTE_CONFIRMED
 
+        # Nível padrão para operações não críticas
+        return PermissionLevel.LEVEL_1_SUGGEST
+
     def _validate_operation_specifics(self, operation: str,
                                     context: Dict[str, Any]) -> Dict[str, Any]:
         """Valificações específicas por tipo de operação"""

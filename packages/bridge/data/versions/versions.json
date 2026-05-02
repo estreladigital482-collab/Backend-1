@@ -1,0 +1,50 @@
+[
+  {
+    "version_id": "v1",
+    "description": "Candidate 1",
+    "created_at": "2026-05-02T09:36:16.630863",
+    "metrics": {
+      "quality_score": 7.5,
+      "stability": 0.8,
+      "security": 0.9,
+      "errors": 0
+    },
+    "metadata": {}
+  },
+  {
+    "version_id": "v2",
+    "description": "Candidate 1",
+    "created_at": "2026-05-02T09:54:46.401843",
+    "metrics": {
+      "quality_score": 7.5,
+      "stability": 0.8,
+      "security": 0.9,
+      "errors": 0
+    },
+    "metadata": {}
+  },
+  {
+    "version_id": "v3",
+    "description": "Candidate 1",
+    "created_at": "2026-05-02T09:55:10.936576",
+    "metrics": {
+      "quality_score": 7.5,
+      "stability": 0.8,
+      "security": 0.9,
+      "errors": 0
+    },
+    "metadata": {}
+  },
+  {
+    "version_id": "v4",
+    "description": "Candidate 1",
+    "created_at": "2026-05-02T10:02:25.273001",
+    "metrics": {
+      "quality_score": 7.5,
+      "stability": 0.8,
+      "security": 0.9,
+      "errors": 0
+    },
+    "metadata": {}
+  }
+]
