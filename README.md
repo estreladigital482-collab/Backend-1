@@ -1,52 +1,329 @@
-# Aura Sphere
+# Aura Sphere - Aplicativo de IA Conversacional
 
-Projeto Aura Sphere com frontend em Vite/React e backend bridge em FastAPI.
+Um aplicativo moderno de IA conversacional com suporte a múltiplos provedores (OpenAI, Anthropic, Lovable), memória inteligente com busca semântica, histórico de conversas persistente e interface de chat em tempo real.
 
-## Visão geral
+## 🚀 Características
 
-- frontend app em React com Vite no diretório raiz.
-- `packages/bridge`: backend FastAPI para rotas de chat, memória e pesquisa.
-- `packages/mempalace`: motor de memória local de exemplo.
-- `docker-compose.yml`: stack local com Postgres, Redis, bridge, frontend e proxy Nginx.
+- ✨ **Chat com Streaming**: Respostas em tempo real via Server-Sent Events
+- 🧠 **Memória Inteligente**: Busca semântica com embeddings vetoriais
+- 💬 **Múltiplas Conversas**: Gerenciar várias sessões independentes
+- 🤖 **LLM Agnóstico**: Suporte para OpenAI, Anthropic, Lovable, com fallback local
+- 🎨 **Interface Moderna**: React + Vite com componentes Radix UI
+- 📱 **Mobile Ready**: Wrapping Android com Capacitor
+- 🔐 **Autenticação Segura**: JWT tokens com suporte a Supabase
+- 🌍 **Prompts Dinâmicos**: 6 tipos de prompt (Assistant, Developer, Creative, etc.)
 
-## Como iniciar
+## 📊 Stack Técnico
 
-1. Copie o `.env.example` para `.env`:
-   ```bash
-   ./scripts/setup.sh
-   ```
+### Frontend
+- **React** + **Vite** para desenvolvimento rápido
+- **TypeScript** para type safety
+- **Tailwind CSS** + **Radix UI** para componentes
+- **React Router** para navegação
+- **Capacitor** para wrappers mobile
 
-2. Inicie a stack Docker:
-   ```bash
-   ./scripts/dev.sh
-   ```
+### Backend
+- **FastAPI** framework HTTP
+- **SQLAlchemy** ORM com PostgreSQL/SQLite
+- **LLM Service** integração com 4 provedores
+- **Embedding Service** sentence-transformers
+- **JWT Authentication** com python-jose
+- **Rate Limiting** com slowapi
 
-3. Acesse o frontend em `http://localhost:3000`.
+### Infraestrutura
+- **Docker Compose** orquestração local
+- **PostgreSQL** banco de dados
+- **Redis** cache (optional)
+- **Nginx** reverse proxy
 
-## Endpoints do backend
+## 🎯 Comece Rápido
 
-- `GET /api/v1/health` - health check.
-- `POST /api/v1/chat` - endpoint de chat streaming.
-- `POST /api/v1/memory` - salva um item de memória.
-- `GET /api/v1/history?user_id=...` - busca histórico de chat.
-- `GET /api/v1/search?q=...&user_id=...` - pesquisa por conteúdo de memória.
+### Pré-requisitos
+- Docker & Docker Compose
+- Python 3.10+
+- Node.js 18+
 
-## Notas
+### Setup em 3 passos
 
-- O `.env` é ignorado e não deve ser commitado.
-- Use `VITE_API_URL` para apontar o frontend ao bridge.
-- O chat inclui agora busca na conversa e limpeza de histórico diretamente na interface.
-- O app traz um sistema AI ON com sidebar de modos para Chat, Código, Projetos, Memória, Imagem, Voz, Automação e Dev Mode.
-- Use comandos especiais no chat para alternar entre modos rapidamente, como `@imagem`, `@código`, `@memória`, `@voz` e `@automação`.
-- A memória agora utiliza a estrutura `packages/mempalace` como engine de memória no backend para buscas e armazenamento de contexto.
-- O chat também suporta múltiplos provedores: `Lovable`, `Anthropic / Claude` e `OpenAI` via configurações de função do Supabase.
-- Configure `LOVABLE_API_KEY`, `ANTHROPIC_API_KEY` ou `OPENAI_API_KEY` no ambiente, e use `AI_PROVIDER` para definir um provedor padrão.
+```bash
+# 1. Clone e configure
+git clone <repo-url>
+cd Aura-sphere-
+./scripts/setup.sh
 
-## Android
+# 2. Configure a API key (edite .env)
+nano .env  # Adicione ANTHROPIC_API_KEY ou OPENAI_API_KEY
 
-Este projeto agora inclui suporte Android via Capacitor.
+# 3. Inicie
+./scripts/dev.sh
+```
 
-- Execute `npm run android:sync` para gerar o build web e sincronizar com o projeto Android.
-- Execute `npm run android:open` para abrir o projeto Android no Android Studio.
+Acesse em **http://localhost:3000** 🎉
+
+## 📚 Documentação
+
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Arquitetura detalhada, fluxos e design
+- **[SETUP.md](./SETUP.md)** - Guia completo de setup e desenvolvimento
+- **[MAINTENANCE.md](./MAINTENANCE.md)** - Checklist de deploy e manutenção
+- **[SYSTEM_EVOLUTION_TASKS.md](./SYSTEM_EVOLUTION_TASKS.md)** - **CRÍTICO**: Arquitetura de segurança, sandbox, evolução controlada da IA
+- **[STUDY_PLAN.md](./STUDY_PLAN.md)** - Plano de estudo dos 70 repositórios clonados
+- **[GIT_WORKFLOW.md](./GIT_WORKFLOW.md)** - Guia de workflow Git com auto-commit
+- **[NEXT_STEPS.md](./NEXT_STEPS.md)** - Próximas tarefas para o projeto
+- **[HISTORY.md](./HISTORY.md)** - Histórico de desenvolvimento
+
+## 🔌 API Endpoints
+
+### Conversas
+```bash
+# Criar nova conversa
+POST /api/v1/conversations
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "title": "Minha conversa",
+  "prompt_type": "assistant"
+}
+
+# Listar conversas
+GET /api/v1/conversations
+
+# Deletar conversa  
+DELETE /api/v1/conversations/{id}
+```
+
+### Chat
+```bash
+# Chat com streaming SSE
+POST /api/v1/chat
+Authorization: Bearer <token>
+
+{
+  "user_id": "user123",
+  "ai_name": "Aurora",
+  "prompt_type": "assistant",
+  "messages": [
+    {"role": "user", "content": "Olá!"}
+  ]
+}
+
+# Response: Server-Sent Events com chunks
+data: {"choices":[{"delta":{"content":"Olá"}}]}
+```
+
+### Memória
+```bash
+# Salvar item de memória
+POST /api/v1/memory
+
+{
+  "user_id": "user123",
+  "role": "user",
+  "content": "Informação para lembrar",
+  "category": "important"
+}
+
+# Buscar memória (text ou semântica)
+GET /api/v1/search?user_id=user123&q=Python
+```
+
+Veja [ARCHITECTURE.md](./ARCHITECTURE.md) para documentação detalhada de todos os endpoints.
+
+## 🎨 Modo de Prompts
+
+Suporte a 6 tipos de prompt dinâmicos:
+
+1. **assistant** (padrão) - Respostas úteis e objetivas
+2. **developer** - Foco em código e explicações técnicas  
+3. **creative** - Brainstorming e geração de ideias
+4. **analytical** - Análise profunda de problemas
+5. **formal** - Tom profissional e documentado
+6. **summarizer** - Síntese e resumos concisos
+
+## 🧠 Busca Semântica
+
+A memória usa **embeddings vetoriais** com sentence-transformers:
+- Busca por similaridade semântica (não apenas keywords)
+- Modelo padrão: `all-MiniLM-L6-v2` (rápido e eficiente)
+- Fallback automático para text search (ILIKE) se embeddings falhar
+
+```bash
+# Busca semântica (padrão)
+GET /api/v1/search?user_id=user123&q=Qual é a capital da França?
+
+# Text search (fallback)
+GET /api/v1/search?user_id=user123&q=capital&semantic=false
+```
+
+## 🤖 Provedores de LLM Suportados
+
+### OpenAI
+```env
+AI_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini  # ou gpt-4o, gpt-3.5-turbo
+```
+
+### Anthropic (Claude)
+```env
+AI_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
+```
+
+### Lovable
+```env
+AI_PROVIDER=lovable
+LOVABLE_API_KEY=...
+```
+
+### Local/Fallback (desenvolvimento)
+```env
+AI_PROVIDER=local  # Simula respostas para testes
+```
+
+## 🔐 Autenticação
+
+### Gerar Token JWT (Desenvolvimento)
+```bash
+cd packages/bridge
+python scripts/generate_jwt.py --user admin@example.com
+```
+
+### Usar Token
+```bash
+curl -H "Authorization: Bearer <seu-token>" \
+     http://localhost:8000/api/v1/chat
+```
+
+## 🧪 Testes
+
+### Backend
+```bash
+cd packages/bridge
+pytest test_api.py -v
+```
+
+### Frontend
+```bash
+cd packages/frontend
+npm run test
+npm run test:watch
+```
+
+## 🐳 Docker
+
+### Desenvolvimento
+```bash
+docker-compose up -d
+```
+
+### Build de produção
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+Veja [SETUP.md](./SETUP.md) para mais detalhes de deployment.
+
+## 📱 Mobile (Android)
+
+```bash
+# Build e sync com Android
+npm run android:sync
+
+# Abrir Android Studio
+npm run android:open
+```
+
+## 📝 Variáveis de Ambiente
+
+Copie `.env.example` para `.env` e configure:
+
+```bash
+# Essenciais
+ENV=development
+SECRET_KEY=sua-chave-secreta
+DATABASE_URL=postgresql://...
+
+# Escolha um provedor de LLM
+AI_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Frontend
+VITE_API_URL=http://localhost:8000
+
+# Opcional
+SEMANTIC_SEARCH_ENABLED=true
+MULTI_SESSION_ENABLED=true
+```
+
+Veja `.env.example` para todas as opções.
+
+## 🚀 Deployment
+
+### Checklist Pré-Deploy
+1. Configure `ENV=production`
+2. Gere nova `SECRET_KEY` segura
+3. Use PostgreSQL (não SQLite)
+4. Configure `CORS_ORIGIN` correto
+5. Implemente HTTPS/TLS
+6. Ative backup automático
+
+Veja [MAINTENANCE.md](./MAINTENANCE.md) para checklist completo.
+
+## 🗺️ Roadmap
+
+### ✅ Implementado
+- [x] Chat com streaming SSE
+- [x] LLM Service (multi-provider)
+- [x] Busca semântica com embeddings
+- [x] Múltiplas conversas/sessões
+- [x] Prompts dinâmicos
+- [x] Autenticação JWT
+- [x] Testes E2E
+
+### 🔄 Em Progresso
+- [ ] MemPalace integration completa
+- [ ] Redis caching
+- [ ] Logging estruturado
+- [ ] Rate limiting por usuário
+
+### 📋 Próximos
+- [ ] User profiles e preferences
+- [ ] Analytics e dashboards
+- [ ] Export history (JSON/PDF)
+- [ ] Voice input aprimorado
+- [ ] Dark mode
+- [ ] Modo offline
+
+Veja [NEXT_STEPS.md](./NEXT_STEPS.md) para lista completa.
+
+## 🤝 Contribuição
+
+1. Fork o repositório
+2. Crie uma branch (`git checkout -b feature/amazing`)
+3. Commit mudanças (`git commit -am 'Add amazing feature'`)
+4. Push para branch (`git push origin feature/amazing`)
+5. Abra Pull Request
+
+Veja [CONTRIBUTING.md](./CONTRIBUTING.md) para diretrizes.
+
+## 📄 Licença
+
+MIT License - veja [LICENSE](./LICENSE) para detalhes.
+
+## 🙋 Support
+
+- 📖 Veja [SETUP.md](./SETUP.md) para ajuda com setup
+- 🐛 Verifique [ARCHITECTURE.md](./ARCHITECTURE.md) para entender o sistema
+- 💬 Abra issue no GitHub para bugs/features
+- 📧 Envie e-mail para suporte
+
+---
+
+**Desenvolvido com ❤️ para a comunidade de IA**
+
+**Chat em tempo real • Memória inteligente • Multi-LLM**
 - No emulador Android, use `VITE_API_URL=http://10.0.2.2:8000` para apontar ao backend local.
 - Para produções e dispositivos físicos, defina `VITE_API_URL` para o endpoint público do seu backend.

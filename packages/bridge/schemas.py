@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime
 
 from pydantic import BaseModel, Field
 
@@ -10,7 +11,9 @@ class Message(BaseModel):
 
 class ChatRequest(BaseModel):
     user_id: Optional[str] = None
+    conversation_id: Optional[int] = None  # Nova conversa se None
     ai_name: Optional[str] = None
+    prompt_type: Optional[str] = "assistant"  # assistant, developer, creative, analytical, formal, summarizer
     messages: List[Message] = Field(default_factory=list)
 
 
@@ -34,3 +37,24 @@ class SearchResult(BaseModel):
 
 class SearchResponse(BaseModel):
     results: List[SearchResult]
+
+
+class ConversationCreate(BaseModel):
+    title: Optional[str] = None
+    system_prompt: Optional[str] = None
+    prompt_type: Optional[str] = "assistant"
+
+
+class ConversationResponse(BaseModel):
+    id: int
+    user_id: str
+    title: Optional[str]
+    system_prompt: Optional[str]
+    prompt_type: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class ConversationListResponse(BaseModel):
+    conversations: List[ConversationResponse]
+
