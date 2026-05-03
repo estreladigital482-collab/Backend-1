@@ -806,4 +806,71 @@ n
 - [ ] Baixo → monitorar
 - [ ] Médio → alertar
 - [ ] Alto → sugerir contenção
+## 54. Classificação de severidade
+
+- [ ] Baixo → monitorar
+- [ ] Médio → alertar
+- [ ] Alto → sugerir contenção
 - [ ] Crítico → conter e notificar usuário
+
+---
+
+## 📋 Instruções para o Próximo Programador/Copilot
+
+### Contexto Atual
+- Todas as tarefas de 1 a 54 foram adicionadas ao backlog
+- Sistema base implementado com core/, agent/, runtime/, sandbox/
+- Repositórios externos clonados em `external_repos/` (39 repositórios)
+- Lista completa de URLs em `packages/bridge/agent/repository_sources.md`
+
+### Prioridades Imediatas
+1. **Implementar arquitetura de inteligência coletiva** (tarefas 31-54)
+   - Começar com `colony/ants/` - agentes exploradores leves
+   - Implementar comunicação indireta via memória compartilhada
+   - Criar sistema de trilhas para reforço de soluções
+
+2. **Expandir sistema de defesa** (tarefas 34, 51-54)
+   - wolves/defense/ como primeira implementação
+   - Pipeline de resposta a incidentes
+   - Integração com logs existentes
+
+3. **Refinar sandbox e runtime** (tarefas 6, 7, 19, 20)
+   - Melhorar isolamento de containers
+   - Implementar simulador de impacto
+   - Criar ambiente de testes paralelos
+
+### Regras de Implementação
+- **Nunca modificar core/** diretamente - ele é imutável
+- Toda nova funcionalidade deve passar por sandbox primeiro
+- Agentes devem ter isolamento completo entre si
+- Logs devem ser append-only e imutáveis
+- Qualquer mudança crítica requer aprovação explícita do usuário
+
+### Estrutura de Diretórios Sugerida
+```
+packages/bridge/
+├── core/           # IMUTÁVEL - não tocar
+├── agent/          # IA principal
+├── runtime/        # Executor controlado
+├── sandbox/        # Ambiente isolado
+├── colony/         # NOVO - agentes exploradores
+│   └── ants/
+├── hive/           # NOVO - agentes executores
+│   └── bees/
+└── wolves/         # NOVO - defesa ativa
+    └── defense/
+```
+
+### Testes Obrigatórios
+- Todo código novo deve rodar em sandbox
+- Validar isolamento entre agentes
+- Testar comunicação indireta
+- Verificar logs de auditoria
+
+### Próximos Passos
+1. Ler tarefas 31-35 para entender arquitetura coletiva
+2. Implementar colony/ants/ primeiro (mais simples)
+3. Integrar com sistema existente via orchestrator/
+4. Testar thoroughly antes de expandir para bees/ e wolves/
+
+**Lembre-se**: A IA propõe mudanças, mas nunca executa diretamente em produção. Sandbox é obrigatório!
