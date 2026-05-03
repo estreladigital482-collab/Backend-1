@@ -69,14 +69,18 @@ class LLMService:
             messages = [{"role": "system", "content": system_prompt}] + messages
         
         if self.provider == "openai":
-            yield from await self._stream_openai(messages, **kwargs)
+            async for chunk in self._stream_openai(messages, **kwargs):
+                yield chunk
         elif self.provider == "anthropic":
-            yield from await self._stream_anthropic(messages, **kwargs)
+            async for chunk in self._stream_anthropic(messages, **kwargs):
+                yield chunk
         elif self.provider == "lovable":
-            yield from await self._stream_lovable(messages, **kwargs)
+            async for chunk in self._stream_lovable(messages, **kwargs):
+                yield chunk
         else:
             # Fallback local para desenvolvimento
-            yield from await self._stream_local(messages, **kwargs)
+            async for chunk in self._stream_local(messages, **kwargs):
+                yield chunk
     
     async def _stream_openai(
         self, 

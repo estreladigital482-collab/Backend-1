@@ -29,7 +29,9 @@ from schemas import (
     ConversationResponse,
     ConversationListResponse
 )
-from packages.mempalace.memory import MemoryEngine
+import sys
+sys.path.append(str(base_dir / "packages"))
+from mempalace.memory import MemoryEngine
 from llm_service import get_llm_service
 from embedding_service import get_embedding_service
 from agent import get_agent_service

@@ -4,6 +4,8 @@ import { Send, Mic, MicOff, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ParticleSphere } from "@/components/ParticleSphere";
+import { SyncStatus } from "@/components/SyncStatus";
+import { syncService } from "@/lib/sync-service";
 import type { ChatMessage, ParticleShape, SphereState, VoiceId } from "@/lib/types";
 import { createRecognition, getVoiceConfig, speak, stopSpeaking } from "@/lib/speech";
 import { inferShape } from "@/lib/shapes";
@@ -24,22 +26,29 @@ const STATE_LABELS: Record<SphereState, string> = {
 
 export default function Chat({
   userId,
+  isLocal = false,
+  isOffline = false,
   aiName,
   voiceId,
   onSignOut,
   onEditProfile,
+  onToggleOffline,
 }: {
   userId: string;
+  isLocal?: boolean;
+  isOffline?: boolean;
   aiName: string;
   voiceId: VoiceId | string;
   onSignOut: () => void;
   onEditProfile: () => void;
+  onToggleOffline?: (offline: boolean) => void;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [state, setState] = useState<SphereState>("idle");
   const [shape, setShape] = useState<ParticleShape>("sphere");
   const [recording, setRecording] = useState(false);
+  const [lastSync, setLastSync] = useState<string>();
   const recognitionRef = useRef<ReturnType<typeof createRecognition> | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lang = getVoiceConfig(voiceId).lang;
@@ -84,23 +93,39 @@ export default function Chat({
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE}/api/v1/history?user_id=${encodeURIComponent(userId)}`,
-          { headers: { Accept: "application/json", ...AUTH_HEADERS } }
-        );
+        if (isLocal) {
+          // Carregar do localStorage
+          const stored = localStorage.getItem(`messages_${userId}`);
+          if (stored) {
+            setMessages(JSON.parse(stored));
+          }
+        } else if (!isOffline) {
+          // Carregar do backend
+          const response = await fetch(
+            `${API_BASE}/api/v1/history?user_id=${encodeURIComponent(userId)}`,
+            { headers: { Accept: "application/json", ...AUTH_HEADERS } }
+          );
 
-        if (!response.ok) return;
-        const data = await response.json();
-        if (data?.messages) {
-          setMessages(data.messages);
+          if (!response.ok) return;
+          const data = await response.json();
+          if (data?.messages) {
+            setMessages(data.messages);
+            setLastSync(new Date().toISOString());
+          }
         }
       } catch (error) {
         console.error("Failed to load chat history", error);
+        if (isLocal) {
+          const stored = localStorage.getItem(`messages_${userId}`);
+          if (stored) {
+            setMessages(JSON.parse(stored));
+          }
+        }
       }
     };
 
     fetchHistory();
-  }, [userId]);
+  }, [userId, isLocal, isOffline]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -122,19 +147,32 @@ export default function Chat({
   }, [messages]);
 
   const persist = async (msg: ChatMessage) => {
-    await fetch(`${API_BASE}/api/v1/memory`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...AUTH_HEADERS,
-      },
-      body: JSON.stringify({
-        user_id: userId,
-        role: msg.role,
-        content: msg.content,
-        category: "chat",
-      }),
-    });
+    if (isLocal) {
+      // Salvar em localStorage
+      const msgs = messages.length > 0 ? messages : [];
+      const updated = [...msgs, msg];
+      localStorage.setItem(`messages_${userId}`, JSON.stringify(updated));
+      // Adicionar à fila de sincronização se estiver online
+      if (navigator.onLine && !isOffline) {
+        syncService.addMessageSync(userId, msg);
+      }
+    } else if (!isOffline) {
+      // Salvar no backend
+      await fetch(`${API_BASE}/api/v1/memory`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...AUTH_HEADERS,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          role: msg.role,
+          content: msg.content,
+          category: "chat",
+        }),
+      });
+      setLastSync(new Date().toISOString());
+    }
   };
 
   const sendText = async (text: string) => {
@@ -294,13 +332,24 @@ export default function Chat({
           <h1 className="text-base font-semibold tracking-tight">{aiName}</h1>
           <p className="text-xs text-muted-foreground">{STATE_LABELS[state]}</p>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 items-center">
+          {(isLocal || !navigator.onLine) && (
+            <SyncStatus
+              isOffline={isOffline}
+              isLocal={isLocal}
+              lastSync={lastSync}
+              onToggleOffline={onToggleOffline}
+              onSignOut={onSignOut}
+            />
+          )}
           <Button variant="ghost" size="icon" onClick={onEditProfile} aria-label="Configurações">
             <Settings className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={onSignOut} aria-label="Sair">
-            <LogOut className="h-5 w-5" />
-          </Button>
+          {isLocal || !navigator.onLine ? null : (
+            <Button variant="ghost" size="icon" onClick={onSignOut} aria-label="Sair">
+              <LogOut className="h-5 w-5" />
+            </Button>
+          )}
         </div>
       </header>
 

@@ -9,23 +9,30 @@ import { supabase } from "@/integrations/supabase/client";
 import { Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function Onboarding({ userId, onDone }: { userId: string; onDone: () => void }) {
-  const [aiName, setAiName] = useState("Aurora");
+export default function Onboarding({ userId, isLocal = false, onDone }: { userId: string; isLocal?: boolean; onDone: () => void }) {
+  const [aiName, setAiName] = useState("Caos");
   const [voiceId, setVoiceId] = useState<VoiceId>("pt-female");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     // Pre-fill if profile exists
-    supabase
-      .from("profiles")
-      .select("ai_name, voice_id")
-      .eq("id", userId)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data?.ai_name) setAiName(data.ai_name);
-        if (data?.voice_id) setVoiceId(data.voice_id as VoiceId);
-      });
-  }, [userId]);
+    if (isLocal) {
+      const savedName = localStorage.getItem(`ai_name_${userId}`);
+      const savedVoice = localStorage.getItem(`voice_id_${userId}`);
+      if (savedName) setAiName(savedName);
+      if (savedVoice) setVoiceId(savedVoice as VoiceId);
+    } else {
+      supabase
+        .from("profiles")
+        .select("ai_name, voice_id")
+        .eq("id", userId)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data?.ai_name) setAiName(data.ai_name);
+          if (data?.voice_id) setVoiceId(data.voice_id as VoiceId);
+        });
+    }
+  }, [userId, isLocal]);
 
   const preview = (id: VoiceId) => {
     const cfg = VOICE_OPTIONS.find((v) => v.id === id)!;
@@ -41,15 +48,26 @@ export default function Onboarding({ userId, onDone }: { userId: string; onDone:
       return;
     }
     setSaving(true);
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({ id: userId, ai_name: aiName.trim(), voice_id: voiceId, onboarded: true });
-    setSaving(false);
-    if (error) {
-      toast.error("Não foi possível salvar");
-      return;
+
+    if (isLocal) {
+      // Salvar em localStorage
+      localStorage.setItem(`ai_name_${userId}`, aiName.trim());
+      localStorage.setItem(`voice_id_${userId}`, voiceId);
+      localStorage.setItem(`onboarded_${userId}`, "true");
+      setSaving(false);
+      onDone();
+    } else {
+      // Salvar no Supabase
+      const { error } = await supabase
+        .from("profiles")
+        .upsert({ id: userId, ai_name: aiName.trim(), voice_id: voiceId, onboarded: true });
+      setSaving(false);
+      if (error) {
+        toast.error("Não foi possível salvar");
+        return;
+      }
+      onDone();
     }
-    onDone();
   };
 
   return (
@@ -69,7 +87,7 @@ export default function Onboarding({ userId, onDone }: { userId: string; onDone:
             id="ai-name"
             value={aiName}
             onChange={(e) => setAiName(e.target.value)}
-            placeholder="Ex: Aurora"
+            placeholder="Ex: Caos"
             maxLength={32}
             className="h-12 text-base"
           />
