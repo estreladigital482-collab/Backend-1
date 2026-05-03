@@ -35,6 +35,11 @@ from mempalace.memory import MemoryEngine
 from llm_service import get_llm_service
 from embedding_service import get_embedding_service
 from agent import get_agent_service
+from mcp_server import server as mcp_server
+
+# MCP SSE Transport
+from mcp.server.sse import SseServerTransport
+from mcp.server.models import InitializationOptions, NotificationOptions
 
 ENV = os.getenv("ENV", "development")
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
@@ -56,6 +61,9 @@ app.add_middleware(
 init_db()
 memory_engine = MemoryEngine()
 agent_service = get_agent_service()
+
+# Initialize MCP SSE Transport
+mcp_transport = SseServerTransport("/api/v1/mcp/messages")
 
 
 def get_current_user(authorization: str | None = Header(None)) -> dict[str, Any]:
@@ -83,6 +91,36 @@ def rate_limit_handler(request: Request, exc: RateLimitExceeded):
 @app.get("/api/v1/health")
 def health():
     return {"status": "ok", "env": ENV}
+
+
+# === MCP ENDPOINTS ===
+
+@app.get("/api/v1/mcp/sse")
+async def mcp_sse(request: Request):
+    """MCP Server-Sent Events endpoint for tool calls."""
+    async with mcp_transport.connect_sse(
+        request.scope, request.receive, request._send
+    ) as streams:
+        await mcp_server.run(
+            streams[0],
+            streams[1],
+            InitializationOptions(
+                server_name="aura-sphere-mcp",
+                server_version="0.1.0",
+                capabilities=mcp_server.get_capabilities(
+                    notification_options=NotificationOptions(),
+                    experimental_capabilities={},
+                ),
+            ),
+        )
+
+
+@app.post("/api/v1/mcp/messages")
+async def mcp_messages(request: Request):
+    """MCP message handling endpoint."""
+    await mcp_transport.handle_post_message(
+        request.scope, request.receive, request._send
+    )
 
 
 @app.get("/api/v1/agent/session")
