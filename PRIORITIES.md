@@ -98,3 +98,47 @@
 - **Tarefas Completadas Esta Sessão**: 8
 - **Tempo Estimado para MVP**: ~2 semanas de desenvolvimento focado
 
+---
+
+## 🚀 INÍCIO DAS TAREFAS RESTANTES
+
+### 1. Prioridade: Conclusão do aplicativo
+- Completar a integração offline/online e sincronia de mensagens.
+- Finalizar registro de perfil local e migração para login em nuvem.
+- Terminar a lógica de memória entre frontend, backend e IA.
+- Implementar histórico de chat persistente com múltiplas sessões/threads.
+- Verificar o envio de prompts e pré-prompts dinâmicos para o agent.
+- Consolidação de fluxos de chat e modo Memória com cards e busca semântica.
+- Criar onboarding final, tutorial rápido e suporte a temas light/dark.
+- Ajustar responsividade, mobile e transições de UI.
+
+### 2. Prioridade: Segurança e estabilidade
+- Garantir autenticação consistente e cabeçalhos `Authorization` em todos os ambientes.
+- Adicionar proteção de rotas de memória e validação de payloads.
+- Criar contratos de API/Swagger para backend e documentação de tipos.
+- Implementar controle de acesso por `user_id` e políticas de limpeza de dados.
+- Finalizar sandbox, core imutável e controle de processos do agente.
+- Consolidar logs imutáveis, auditoria completa e controle de rollback.
+- Proteger ações destruivas com confirmações, limites e isolamento.
+- Validar patches, garantir bloqueios de mudanças de core e monitoramento de ameaças.
+
+### 3. Prioridade: Resto das tarefas restantes
+- Polir componentes de UX/UI, animações e acessibilidade.
+- Criar testes unitários, e2e, performance e compatibilidade cross-browser.
+- Completar documentação de uso, deploy e onboarding de desenvolvedores.
+- Otimizar chamadas de API, cache, paginação e renderização de histórico.
+- Revisar dependências, scripts `package.json` e alinhamento Docker.
+- Avançar em módulos criativos multimodais, vídeo, mídia e universos criativos.
+- Expandir monitoramento, dashboards de status e métricas em tempo real.
+- Estabelecer governança de agentes, playbooks de defesa e cenários de recuperação.
+
+### 4. Próximo passo imediato
+- Iniciar pelo bloco de **Conclusão do aplicativo**: sincronia offline/local, memória e chat persistente.
+- Em paralelo, revisar rapidamente os pontos de **Segurança** críticos: auth, API e sandbox.
+- Em seguida, atacar os itens de **Resto** com testes, UX e documentação.
+
+---
+
+## 📌 Observação
+Este plano já coloca todas as tarefas restantes em ordem prática de execução: primeiro a entrega do app, depois a segurança e, por fim, a expansão e polimento.
+
