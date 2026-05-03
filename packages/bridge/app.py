@@ -36,6 +36,7 @@ from llm_service import get_llm_service
 from embedding_service import get_embedding_service
 from agent import get_agent_service
 from mcp_server import server as mcp_server
+from orchestrator import get_central_orchestrator
 
 # MCP SSE Transport
 from mcp.server.sse import SseServerTransport
@@ -883,3 +884,41 @@ def search(
                 for item in items
             ]
         }
+
+
+# === ORCHESTRATOR ENDPOINTS ===
+
+orchestrator = get_central_orchestrator()
+
+@app.post("/api/v1/orchestrator/command")
+async def process_orchestrator_command(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Processa comando através do orquestrador coletivo"""
+    command = payload.get("command")
+    if not command:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="command is required")
+
+    user_id = current_user.get("sub", "dev-user")
+    result = await orchestrator.process_user_command(command, user_id)
+    return result
+
+
+@app.get("/api/v1/orchestrator/tasks")
+async def get_orchestrator_tasks(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Retorna tarefas ativas do orquestrador"""
+    tasks = await orchestrator.get_active_tasks()
+    return {"tasks": tasks}
+
+
+@app.get("/api/v1/orchestrator/tasks/{task_id}")
+async def get_orchestrator_task_status(
+    task_id: str,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Retorna status de uma tarefa específica"""
+    task = await orchestrator.get_task_status(task_id)
+    if not task:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+    return {"task": task}

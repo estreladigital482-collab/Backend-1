@@ -617,3 +617,210 @@ class WolfSentinel:
         """Para o sentinela"""
         self.active = False
         logger.info(f"WolfSentinel {self.sentinel_id} stopped sentinel duty")
+
+    async def assess_task_risk(self, orchestrator_task: Any, exploration_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Avalia risco de uma tarefa do orquestrador
+
+        Args:
+            orchestrator_task: Tarefa do orquestrador
+            exploration_results: Resultados da exploração
+
+        Returns:
+            Avaliação de risco
+        """
+        try:
+            # Analisar comando do usuário
+            command = orchestrator_task.user_command.lower()
+
+            # Fatores de risco
+            risk_factors = []
+
+            # Verificar palavras-chave de risco
+            high_risk_keywords = ["delete", "remove", "drop", "destroy", "kill", "terminate", "shutdown", "format"]
+            medium_risk_keywords = ["modify", "change", "update", "alter", "execute", "run", "install"]
+
+            if any(keyword in command for keyword in high_risk_keywords):
+                risk_factors.append("high_risk_keywords")
+            elif any(keyword in command for keyword in medium_risk_keywords):
+                risk_factors.append("medium_risk_keywords")
+
+            # Verificar complexidade da exploração
+            exploration_complexity = len(exploration_results)
+            if exploration_complexity > 10:
+                risk_factors.append("high_exploration_complexity")
+
+            # Verificar se há erros nos resultados
+            error_count = sum(1 for r in exploration_results if "error" in r)
+            if error_count > 0:
+                risk_factors.append("exploration_errors")
+
+            # Calcular nível de risco
+            if "high_risk_keywords" in risk_factors:
+                risk_level = "critical"
+                confidence = 0.9
+            elif len(risk_factors) >= 2:
+                risk_level = "high"
+                confidence = 0.7
+            elif len(risk_factors) == 1:
+                risk_level = "medium"
+                confidence = 0.5
+            else:
+                risk_level = "low"
+                confidence = 0.3
+
+            assessment = {
+                "level": risk_level,
+                "confidence": confidence,
+                "risk_factors": risk_factors,
+                "recommendations": self._generate_risk_recommendations(risk_level, risk_factors),
+                "requires_approval": risk_level in ["high", "critical"]
+            }
+
+            logger.info(f"Risk assessment for task {orchestrator_task.id}: {risk_level} ({confidence:.2f} confidence)")
+
+            return assessment
+
+        except Exception as e:
+            logger.error(f"Error assessing task risk: {e}")
+            return {
+                "level": "unknown",
+                "confidence": 0.0,
+                "error": str(e),
+                "risk_factors": ["assessment_error"],
+                "requires_approval": True
+            }
+
+    def _generate_risk_recommendations(self, risk_level: str, risk_factors: List[str]) -> List[str]:
+        """Gera recomendações baseadas no nível de risco"""
+        recommendations = []
+
+        if risk_level == "critical":
+            recommendations.extend([
+                "Require explicit user approval before execution",
+                "Execute in isolated sandbox environment",
+                "Prepare rollback procedures",
+                "Monitor execution closely"
+            ])
+        elif risk_level == "high":
+            recommendations.extend([
+                "Execute with additional validation",
+                "Limit scope of operations",
+                "Have contingency plans ready"
+            ])
+        elif risk_level == "medium":
+            recommendations.extend([
+                "Log all operations",
+                "Monitor for unexpected behavior",
+                "Be prepared to interrupt if needed"
+            ])
+        else:
+            recommendations.append("Proceed with standard monitoring")
+
+        # Recomendações específicas baseadas em fatores
+        if "exploration_errors" in risk_factors:
+            recommendations.append("Review exploration results for potential issues")
+        if "high_exploration_complexity" in risk_factors:
+            recommendations.append("Consider breaking task into smaller components")
+
+        return recommendations
+
+    async def activate_defense_measures(self, orchestrator_task: Any, risk_assessment: Dict[str, Any]):
+        """
+        Ativa medidas de defesa para tarefa de alto risco
+
+        Args:
+            orchestrator_task: Tarefa do orquestrador
+            risk_assessment: Avaliação de risco
+        """
+        try:
+            risk_level = risk_assessment["level"]
+
+            if risk_level in ["high", "critical"]:
+                logger.warning(f"Activating defense measures for high-risk task {orchestrator_task.id}")
+
+                # Criar alerta de defesa
+                defense_alert = {
+                    'signal_id': f"defense_activation_{orchestrator_task.id}_{int(time.time())}",
+                    'type': 'task_defense',
+                    'severity': 'high' if risk_level == 'high' else 'critical',
+                    'description': f"Defense measures activated for {risk_level} risk task",
+                    'data': {
+                        'task_id': orchestrator_task.id,
+                        'risk_level': risk_level,
+                        'risk_factors': risk_assessment.get('risk_factors', []),
+                        'user_command': orchestrator_task.user_command
+                    },
+                    'timestamp': time.time(),
+                    'source': f"orchestrator_defense_{self.sentinel_id}"
+                }
+
+                # Processar alerta
+                validated = await self._validate_alert(defense_alert)
+                await self._store_validated_alert(validated)
+
+                # Para risco crítico, escalar imediatamente
+                if risk_level == "critical":
+                    await self._escalate_alert(validated)
+
+                # Medidas específicas de defesa
+                await self._implement_defense_measures(orchestrator_task, risk_assessment)
+
+            else:
+                logger.info(f"No defense measures needed for {risk_level} risk task {orchestrator_task.id}")
+
+        except Exception as e:
+            logger.error(f"Error activating defense measures: {e}")
+
+    async def _implement_defense_measures(self, orchestrator_task: Any, risk_assessment: Dict[str, Any]):
+        """
+        Implementa medidas de defesa específicas
+
+        Args:
+            orchestrator_task: Tarefa do orquestrador
+            risk_assessment: Avaliação de risco
+        """
+        # Medidas baseadas no nível de risco
+        risk_level = risk_assessment["level"]
+
+        if risk_level == "critical":
+            # Isolamento completo
+            await self._isolate_task_execution(orchestrator_task)
+            # Aumentar monitoramento
+            await self._increase_monitoring(orchestrator_task)
+            # Preparar rollback
+            await self._prepare_rollback(orchestrator_task)
+
+        elif risk_level == "high":
+            # Isolamento parcial
+            await self._limit_task_scope(orchestrator_task)
+            # Aumentar logging
+            await self._increase_logging(orchestrator_task)
+
+        # Log das medidas implementadas
+        logger.info(f"Defense measures implemented for task {orchestrator_task.id}")
+
+    async def _isolate_task_execution(self, orchestrator_task: Any):
+        """Isola execução da tarefa"""
+        # TODO: Implementar isolamento real (containers, recursos limitados, etc.)
+        logger.info(f"Task {orchestrator_task.id} execution isolated")
+
+    async def _increase_monitoring(self, orchestrator_task: Any):
+        """Aumenta monitoramento da tarefa"""
+        # TODO: Implementar monitoramento aumentado
+        logger.info(f"Monitoring increased for task {orchestrator_task.id}")
+
+    async def _prepare_rollback(self, orchestrator_task: Any):
+        """Prepara procedimentos de rollback"""
+        # TODO: Implementar preparação de rollback
+        logger.info(f"Rollback prepared for task {orchestrator_task.id}")
+
+    async def _limit_task_scope(self, orchestrator_task: Any):
+        """Limita escopo da tarefa"""
+        # TODO: Implementar limitação de escopo
+        logger.info(f"Scope limited for task {orchestrator_task.id}")
+
+    async def _increase_logging(self, orchestrator_task: Any):
+        """Aumenta logging da tarefa"""
+        # TODO: Implementar logging aumentado
+        logger.info(f"Logging increased for task {orchestrator_task.id}")

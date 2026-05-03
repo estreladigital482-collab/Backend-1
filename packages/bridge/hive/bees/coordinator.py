@@ -410,3 +410,58 @@ class BeeCoordinator:
         """Para o ciclo de coordenação"""
         self.active = False
         logger.info(f"BeeCoordinator {self.coordinator_id} stopped coordination")
+
+    async def execute_from_exploration(self, orchestrator_task: Any, exploration_results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Executa tarefas baseadas nos resultados da exploração das formigas
+
+        Args:
+            orchestrator_task: Tarefa do orquestrador
+            exploration_results: Resultados da exploração
+
+        Returns:
+            Lista de resultados da execução
+        """
+        execution_results = []
+
+        try:
+            # Processar resultados da exploração como relatórios de scout
+            for result in exploration_results:
+                scout_report = {
+                    "id": f"scout_{int(time.time() * 1000)}_{len(execution_results)}",
+                    "type": "scout_report",
+                    "processed_data": {
+                        "summary": result,
+                        "structure_findings": result.get("findings", []),
+                        "code_findings": result.get("code_findings", []),
+                        "pattern_findings": result.get("patterns", [])
+                    },
+                    "quality_score": result.get("relevance", 0.5),
+                    "source_ant": result.get("ant_id", "unknown")
+                }
+
+                # Processar relatório e criar tarefas
+                tasks = await self._create_tasks_from_report(scout_report)
+                execution_results.extend([{
+                    "task_id": task.id,
+                    "type": task.type,
+                    "priority": task.priority.value,
+                    "bee_id": f"bee_{self.coordinator_id}",
+                    "based_on_exploration": result.get("subtask_type"),
+                    "estimated_complexity": task.estimated_complexity
+                } for task in tasks])
+
+                # Adicionar tarefas às filas
+                for task in tasks:
+                    self._add_task_to_queue(task)
+
+            # Tentar distribuir tarefas imediatamente
+            await self._distribute_tasks()
+
+            logger.info(f"Created {len(execution_results)} execution tasks from {len(exploration_results)} exploration results")
+
+        except Exception as e:
+            logger.error(f"Error in execute_from_exploration: {e}")
+            execution_results = [{"error": str(e), "bee_id": f"bee_{self.coordinator_id}"}]
+
+        return execution_results

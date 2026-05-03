@@ -246,6 +246,55 @@ class AntCoordinator:
                 # Para valores simples, manter o último (poderia ser média/voto)
                 consensus[key] = value
 
+    async def explore_subtask(self, subtask: Dict[str, Any], user_command: str) -> List[Dict[str, Any]]:
+        """
+        Explora uma subtarefa específica usando formigas
+
+        Args:
+            subtask: Configuração da subtarefa
+            user_command: Comando original do usuário
+
+        Returns:
+            Lista de resultados da exploração
+        """
+        try:
+            # Converter subtarefa para formato de tarefa de exploração
+            task_config = {
+                "type": subtask.get("type", "general_exploration"),
+                "description": subtask.get("description", ""),
+                "user_command": user_command,
+                "analyze_code": True,
+                "patterns": [subtask.get("type", "general")],
+                "deep_analysis": subtask.get("type") in ["analyze_content", "gather_intelligence"]
+            }
+
+            # Usar repositório atual como alvo (pode ser parametrizado)
+            repo_path = "."  # repositório atual
+
+            # Atribuir tarefa para formigas
+            ant_ids = await self.assign_exploration_task(repo_path, task_config)
+
+            if not ant_ids:
+                logger.warning("No ants available for exploration")
+                return []
+
+            # Aguardar e coletar resultados
+            task_id = f"subtask_{uuid.uuid4().hex[:8]}"
+            results = await self.collect_results(task_id, timeout=15.0)
+
+            # Adicionar metadados
+            for result in results:
+                result["ant_id"] = ant_ids[0] if ant_ids else "unknown"
+                result["subtask_type"] = subtask.get("type")
+                result["user_command"] = user_command
+
+            logger.info(f"Explored subtask {subtask.get('type')} with {len(results)} findings")
+            return results
+
+        except Exception as e:
+            logger.error(f"Error exploring subtask: {e}")
+            return [{"error": str(e), "ant_id": "error", "subtask_type": subtask.get("type")}]
+
     async def optimize_exploration(self):
         """Otimiza estratégias de exploração baseadas em performance"""
         # Evaporar trilhas antigas
