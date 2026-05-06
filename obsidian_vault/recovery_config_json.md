@@ -1,0 +1,21 @@
+---
+source: /workspaces/Aura-sphere-/recovery/recovery_config.json
+filename: recovery_config.json
+---
+
+# recovery_config.json
+
+{
+  "max_recovery_points": 10,
+  "auto_recovery_enabled": true,
+  "recovery_timeout_seconds": 300,
+  "backup_frequency_hours": 24,
+  "critical_files": [
+    "packages/bridge/agent/core/",
+    "packages/bridge/agent/database.py",
+    "packages/bridge/agent/schemas.py",
+    "packages/bridge/agent/app.py",
+    "supabase/migrations/",
+    "SYSTEM_EVOLUTION_TASKS.md"
+  ]
+}

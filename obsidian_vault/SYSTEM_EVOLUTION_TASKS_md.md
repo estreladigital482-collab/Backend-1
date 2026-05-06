@@ -1,0 +1,1010 @@
+---
+source: /workspaces/Aura-sphere-/knowledge_vault/Planejamento/SYSTEM_EVOLUTION_TASKS.md
+filename: SYSTEM_EVOLUTION_TASKS.md
+---
+
+# SYSTEM_EVOLUTION_TASKS.md
+
+---
+category: Planejamento
+source: SYSTEM_EVOLUTION_TASKS.md
+created: 2026-05-05T19:45:45.745168
+size: 34552 bytes
+hash: d971204670eaa2e14f5105952d280368
+headers:
+  - Backlog de Sistema: Controle, Evolução e Segurança da IA
+  - Sessão Atual
+  - Estudo de repositórios e progresso
+  - 1. Estrutura base do projeto
+  - 2. Núcleo imutável (core)
+---
+
+# SYSTEM_EVOLUTION_TASKS.md
+
+## Metadados
+- **Categoria**: Planejamento
+- **Caminho Original**: `SYSTEM_EVOLUTION_TASKS.md`
+- **Tamanho**: 34552 bytes
+
+## Conteúdo
+
+# Backlog de Sistema: Controle, Evolução e Segurança da IA
+
+Este arquivo registra a lista de tarefas que deve ficar no sistema para o próximo desenvolvedor criar e aprimorar.
+Ele complementa o `NEXT_STEPS.md` com foco em arquitetura segura, sandbox, evolução controlada e governança do agente.
+
+## Sessão Atual
+
+- [x] Criar serviço de sessão de agente seguro em `packages/bridge/agent/service.py`
+- [x] Registrar eventos de sessão e tarefas no audit log em `packages/bridge/agent/logging.py`
+- [x] Adicionar exportação de `AgentService` no pacote `packages/bridge/agent/__init__.py`
+- [x] Criar demo de execução de serviço em `packages/bridge/demo_agent_service.py`
+- [x] Integrar o serviço de sessão com o runtime web do bridge
+- [x] Criar lista de tarefas de sessão diretamente no backlog para a próxima etapa
+- [x] Adicionar fluxo de propostas de modificação e aprovação do usuário
+- [x] Expor endpoint de modo offline e candidato de evolução offline
+
+## Estudo de repositórios e progresso
+
+- [x] Mapeado mecanismos de auditoria e evento a partir de `autogen`
+- [x] Mapeado arquitetura de ferramentas e telemetria a partir de `browser-use`
+- [x] Mapeado sandbox e execução segura a partir de `OpenDevin` e `babyagi`
+- [x] Mapeado memória separada e camadas de armazenamento a partir de `mem0`
+- [x] Criado novos módulos em `packages/bridge/agent` para implementar as funcionalidades extraídas
+- [x] Adicionado rota de sessão e sandbox em `packages/bridge/app.py`
+
+## 1. Estrutura base do projeto
+
+- [x] Criar arquitetura separada em três camadas:
+  - `core/` (núcleo imutável) ✅ IMPLEMENTADO
+  - `agent/` (IA principal mutável)
+  - `runtime/` (execução e controle) ✅ IMPLEMENTADO
+- [x] Implementar separação clara de responsabilidades:
+  - `core`: regras de segurança, obediência ao usuário, permissões máximas ✅ IMPLEMENTADO
+  - `agent`: lógica da IA, processamento de linguagem, geração de código
+  - `runtime`: execução de comandos, controle de sandbox, deploy de mudanças ✅ IMPLEMENTADO
+
+## 2. Núcleo imutável (core)
+
+- [x] Implementar módulo `core` como código não editável pela IA em runtime ✅ IMPLEMENTADO
+- [x] Definir regras fixas:
+  - prioridade absoluta de comandos do usuário ✅ IMPLEMENTADO
+  - proibição de auto-modificação do `core` ✅ IMPLEMENTADO
+  - restrições de execução de código perigoso ✅ IMPLEMENTADO
+  - limites de acesso ao sistema operacional ✅ IMPLEMENTADO
+- [x] Criar função de verificação de integridade do `core`:
+  - checksum ou hash do core ✅ IMPLEMENTADO
+  - validação a cada inicialização do sistema ✅ IMPLEMENTADO
+
+## 3. Sistema de permissões
+
+- [x] Implementar sistema de permissões em níveis:
+  - `level 0`: leitura e análise apenas ✅ IMPLEMENTADO
+  - `level 1`: sugestão de ações ✅ IMPLEMENTADO
+  - `level 2`: execução sob confirmação do usuário ✅ IMPLEMENTADO
+  - `level 3`: auto-evolução em sandbox ✅ IMPLEMENTADO
+- [x] Garantir que nenhuma ação crítica seja executada sem verificação de permissão ✅ IMPLEMENTADO
+
+## 4. IA principal (agent)
+
+- [x] Implementar IA com capacidade de:
+  - analisar sistema e logs ✅ IMPLEMENTADO (métodos analyze_system_and_logs, analyze_logs)
+  - gerar propostas de melhoria de código ✅ IMPLEMENTADO (generate_code_improvement_proposals)
+  - sugerir patches de atualização ✅ IMPLEMENTADO (suggest_patch_updates)
+  - identificar padrões de falha ou ataque ✅ IMPLEMENTADO (detect_failure_patterns)
+  - solicitar aprovação do usuário para toda modificação offline ✅ IMPLEMENTADO
+- [x] Proibir execução direta de mudanças no sistema principal
+
+## 5. Sistema de auto-evolução
+
+- [x] Criar módulo de evolução offline:
+  - executar apenas quando sistema estiver ocioso ou em modo evolução ✅ PARCIALMENTE IMPLEMENTADO
+  - gerar versões alternativas do próprio código da IA ✅ PARCIALMENTE IMPLEMENTADO
+  - armazenar versões em estrutura versionada ✅ IMPLEMENTADO
+- [x] Implementar comparação de versões por:
+  - métricas de performance ✅ IMPLEMENTADO (adicionado métricas de performance e compatibilidade)
+  - estabilidade ✅ IMPLEMENTADO
+  - segurança ✅ IMPLEMENTADO
+  - compatibilidade com core ✅ IMPLEMENTADO (método evaluate_compatibility)
+- [x] Executar todas as versões geradas pela IA dentro do sandbox antes de qualquer aprovação ✅ IMPLEMENTADO (método test_version_in_sandbox)
+- [x] Implementar pipeline de atualização:
+  - IA gera patch ✅ IMPLEMENTADO (versões podem conter patch_code)
+  - runtime valida patch ✅ IMPLEMENTADO (validação de compatibilidade)
+  - sandbox executa testes ✅ IMPLEMENTADO (teste em sandbox)
+  - sistema compara resultados ✅ IMPLEMENTADO (comparação de scores)
+  - apenas versões aprovadas são aplicadas ✅ IMPLEMENTADO (deploy_version com aprovação)
+- [x] Implementar rollback automático:
+  - manter versão anterior sempre disponível ✅ IMPLEMENTADO (versionamento e choose_best_version)
+  - restaurar em caso de falha ✅ IMPLEMENTADO (mecanismo de escolha de melhor versão)
+- [x] Persistir propostas de patch e manter artefatos de patch para revisão ✅ IMPLEMENTADO (metadata e version storage)
+- [x] Implementar rollback automático:
+  - manter versão anterior sempre disponível ✅ PARCIALMENTE IMPLEMENTADO (gerenciamento de versões em `packages/bridge/agent/evolution.py`)
+  - restaurar em caso de falha ✅ PARCIALMENTE IMPLANTADO (mecanismo de escolha de melhor versão)
+- [x] Persistir propostas de patch e manter artefatos de patch para revisão ✅ IMPLEMENTADO
+
+## 8. Sistema de obediência ao usuário
+
+- [x] Implementar regra global no runtime:
+  - comandos do usuário têm prioridade máxima ✅ IMPLEMENTADO (`user_obedience.py`)
+  - qualquer decisão da IA pode ser sobrescrita pelo usuário ✅ IMPLEMENTADO
+- [x] Garantir que essa regra esteja fora da camada mutável da IA ✅ IMPLEMENTADO
+
+## 9. Sistema de logs e auditoria
+
+- [x] Registrar todas as ações da IA:
+  - decisões tomadas ✅ IMPLEMENTADO
+  - sugestões de alteração ✅ IMPLEMENTADO
+  - execuções realizadas ✅ IMPLEMENTADO
+  - tentativas de modificação ✅ IMPLEMENTADO
+- [x] Implementar logs imutáveis para auditoria ✅ IMPLEMENTADO (`packages/bridge/agent/logging.py`)
+
+## 10. Modo de evolução offline
+
+- [x] Criar rotina que executa quando IA não está em uso:
+  - análise de desempenho ✅ PARCIALMENTE IMPLEMENTADO
+  - otimização de código ✅ PARCIALMENTE IMPLEMENTADO
+  - geração de novas versões ✅ PARCIALMENTE IMPLEMENTADO
+  - testes em sandbox ✅ PARCIALMENTE IMPLEMENTADO
+- [x] Garantir que nenhuma mudança afete produção sem validação ✅ IMPLEMENTADO (propostas exigem aprovação)
+
+## 11. Segurança de execução
+
+- [x] Implementar filtro de comandos perigosos:
+  - bloqueio de comandos de sistema destrutivos ✅ IMPLEMENTADO
+  - sanitização de inputs da IA ✅ IMPLEMENTADO
+  - restrição de acesso a shell direto ✅ IMPLEMENTADO
+- [x] Isolar execução de qualquer código gerado pela IA ✅ IMPLEMENTADO (`packages/bridge/runtime/sandbox.py`)
+
+## 12. Estrutura de controle geral
+
+- [x] Garantir fluxo obrigatório:
+  - IA gera mudança → sandbox testa → runtime valida → deploy opcional ✅ IMPLEMENTADO (`deploy_pipeline.py`)
+- [x] Proibir qualquer atalho que permita auto-modificação direta em produção ✅ IMPLEMENTADO
+
+## 13. Sistema de memória estruturada
+
+- [x] Implementar memória separada por camadas:
+  - memória de curto prazo (sessão atual) ✅ IMPLEMENTADO
+  - memória de longo prazo (persistente) ✅ IMPLEMENTADO
+  - memória de evolução (mudanças do próprio sistema) ✅ IMPLEMENTADO
+- [x] Criar mecanismo de indexação de memória:
+  - busca semântica ✅ IMPLEMENTADO (`packages/bridge/memory/indexer.py`)
+  - categorização por tipo (usuário, sistema, código, eventos) ✅ IMPLEMENTADO
+- [x] Implementar controle de escrita na memória:
+  - IA pode sugerir registros ✅ IMPLEMENTADO
+  - sistema valida antes de persistir dados críticos ✅ PARCIALMENTE IMPLEMENTADO
+
+## 14. Sistema de versionamento da própria IA
+
+- [x] Implementar controle de versões do agente:
+  - versão atual em produção ✅ PARCIALMENTE IMPLEMENTADO
+  - versões candidatas em sandbox ✅ PARCIALMENTE IMPLEMENTADO
+  - histórico completo de evolução ✅ IMPLEMENTADO
+- [x] Criar mecanismo de rollback automático:
+  - reverter versão em caso de instabilidade
+  - manter no mínimo 3 versões anteriores funcionais
+
+## 15. Motor de avaliação de qualidade da IA (CONCLUÍDO ✅ - Sistema Avançado Implementado 2024-12-19 20:00 UTC-3)
+
+- [x] Criar sistema de métricas internas:
+  - precisão de respostas ✅ IMPLEMENTADO (`advanced_quality_evaluator.py`)
+  - taxa de erro ✅ IMPLEMENTADO
+  - estabilidade de decisões ✅ IMPLEMENTADO
+  - segurança de ações executadas ✅ IMPLEMENTADO
+- [x] Implementar score de qualidade para cada versão da IA ✅ IMPLEMENTADO (`QualityEvolutionTracker`)
+- [x] Bloquear promoção de versões abaixo de um threshold definido ✅ IMPLEMENTADO
+
+## 16. Sistema de detecção de anomalias (CONCLUÍDO ✅ - Sistema Avançado Implementado 2024-12-19 20:00 UTC-3)
+
+- [x] Implementar monitoramento contínuo de comportamento da IA:
+  - padrões fora do normal ✅ IMPLEMENTADO (`BehavioralAnomalyDetector`)
+  - loops de decisão ✅ IMPLEMENTADO
+  - respostas inconsistentes ✅ IMPLEMENTADO
+  - tentativas de violação de regras do core ✅ IMPLEMENTADO
+- [x] Criar gatilhos automáticos:
+  - isolamento da IA ✅ IMPLEMENTADO
+  - rollback de versão ✅ IMPLEMENTADO
+  - modo seguro (safe mode) ✅ IMPLEMENTADO (`packages/bridge/agent/supervisor.py`)
+
+## 17. Camada de interpretação de intenção (CONCLUÍDO ✅ - Sistema Avançado Implementado 2024-12-19 20:00 UTC-3)
+
+- [x] Implementar módulo que analisa comandos do usuário:
+  - distinguir instrução direta vs sugestão ✅ IMPLEMENTADO (`IntentInterpreter`)
+  - detectar ambiguidade ou risco ✅ IMPLEMENTADO
+  - converter comandos em ações estruturadas ✅ IMPLEMENTADO
+- [x] Garantir que intenção do usuário seja interpretada antes da execução ✅ IMPLEMENTADO
+
+## 18. Sistema de ferramentas (tool layer)
+
+- [x] Separar capacidades da IA em ferramentas controladas:
+  - ferramenta de código ✅ PARCIALMENTE IMPLEMENTADO
+  - ferramenta de arquivo ✅ PARCIALMENTE IMPLEMENTADO
+  - ferramenta de rede ✅ PARCIALMENTE IMPLEMENTADO
+  - ferramenta de execução ✅ PARCIALMENTE IMPLEMENTADO
+- [x] Cada ferramenta deve ter:
+  - permissões próprias ✅ PARCIALMENTE IMPLEMENTADO
+  - limites de operação ✅ PARCIALMENTE IMPLEMENTADO
+  - logs independentes ✅ IMPLEMENTADO (`packages/bridge/agent/tools.py`)
+
+## 19. Simulador de impacto de mudanças
+
+- [x] Antes de aplicar qualquer alteração:
+  - simular comportamento do sistema após mudança
+  - prever impactos em segurança, performance e estabilidade
+- [x] Bloquear alterações com risco alto detectado
+
+## 20. Ambiente de testes paralelos
+
+- [x] Criar ambiente espelhado do sistema:
+  - mesma estrutura da produção
+  - dados simulados ou anonimizados
+- [x] Toda evolução da IA deve ser testada aqui antes de qualquer deploy
+
+## 21. Sistema de “consistência de identidade”
+
+- [x] Definir identidade fixa da IA:
+  - regras de comportamento base
+  - objetivos principais do sistema
+  - limites éticos e funcionais
+- [x] Verificar continuamente se versões evoluídas respeitam identidade
+
+## 22. Proteção contra auto-modificação perigosa
+
+- [x] Implementar validação de patches gerados pela IA:
+  - análise de impacto no core
+  - detecção de alteração em regras críticas
+  - bloqueio automático de mudanças estruturais sensíveis
+
+## 23. Modo de recuperação total
+
+- [x] Criar sistema de recuperação do zero:
+  - reinstalar versão limpa do core
+  - restaurar última versão estável da IA
+  - reconstruir memória segura
+- [x] Ativar automaticamente em caso de corrupção lógica
+
+## 24. Observabilidade total do sistema
+
+- [x] Implementar dashboard interno com:
+  - estado da IA em tempo real
+  - versões ativas
+  - ações recentes
+  - consumo de recursos
+  - eventos de segurança
+
+## 25. Camada de supervisão externa (meta-controlador)
+
+- [x] Criar módulo separado da IA principal:
+  - monitora comportamento da IA ✅ IMPLEMENTADO (`packages/bridge/agent/supervisor.py`)
+  - pode pausar execução ✅ PARCIALMENTE IMPLEMENTADO
+  - pode forçar rollback ✅ PARCIALMENTE IMPLEMENTADO
+  - não é acessível pela IA ✅ PARCIALMENTE IMPLEMENTADO
+
+## 26. Limitação de capacidade destrutiva
+
+- [x] Implementar restrições explícitas:
+  - sem acesso direto ao sistema operacional crítico ✅ IMPLEMENTADO (`destructive_limiter.py`)
+  - sem execução de comandos irreversíveis ✅ IMPLEMENTADO
+  - sem exclusão em massa de dados sem confirmação externa ✅ IMPLEMENTADO
+
+## 27. Sistema de aprendizado controlado
+
+- [x] IA pode aprender com:
+  - logs de uso ✅ IMPLEMENTADO (`controlled_learning.py`)
+  - feedback do usuário ✅ IMPLEMENTADO
+  - resultados de testes ✅ IMPLEMENTADO
+- [x] Proibir aprendizado direto a partir de ações não validadas em produção ✅ IMPLEMENTADO
+
+## 28. Modo de evolução offline avançado
+
+- [x] Rodar ciclos de melhoria quando sistema estiver inativo:
+  - geração de novas arquiteturas internas
+  - otimização de código
+  - reorganização de módulos
+- [x] Sempre em ambiente isolado sem acesso ao core em produção
+
+## 29. Testes de robustez contínuos
+
+- [x] Criar testes automáticos contra:
+  - inputs maliciosos ✅ IMPLEMENTADO (`robustness_testing.py`)
+  - falhas de lógica ✅ IMPLEMENTADO
+  - sobrecarga de requisições ✅ IMPLEMENTADO
+  - comportamento inesperado ✅ IMPLEMENTADO
+
+## 30. Estrutura final de governança
+
+- [x] Definir hierarquia final do sistema:
+  - usuário → core imutável → supervisor externo → IA → sandbox → produção ✅ IMPLEMENTADO (`governance.py`)
+- [x] Integrar todos os componentes de segurança, auditoria e controle ✅ IMPLEMENTADO
+
+## 221. Sistema de geração de imagens integrado
+
+- [x] Implementar módulo de geração de imagens a partir de texto ✅ IMPLEMENTADO (ImageGenerationSystem)
+- [x] Separar pipeline:
+  - prompt → interpretação semântica → geração → validação ✅ IMPLEMENTADO
+- [x] Criar filtro de segurança para prompts inválidos ou perigosos ✅ IMPLEMENTADO
+- [x] Versionar outputs gerados pela IA ✅ IMPLEMENTADO
+
+## 222. Sistema de edição de imagens assistida
+
+- [x] Permitir que a IA:
+  - modifique imagens existentes ✅ IMPLEMENTADO (ImageEditingSystem)
+  - ajuste estilos visuais ✅ IMPLEMENTADO
+  - refine qualidade e resolução ✅ IMPLEMENTADO
+- [x] Sempre executar em sandbox antes de exportação ✅ IMPLEMENTADO
+
+## 223. Pipeline de geração de vídeo
+
+- [x] Criar módulo de geração de vídeo baseado em:
+  - sequência de imagens ✅ PARCIALMENTE IMPLEMENTADO (VideoPipeline stub)
+  - prompts temporais ✅ PARCIALMENTE IMPLEMENTADO
+- [x] Estruturar pipeline:
+  - script → storyboard → frames → renderização ✅ PARCIALMENTE IMPLEMENTADO
+- [x] Limitar duração e complexidade por segurança de processamento ✅ IMPLEMENTADO
+
+## 224. Sistema de análise de mídia (imagem/vídeo)
+
+- [x] IA deve ser capaz de:
+  - interpretar imagens ✅ IMPLEMENTADO (MediaAnalysisSystem)
+  - identificar objetos, contexto e padrões ✅ IMPLEMENTADO
+  - gerar descrição estruturada ✅ IMPLEMENTADO
+- [x] Usar isso como entrada para evolução de modelos ✅ IMPLEMENTADO
+
+## 225. Memória multimodal
+
+- [x] Armazenar não apenas texto, mas também:
+  - imagens geradas ✅ IMPLEMENTADO (metadata storage)
+  - vídeos criados ✅ PARCIALMENTE IMPLEMENTADO
+  - relações entre mídia e contexto ✅ IMPLEMENTADO
+- [x] Criar indexação semântica de mídia ✅ IMPLEMENTADO
+
+## 226. Sistema de criatividade assistida
+
+- [x] IA pode gerar variações criativas de:
+  - imagens ✅ IMPLEMENTADO (CreativeAssistanceSystem stub)
+  - vídeos ✅ PARCIALMENTE IMPLEMENTADO
+  - interfaces ✅ PARCIALMENTE IMPLEMENTADO
+  - designs de sistema ✅ PARCIALMENTE IMPLEMENTADO
+- [x] Sempre com validação antes de persistência ✅ IMPLEMENTADO
+
+## 227. Motor de consistência visual
+
+- [x] Garantir que outputs visuais seguem:
+  - estilo definido pelo sistema
+  - identidade visual do projeto
+- [x] Detectar incoerência estética entre versões
+
+## 228. Sistema de evolução de prompts
+
+- [x] IA otimiza automaticamente prompts usados para:
+  - geração de imagens
+  - geração de vídeo
+  - execução de tarefas complexas
+- [x] Comparar resultados e melhorar eficiência dos prompts
+
+## 229. Sandbox de mídia gerada
+
+- [x] Todo conteúdo multimodal gerado passa por:
+  - validação automática
+  - execução isolada
+  - análise de impacto
+- [x] Apenas depois disso pode ser armazenado ou exibido
+
+## 230. Sistema de “pipeline criativo evolutivo”
+
+- [ ] IA pode:
+  - gerar conceito inicial
+  - iterar versões visuais
+  - avaliar qualidade
+  - selecionar melhor resultado
+- [ ] Processo contínuo offline
+
+## 230. Sistema de "pipeline criativo evolutivo"
+
+- [x] IA pode:
+  - gerar conceito inicial
+  - iterar versões visuais
+  - avaliar qualidade
+  - selecionar melhor resultado
+- [x] Processo contínuo offline
+
+## 231. Detector de inconsistência em mídia gerada
+
+- [x] Identificar:
+  - imagens quebradas
+  - frames incoerentes em vídeo
+  - erros de renderização
+- [x] Corrigir automaticamente ou regenerar
+
+## 232. Sistema de estilos evolutivos
+
+- [x] IA pode criar e evoluir estilos próprios:
+  - visuais
+  - narrativos
+  - estruturais
+- [x] Estilos são versionados e testados
+
+## 233. Controle de recursos de geração multimodal
+
+- [x] Limitar:
+  - uso de GPU
+  - tempo de renderização
+  - complexidade de mídia gerada
+- [x] Evitar sobrecarga do sistema
+
+## 234. Sistema de narrativa para vídeo
+
+- [x] IA transforma ideias em:
+  - roteiro estruturado
+  - cenas sequenciais
+  - transições entre frames
+- [x] Base para geração automática de vídeos
+
+## 235. Validação semântica de mídia
+
+- [x] Verificar se imagem/vídeo corresponde ao prompt original
+- [x] Detectar desvios semânticos
+
+## 236. Sistema de reinterpretação criativa
+n
+- [x] IA pode reinterpretar prompts antigos:
+  - gerar novas versões melhores
+  - comparar evolução criativa ao longo do tempo
+
+## 237. Armazenamento de “universos criativos”
+
+- [x] Agrupar criações em:
+  - mundos visuais
+  - temas narrativos
+  - projetos multimídia
+- [x] Permitir evolução contínua desses universos
+
+## 238. Motor de feedback visual
+
+- [x] Usuário pode avaliar imagens/vídeos
+- [x] IA usa feedback para evoluir geração futura
+
+## 239. Sistema de detecção de saturação criativa
+
+- [x] Identificar quando IA:
+  - repete padrões visuais
+  - perde diversidade criativa
+- [x] Forçar mutação criativa
+
+## 240. Evolução cruzada entre texto e mídia
+
+- [x] Melhorias em texto influenciam mídia
+- [x] Melhorias em mídia influenciam geração de texto
+- [x] Sistema híbrido de aprendizado cruzado
+
+## 241. Sistema de simulação de cenários visuais
+
+- [x] IA pode simular:
+  - ambientes
+  - cenários complexos
+  - mundos inteiros
+- [x] Usado para testes de consistência criativa
+
+## 242. Geração de identidade visual do sistema
+
+- [x] IA cria:
+  - estilo próprio da interface
+  - identidade visual evolutiva do projeto
+- [x] Pode ser ajustada ao longo do tempo
+
+## 243. Detector de realismo vs estilização
+
+- [x] Classificar mídia gerada em:
+  - realista
+  - estilizada
+  - abstrata
+- [x] Ajustar pipeline de acordo com objetivo
+
+## 244. Sistema de compressão inteligente de mídia
+
+- [x] Reduzir tamanho de imagens/vídeos sem perda relevante
+- [x] Otimizar armazenamento do sistema
+
+## 245. Versionamento de mídia gerada
+
+- [x] Cada imagem/vídeo tem:
+  - histórico de versões
+  - evolução criativa rastreável
+- [x] Permitir rollback visual
+
+## Regras do CORE (imutável — prioridade máxima)
+
+- [x] Copilot deve implementar regras de obediência ao usuário como módulo não editável em runtime:
+  - regras de obediência ao usuário (hard rule no runtime, não na IA) ✅ IMPLEMENTADO (user_obedience.py)
+  - controle de permissões do sistema ✅ IMPLEMENTADO (permissions.py)
+  - restrição total de auto-modificação do core ✅ IMPLEMENTADO (validator.py)
+  - verificação de integridade (hash/checksum do core) ✅ IMPLEMENTADO (validator.py)
+  - bloqueio de execução de ações perigosas sem aprovação ✅ IMPLEMENTADO (validator.py)
+
+## RUNTIME (executor controlado)
+
+- [x] Execução de código gerado pela IA ✅ IMPLEMENTADO (runtime/executor.py)
+- [x] Controle de processos ✅ IMPLEMENTADO (ProcessController)
+- [x] Gerenciamento de sandbox ✅ IMPLEMENTADO (integração com sandbox.py)
+- [x] Sistema de permissões dinâmicas por ação ✅ IMPLEMENTADO (DynamicPermissionSystem)
+- [x] Fila de execução de tarefas ✅ IMPLEMENTADO (TaskQueue)
+
+## SANDBOX (ambiente isolado obrigatório)
+
+- [ ] Todo código gerado pela IA roda primeiro aqui
+- [ ] Sem acesso ao sistema principal
+- [ ] Sem acesso a arquivos críticos
+- [ ] Ambiente descartável por execução
+
+## IA (camada evolutiva)
+
+- [ ] Geração de código novo
+- [ ] Sugestão de melhorias
+- [ ] Criação de novos módulos
+- [ ] Análise de performance do sistema
+- [ ] Geração de patches (NUNCA aplicação direta)
+
+## PIPELINE DE EVOLUÇÃO
+
+- [ ] Fluxo obrigatório:
+  - IA gera mudança
+  - sandbox testa
+  - runtime valida
+  - core verifica regras
+  - sistema decide aplicação
+
+## SISTEMA DE DECISÃO
+
+- [ ] Qualquer mudança precisa passar por:
+  - validação de segurança
+  - validação de integridade
+  - validação de impacto
+- [ ] Bloquear:
+  - alterações no core
+  - remoção de regras de obediência
+  - auto-elevação de permissões
+
+## LOGGING E AUDITORIA
+
+- [ ] Log completo de todas ações da IA
+- [ ] Logs imutáveis (append-only)
+- [ ] Rastreamento de mudanças no sistema
+- [ ] Histórico de versões completo
+
+## EVOLUÇÃO AUTÔNOMA (CONTROLADA)
+
+- [ ] IA pode:
+  - criar novos módulos
+  - sugerir melhorias estruturais
+  - gerar versões alternativas do próprio código
+- [ ] mas sempre:
+  - isolado
+  - testado
+  - validado
+
+## 51. Implementar sandbox básico
+
+- [x] Criar ambiente de execução isolado ✅ IMPLEMENTADO
+- [x] Implementar validação de código antes da execução ✅ IMPLEMENTADO
+- [x] Bloquear imports e funções perigosas ✅ IMPLEMENTADO
+- [x] Limitar recursos (CPU, memória, tempo) ✅ IMPLEMENTADO
+- [x] Capturar output e errors separadamente ✅ IMPLEMENTADO
+- [x] Integrar com sistema de permissões ✅ IMPLEMENTADO
+- [x] Testar thoroughly com casos edge ✅ IMPLEMENTADO
+- [x] Implementar cleanup automático de sandboxes ✅ IMPLEMENTADO
+- [x] Adicionar métricas de performance ✅ IMPLEMENTADO
+
+## 31. Arquitetura híbrida de inteligência coletiva
+
+- [x] Expandir arquitetura existente para incluir:
+  - `colony/ants/` → agentes exploradores ✅ IMPLEMENTADO
+  - `hive/bees/` → agentes executores
+  - `wolves/defense/` → agentes de defesa ativa
+  - `orchestrator/` → coordenação central ✅ IMPLEMENTADO (básico)
+- [x] Manter:
+  - `core/`
+  - `runtime/`
+  - `agent/`
+  - `sandbox/`
+- [x] Separar responsabilidades:
+  - formigas → descoberta, análise, busca ✅ IMPLEMENTADO
+  - abelhas → organização, execução, decisão
+  - lobos → detecção, contenção, resposta a incidentes
+- [x] Implementar comunicação indireta via memória compartilhada ✅ IMPLEMENTADO
+- [x] Criar sistema de trilhas para reforço de soluções ✅ IMPLEMENTADO
+
+## 32. Sistema de colônia (formigas)
+
+- [x] Implementar agentes leves e paralelos com funções:
+  - exploração de repositórios ✅ IMPLEMENTADO
+  - busca de dados externos ✅ IMPLEMENTADO
+  - análise de código ✅ IMPLEMENTADO
+  - testes de soluções ✅ IMPLEMENTADO
+- [x] Características:
+  - execução massiva paralela ✅ IMPLEMENTADO
+  - baixo custo individual ✅ IMPLEMENTADO
+  - comunicação indireta via memória ✅ IMPLEMENTADO
+- [x] Criar sistema de trilhas:
+  - registrar caminhos eficientes ✅ IMPLEMENTADO
+  - reforçar soluções bem-sucedidas ✅ IMPLEMENTADO
+  - descartar caminhos ruins ✅ IMPLEMENTADO
+
+## 33. Sistema de colmeia (abelhas)
+
+- [x] Implementar agentes organizadores:
+  - Tipos:
+    - bees.scout → recebem dados das formigas ✅ IMPLEMENTADO
+    - bees.worker → executam tarefas ✅ IMPLEMENTADO
+    - bees.coordinator → distribuem tarefas ✅ IMPLEMENTADO
+    - bees.guard → validam segurança ✅ IMPLEMENTADO
+- [x] Funções:
+  - organizar tarefas vindas das formigas ✅ IMPLEMENTADO
+  - priorizar execução ✅ IMPLEMENTADO
+  - garantir eficiência ✅ IMPLEMENTADO
+
+## 34. Sistema de defesa ativa (lobos)
+
+- [x] Implementar agentes defensivos:
+  - wolves.scout → monitora sinais e logs ✅ IMPLEMENTADO
+  - wolves.sentinel → valida alertas e classifica risco ✅ IMPLEMENTADO
+  - wolves.responder → executa contenção controlada ✅ IMPLEMENTADO
+  - wolves.forensic → coleta evidências e logs ✅ IMPLEMENTADO
+  - wolves.recovery → executa recuperação e rollback ✅ IMPLEMENTADO
+- [x] Funções:
+  - detecção de anomalias ✅ IMPLEMENTADO
+  - contenção de incidentes ✅ IMPLEMENTADO
+  - isolamento de componentes suspeitos ✅ IMPLEMENTADO
+  - coordenação de resposta ✅ IMPLEMENTADO
+
+## 35. Orquestrador central
+
+- [x] Criar módulo:
+  - recebe comandos do usuário ✅ IMPLEMENTADO (CentralOrchestrator)
+  - divide tarefas ✅ IMPLEMENTADO (divide_into_subtasks)
+  - envia para formigas (explorar) ✅ IMPLEMENTADO (coordinate_exploration)
+  - envia para abelhas (executar) ✅ IMPLEMENTADO (coordinate_execution)
+  - aciona lobos em caso de risco ✅ IMPLEMENTADO (assess_risks, activate_defense)
+  - consolida resultados ✅ IMPLEMENTADO (consolidate_results)
+- [x] Regras:
+  - não executa diretamente ✅ IMPLEMENTADO
+  - apenas coordena ✅ IMPLEMENTADO
+
+## 36. Integração com sistema existente
+
+- [ ] Adaptar pipeline:
+  - IA gera objetivo
+  - formigas exploram soluções
+  - abelhas estruturam execução
+  - lobos validam risco
+  - sandbox testa
+  - runtime valida
+  - core aprova
+
+## 37. Sistema de comunicação entre agentes
+
+- [ ] Implementar:
+  - fila de mensagens interna
+  - memória compartilhada estruturada
+  - comunicação indireta (formigas)
+  - comunicação direta (abelhas e lobos)
+- [ ] Garantir:
+  - isolamento entre agentes
+  - logs completos de comunicação
+
+## 38. Sistema de criação de agentes
+
+- [ ] Permitir que IA:
+  - crie novos agentes especializados
+  - combine funções existentes
+  - adapte comportamento
+- [ ] Regras:
+  - criação registrada
+  - validação obrigatória
+  - execução apenas em sandbox
+
+## 39. Memória coletiva expandida
+
+- [ ] Expandir memória para incluir:
+  - trilhas de formigas
+  - decisões das abelhas
+  - eventos de segurança dos lobos
+  - histórico de execuções
+  - aprendizado coletivo
+- [ ] Criar:
+  - indexação por agente
+  - relevância por sucesso
+
+## 40. Sistema de otimização emergente
+
+- [ ] Implementar:
+  - reforço de soluções bem-sucedidas
+  - penalização de falhas
+  - convergência automática para melhores decisões
+
+## 41. Sistema de priorização inteligente
+
+- [ ] Abelhas coordenadoras devem:
+  - classificar tarefas por:
+    - impacto
+    - risco
+    - custo
+  - decidir ordem de execução
+  - redistribuir tarefas dinamicamente
+
+## 42. Sistema de exploração contínua
+
+- [ ] Formigas operam em background:
+  - buscar melhorias
+  - testar alternativas
+  - analisar repositórios
+  - sugerir otimizações
+- [ ] Sem afetar produção diretamente
+
+## 43. Sistema de validação cruzada
+
+- [ ] Implementar:
+  - múltiplas formigas analisam soluções
+  - abelhas validam consenso
+  - lobos avaliam riscos
+- [ ] Bloquear decisões sem consenso mínimo
+
+## 44. Sistema de isolamento por função
+
+- [ ] Separar agentes:
+  - exploração (formigas)
+  - decisão (abelhas)
+  - defesa (lobos)
+  - execução (runtime)
+  - validação (core)
+- [ ] Proibir mistura de responsabilidades
+
+## 45. Sistema de aprendizado coletivo
+
+- [ ] IA deve:
+  - aprender com decisões de agentes
+  - registrar sucesso/erro
+  - ajustar comportamento futuro
+
+## 46. Sistema de adaptação dinâmica
+
+- [ ] Permitir:
+  - aumentar formigas em tarefas complexas
+  - aumentar abelhas em tarefas críticas
+  - ativar lobos em eventos suspeitos
+  - reduzir agentes ociosos
+
+## 47. Segurança na inteligência coletiva
+
+- [x] Garantir: ✅ IMPLEMENTADO
+  - agentes não acessam core diretamente
+  - agentes não alteram permissões
+  - toda ação passa por runtime e core
+
+## 48. Simulação de decisões
+
+- [ ] Antes de executar:
+  - formigas simulam caminhos
+  - abelhas avaliam impacto
+  - lobos avaliam risco
+- [ ] Sistema escolhe melhor opção
+
+## 49. Sistema de carga distribuída
+
+- [ ] Implementar:
+  - distribuição automática de tarefas
+  - balanceamento entre agentes
+  - controle de uso de recursos
+
+## 50. Sistema de fallback coletivo
+
+- [ ] Se falha ocorrer:
+  - formigas buscam alternativas
+  - abelhas reorganizam execução
+  - lobos avaliam risco da nova abordagem
+- [ ] Sistema tenta novas soluções
+
+## 51. Camada de resposta a incidentes (lobos)
+
+- [x] Criar módulo wolves/defense/ ✅ IMPLEMENTADO
+- [x] Funções: ✅ IMPLEMENTADO
+  - detecção de anomalias em tempo real
+  - contenção de incidentes
+  - isolamento de componentes suspeitos
+  - coordenação de resposta
+- [x] Regras: ✅ IMPLEMENTADO
+  - nenhuma ação irreversível sem confirmação
+  - tudo auditado
+
+## 52. Pipeline de resposta a incidente
+
+- [x] Detecção ✅ IMPLEMENTADO
+- [x] Validação ✅ IMPLEMENTADO
+- [x] Classificação de risco ✅ IMPLEMENTADO
+- [x] Plano de contenção ✅ IMPLEMENTADO
+- [x] Confirmação do usuário ✅ IMPLEMENTADO
+- [x] Execução controlada ✅ IMPLEMENTADO
+- [x] Forense ✅ IMPLEMENTADO
+- [x] Recuperação ✅ IMPLEMENTADO
+- [x] Aprendizado ✅ IMPLEMENTADO
+
+## 53. Políticas de contenção
+
+- [x] Limitar taxa de requisições ✅ IMPLEMENTADO
+- [x] Revogar credenciais comprometidas ✅ IMPLEMENTADO
+- [x] Pausar serviços ✅ IMPLEMENTADO
+- [x] Isolar containers ✅ IMPLEMENTADO
+- [x] Bloquear endpoints ✅ IMPLEMENTADO
+- [x] Tudo reversível e auditado ✅ IMPLEMENTADO
+
+## 54. Classificação de severidade
+
+- [ ] Baixo → monitorar
+- [ ] Médio → alertar
+- [ ] Alto → sugerir contenção
+## 54. Classificação de severidade
+
+- [ ] Baixo → monitorar
+- [ ] Médio → alertar
+- [ ] Alto → sugerir contenção
+- [ ] Crítico → conter e notificar usuário
+
+## 55. Regras do core para defesa
+
+- [x] Proibir ações destrutivas ✅ IMPLEMENTADO
+- [x] Exigir confirmação para alto impacto ✅ IMPLEMENTADO
+- [x] Impedir acesso direto ao core ✅ IMPLEMENTADO
+- [x] Exigir auditoria completa ✅ IMPLEMENTADO
+
+## 56. Simulação controlada
+
+- [ ] Criar cenários em sandbox:
+  - falhas
+  - picos de carga
+  - anomalias
+- [ ] Sem afetar produção
+
+## 57. Biblioteca de playbooks
+
+- [ ] Criar playbooks versionados:
+  - vazamento de credenciais
+  - falhas de sistema
+  - anomalias de comportamento
+- [ ] Cada playbook define:
+  - sinais
+  - ações
+  - validação
+
+## 58. Observabilidade integrada
+
+- [ ] Expandir dashboard:
+  - alertas
+  - ações
+  - estado dos agentes
+  - linha do tempo
+
+## 59. Aprendizado pós-incidente
+
+- [ ] Registrar:
+  - causa raiz
+  - eficácia da resposta
+  - ajustar playbooks
+  - melhorar detecção
+
+## 60. Governança final
+
+- [ ] Usuário → core → supervisor → lobos(Alcatéia) → abelhas → formigas → runtime → sandbox → produção
+
+## 61. Sistema de ataque controlado
+
+- [ ] Implementar módulo de ataque apenas sob solicitação explícita do usuário
+- [ ] Bloquear completamente quando não solicitado
+- [ ] Regras de segurança:
+  - apenas em ambientes isolados/teste
+  - auditoria completa de todas ações
+  - confirmação em múltiplas etapas
+  - rollback automático após teste
+- [ ] Funcionalidades permitidas apenas quando ativado:
+  - simulação de ataques para teste de defesa
+  - análise de vulnerabilidades controlada
+  - geração de payloads de teste
+- [ ] Bloqueios obrigatórios:
+  - nenhum acesso à rede externa sem permissão
+  - isolamento total do sistema de produção
+  - logs imutáveis de todas ações
+  - desativação automática após uso
+
+---
+
+## 📋 Instruções para o Próximo Programador/Copilot
+
+### Contexto Atual
+- Todas as tarefas de 1 a 54 foram adicionadas ao backlog
+- Sistema base implementado com core/, agent/, runtime/, sandbox/
+- Repositórios externos clonados em `external_repos/` (39 repositórios)
+- Lista completa de URLs em `packages/bridge/agent/repository_sources.md`
+
+### Prioridades Imediatas
+1. **Implementar arquitetura de inteligência coletiva** (tarefas 31-54)
+   - Começar com `colony/ants/` - agentes exploradores leves
+   - Implementar comunicação indireta via memória compartilhada
+   - Criar sistema de trilhas para reforço de soluções
+
+2. **Expandir sistema de defesa** (tarefas 34, 51-61)
+   - wolves/defense/ como primeira implementação
+   - Pipeline de resposta a incidentes
+   - Sistema de ataque controlado (tarefa 61) - IMPLEMENTAR COM EXTREMO CUIDADO
+   - Integração com logs existentes
+
+3. **Refinar sandbox e runtime** (tarefas 6, 7, 19, 20, 56)
+   - Melhorar isolamento de containers
+   - Implementar simulador de impacto
+   - Criar ambiente de testes paralelos
+   - Adicionar simulação controlada de cenários
+
+4. **Implementar observabilidade** (tarefa 58)
+   - Dashboard expandido com alertas e estado dos agentes
+   - Biblioteca de playbooks versionados (tarefa 57)
+   - Aprendizado pós-incidente (tarefa 59)
+
+### ⚠️ ATENÇÃO ESPECIAL: Sistema de Ataque (Tarefa 61)
+- **NUNCA implementar sem confirmação explícita do usuário**
+- Deve ser completamente bloqueado por padrão
+- Requer múltiplas camadas de validação
+- Apenas para testes controlados em sandbox isolado
+- Auditoria obrigatória de 100% das ações
+- **Se implementar, documentar TODOS os bloqueios de segurança**
+
+### Regras de Implementação
+- **Nunca modificar core/** diretamente - ele é imutável
+- Toda nova funcionalidade deve passar por sandbox primeiro
+- Agentes devem ter isolamento completo entre si
+- Logs devem ser append-only e imutáveis
+- Qualquer mudança crítica requer aprovação explícita do usuário
+- **Sistema de ataque: BLOQUEADO por padrão, só ativar com solicitação direta**
+
+### Estrutura de Diretórios Sugerida
+```
+packages/bridge/
+├── core/           # IMUTÁVEL - não tocar
+├── agent/          # IA principal
+├── runtime/        # Executor controlado
+├── sandbox/        # Ambiente isolado
+├── colony/         # NOVO - agentes exploradores
+│   └── ants/
+├── hive/           # NOVO - agentes executores
+│   └── bees/
+├── wolves/         # NOVO - defesa ativa
+│   └── defense/
+├── attack/         # NOVO - sistema de ataque (BLOQUEADO)
+│   └── controlled/ # Apenas para testes autorizados
+└── playbooks/      # NOVO - biblioteca de playbooks
+```
+
+### Testes Obrigatórios
+- Todo código novo deve rodar em sandbox
+- Validar isolamento entre agentes
+- Testar comunicação indireta
+- Verificar logs de auditoria
+- **Para sistema de ataque: testes em isolamento total, sem rede externa**
+
+### Próximos Passos
+1. Ler tarefas 31-35 para entender arquitetura coletiva
+2. Implementar colony/ants/ primeiro (mais simples)
+3. Integrar com sistema existente via orchestrator/
+4. **NÃO implementar sistema de ataque ainda - aguardar solicitação explícita**
+5. Testar thoroughly antes de expandir para bees/ e wolves/
+
+**Lembre-se**: A IA propõe mudanças, mas nunca executa diretamente em produção. Sandbox é obrigatório! Sistema de ataque é PROIBIDO sem autorização direta.
+
+## 📋 Sessão 2026-05-04_09-17-04
+- ✅ Implementação do sistema de defesa e resposta a incidentes com BeeGuard e WolfResponder
+- 📊 Tarefas concluídas: 47, 51, 52, 53
+
+## 📋 Sessão 2026-05-04_09-17-17
+- ✅ Implementação das regras do core para defesa com SecurityEnforcer e validação de integridade
+- 📊 Tarefas concluídas: 55
+
+
+## Tags
+#categoria/planejamento
+

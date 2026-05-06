@@ -1,11 +1,11 @@
 {
   "pending": [
     {
-      "task_id": "33c14b90-855a-4864-b034-283ff958aefd",
+      "task_id": "d15ef4e1-afd9-48e0-8a29-41d00b30a15c",
       "description": "Gerar variações de arquitetura interna",
       "task_type": "version_generation",
       "priority": 8,
-      "scheduled_at": "2026-05-05T08:40:56.283453",
+      "scheduled_at": "2026-05-06T12:31:13.778508",
       "should_run_at": null,
       "status": "pending",
       "result": null,
@@ -306,6 +306,18 @@
       "task_type": "optimization",
       "priority": 7,
       "scheduled_at": "2026-05-05T08:40:56.285223",
+      "should_run_at": null,
+      "status": "pending",
+      "result": null,
+      "error": null,
+      "completed_at": null
+    },
+    {
+      "task_id": "488bc1aa-3bff-4cf9-938e-f77c2dfc1988",
+      "description": "Otimizar algoritmos críticos",
+      "task_type": "optimization",
+      "priority": 7,
+      "scheduled_at": "2026-05-06T12:31:13.779621",
       "should_run_at": null,
       "status": "pending",
       "result": null,
@@ -618,6 +630,18 @@
       "task_type": "reorganization",
       "priority": 6,
       "scheduled_at": "2026-05-05T08:40:56.286756",
+      "should_run_at": null,
+      "status": "pending",
+      "result": null,
+      "error": null,
+      "completed_at": null
+    },
+    {
+      "task_id": "d5226eb2-32af-4854-916e-e3150ce04435",
+      "description": "Reorganizar estrutura de módulos",
+      "task_type": "reorganization",
+      "priority": 6,
+      "scheduled_at": "2026-05-06T12:31:13.780667",
       "should_run_at": null,
       "status": "pending",
       "result": null,
@@ -1029,6 +1053,22 @@
       },
       "error": null,
       "completed_at": "2026-05-05T08:40:56.291158"
+    },
+    {
+      "task_id": "33c14b90-855a-4864-b034-283ff958aefd",
+      "description": "Gerar variações de arquitetura interna",
+      "task_type": "version_generation",
+      "priority": 8,
+      "scheduled_at": "2026-05-05T08:40:56.283453",
+      "should_run_at": null,
+      "status": "completed",
+      "result": {
+        "success": true,
+        "version_id": "v42",
+        "message": "Versão v42 gerada com sucesso"
+      },
+      "error": null,
+      "completed_at": "2026-05-06T12:31:13.783924"
     }
   ]
 }

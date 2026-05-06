@@ -1,0 +1,29 @@
+---
+source: /workspaces/Aura-sphere-/packages/bridge/data/patches/ce8df1d0-4600-49cf-bc7e-1ec7337b50dd.json
+filename: ce8df1d0-4600-49cf-bc7e-1ec7337b50dd.json
+---
+
+# ce8df1d0-4600-49cf-bc7e-1ec7337b50dd.json
+
+{
+  "id": "ce8df1d0-4600-49cf-bc7e-1ec7337b50dd",
+  "description": "Atualizar rotina de auditoria",
+  "target_files": [
+    "packages/bridge/agent/logging.py"
+  ],
+  "patch_summary": "Adicionar marcação de revisão para proposições de mudança",
+  "detailed_changes": {
+    "diff": "+ audit flow"
+  },
+  "status": "approved",
+  "requested_by": "agent",
+  "created_at": "2026-05-02T09:54:46.403567",
+  "approved_by": "tester",
+  "approved_at": "2026-05-02T09:54:46.404756",
+  "rejected_by": null,
+  "rejected_at": null,
+  "rejection_reason": null,
+  "metadata": {
+    "approval_comment": "Aprovo a proposta offline"
+  }
+}

@@ -1,0 +1,36 @@
+---
+source: /workspaces/Aura-sphere-/packages/bridge/requirements.txt
+filename: requirements.txt
+---
+
+# requirements.txt
+
+fastapi==0.118.2
+uvicorn[standard]==0.24.0
+sqlalchemy==2.0.32
+psycopg[binary]==3.3.2
+python-jose[cryptography]==3.3.0
+slowapi==0.1.9
+python-dotenv==1.0.0
+pydantic==2.5.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+redis==5.0.1
+alembic==1.13.1
+httpx==0.25.2
+# LLM Providers
+openai==1.3.6
+anthropic==0.28.0
+# Embeddings & Vector Store
+sentence-transformers==3.0.1
+numpy==1.24.3
+psutil==7.2.2
+Pillow==10.0.0
+# Database & Caching
+psycopg-binary==3.1.13
+# MCP (Model Context Protocol)
+mcp==1.0.0
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2

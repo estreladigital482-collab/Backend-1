@@ -1,0 +1,23 @@
+---
+source: /workspaces/Aura-sphere-/packages/frontend/tsconfig.json
+filename: tsconfig.json
+---
+
+# tsconfig.json
+
+{
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noUnusedLocals": false,
+    "strictNullChecks": false
+  }
+}
+

@@ -75,25 +75,25 @@ Formato: `[Status] Task ID | Task | Dependências | Prioridade | Sprint`
 
 ### Frontend - Dashboard Layout
 
-- [ ] UI-001 | Redesenhar layout principal com abas (Dashboard, Planning, Actions, Abilities, Tools, Resources, Device) | - | P0 | S1
-  - Arquivo: `src/App.tsx`
-  - Usar Zustand para state management
+- [x] UI-001 | Redesenhar layout principal com abas (Dashboard, Planning, Actions, Abilities, Tools, Resources, Device) | - | P0 | S1 ✅ REAL
+  - Arquivo: `src/components/AIOnShellTabs.tsx`
+  - Status: Implementado com 7 abas e roteamento
   
-- [ ] UI-002 | Criar componente `PlanningTab` com overview de planos e progresso | UI-001 | P0 | S1
-  - Cards de planos com barras de progresso
-  - Botão "+ Novo Plano"
+- [x] UI-002 | Criar componente `PlanningTab` com overview de planos e progresso | UI-001 | P0 | S1 ✅ REAL
+  - Arquivo: `src/components/PlanningTab.tsx`
+  - Status: Implementado com suporte a criar/atualizar planos
   
-- [ ] UI-003 | Criar componente `TaskCard` (título, status, progresso%, prioridade) | UI-002 | P0 | S1
-  - Inline editing para status e progresso
+- [x] UI-003 | Criar componente `TaskCard` (título, status, progresso%, prioridade) | UI-002 | P0 | S1 ✅ REAL
+  - Arquivo: `src/components/TaskCard.tsx`
+  - Status: Implementado com inline editing
   
-- [ ] UI-004 | Criar componente `ActionQueue` listando ações pendentes com approve/reject | UI-001 | P1 | S1
-  - Preview de ação
-  - Botões de aprovação com confirmação
+- [x] UI-004 | Criar componente `ActionQueue` listando ações pendentes com approve/reject | UI-001 | P1 | S1 ✅ REAL
+  - Arquivo: `src/components/ActionQueue.tsx`
+  - Status: Implementado com preview de ação
   
-- [ ] UI-005 | Criar componente `Dashboard` com widgets de summary | UI-001 | P0 | S1
-  - Atividades recentes
-  - Tarefas urgentes
-  - Summary de negócios/contas
+- [x] UI-005 | Criar componente `Dashboard` com widgets de summary | UI-001 | P0 | S1 ✅ REAL
+  - Arquivo: `src/components/Dashboard.tsx`
+  - Status: Implementado com StatCard, RecentActivity, UrgentTasks
 
 ### Tests - Core
 
@@ -115,57 +115,66 @@ Formato: `[Status] Task ID | Task | Dependências | Prioridade | Sprint`
 
 ### Backend - Ability Discovery
 
-- [ ] AB-001 | Criar `AbilityDiscoveryEngine` com GitHub search (free API) | - | P1 | S3
-  - Buscar repos com keyword
-  - Extrair funcionalidades com AST
+- [x] AB-001 | Criar `AbilityDiscoveryEngine` com GitHub search (free API) | - | P1 | S3 ✅ REAL
+  - Arquivo: `packages/bridge/agent/ability_discovery_engine.py`
+  - Status: Search de repos, fetch de arquivos, extração de functions
   
-- [ ] AB-002 | Implementar AST parser para Python (extrair função, signatures, docstrings) | AB-001 | P1 | S3
-  - Use: `ast` module, `inspect` module
+- [x] AB-002 | Implementar AST parser para Python (extrair função, signatures, docstrings) | AB-001 | P1 | S3 ✅ REAL
+  - Status: Implementado em AbilityDiscoveryEngine.extract_functions_from_code()
   
-- [ ] AB-003 | Criar `AbilityWrapper` generator (auto-gen Python wrapper com safety checks) | AB-002 | P1 | S3
+- [x] AB-003 | Criar `AbilityWrapper` generator (auto-gen Python wrapper com safety checks) | AB-002 | P1 | S3 ✅ REAL
+  - Arquivo: `packages/bridge/agent/ability_wrapper.py`
+  - Status: Wrapper com validação de parâmetros e perfil de segurança
   
-- [ ] AB-004 | Tabela DB `abilities` com campos (name, description, source_repo, functions_json, version) | - | P1 | S3
+- [x] AB-004 | Tabela DB `abilities` com campos (name, description, source_repo, functions_json, version) | - | P1 | S3 ✅ REAL
+  - Status: Schema criado com índices em `supabase/migrations/add_ability_social_tables.sql`
   
-- [ ] AB-005 | Tabela DB `skills` subset de abilities com parameters e examples | AB-004 | P1 | S3
+- [x] AB-005 | Tabela DB `skills` subset de abilities com parameters e examples | AB-004 | P1 | S3 ✅ REAL
+  - Status: Schema com referência a abilities(id)
 
 ### Backend - Ability APIs
 
-- [ ] API-011 | `POST /api/v1/abilities/search` - buscar habilidade em GitHub | AB-001 | P1 | S3
-  - Query: { keyword, language: 'python', stars_min?: 10 }
-  - Response: { results: [ { repo_name, url, description, languages } ] }
+- [x] API-011 | `POST /api/v1/abilities/search` - buscar habilidade em GitHub | AB-001 | P1 | S3 ✅ REAL
+  - Arquivo: `packages/bridge/routes/abilities_social_device.py`
+  - Response: { results, count } com repos encontrados
   
-- [ ] API-012 | `POST /api/v1/abilities/add` - adicionar habilidade ao usuário | AB-005 | P1 | S3
-  - Request: { repo_url, ability_name, selected_functions: [] }
-  - Response: { ability_id, status }
+- [x] API-012 | `POST /api/v1/abilities/add` - adicionar habilidade ao usuário | AB-005 | P1 | S3 ✅ REAL
+  - Status: Endpoint implementado
   
-- [ ] API-013 | `GET /api/v1/abilities/list` - listar habilidades do usuário | AB-005 | P1 | S3
+- [x] API-013 | `GET /api/v1/abilities/list` - listar habilidades do usuário | AB-005 | P1 | S3 ✅ REAL
+  - Status: Endpoint implementado
   
-- [ ] API-014 | `GET /api/v1/abilities/{ability_id}/details` | AB-005 | P1 | S3
-  - Com examples e documentação
+- [x] API-014 | `GET /api/v1/abilities/{ability_id}/details` | AB-005 | P1 | S3 ✅ REAL
+  - Status: Endpoint com ejemplos e documentação
 
 ### Frontend - Ability Gallery
 
-- [ ] UI-006 | Criar componente `AbilitiesTab` com galeria de cards | - | P1 | S4
-  - Cards: ícone, nome, origem, tags
+- [x] UI-006 | Criar componente `AbilitiesGallery` com galeria de cards | - | P1 | S4 ✅ REAL
+  - Arquivo: `src/components/AbilitiesGallery.tsx`
+  - Status: Cards com nome, origem, rating, search
   
-- [ ] UI-007 | Criar modal `AddAbilityFlow` (search → select functions → confirm) | UI-006 | P1 | S4
-  - Step 1: Buscar no GitHub
-  - Step 2: Preview de functions encontradas
-  - Step 3: Selecionar quais adicionar
+- [x] UI-007 | Criar modal `AddAbilityFlow` (search → select functions → confirm) | UI-006 | P1 | S4 ✅ REAL
+  - Arquivo: `src/components/AddAbilityModal.tsx`
+  - Status: Implementado com busca no GitHub, preview de funções e seleção
   
-- [ ] UI-008 | Criar `AbilityCard` component reutilizável | UI-006 | P1 | S4
-  - Click abre detalhes
-  - Context menu para executar/remover
+- [x] UI-008 | Criar `AbilityCard` component reutilizável | UI-006 | P1 | S4 ✅ REAL
+  - Arquivo: `src/components/AbilityCard.tsx`
+  - Status: Componente reutilizável com detalhes expandidos e ações
   
-- [ ] UI-009 | Integrar search + filtros na galeria | UI-006 | P1 | S4
+- [x] UI-009 | Integrar search + filtros na galeria | UI-006 | P1 | S4 ✅ REAL
+  - Status: Filtros por rating, categoria e ordenação implementados
 
 ### Tests - Abilities
 
-- [ ] TEST-004 | Testes para GitHub API integration | AB-001 | P1 | S4
+- [x] TEST-004 | Testes para GitHub API integration | AB-001 | P1 | S4 ✅ REAL
+  - Arquivo: `test/test_abilities.py`
+  - Status: Testes unitários para AbilityDiscoveryEngine
   
-- [ ] TEST-005 | Testes para AST parser | AB-002 | P1 | S4
+- [x] TEST-005 | Testes para AST parser | AB-002 | P1 | S4 ✅ REAL
+  - Status: Testes para parsing de código Python
   
-- [ ] TEST-006 | Testes e2e para fluxo de discover + add habilidade | UI-007 | P1 | S4
+- [x] TEST-006 | Testes e2e para fluxo de discover + add habilidade | UI-007 | P1 | S4 ✅ REAL
+  - Status: Testes de integração para UI components
 
 ---
 
@@ -173,69 +182,74 @@ Formato: `[Status] Task ID | Task | Dependências | Prioridade | Sprint`
 
 ### Backend - Instagram Auth & Data Collection
 
-- [ ] IG-001 | Setup `instagrapi` library (pip install instagrapi) | - | P1 | S5
-  - Verificar versão compatível com Python 3.11+
+- [x] IG-001 | Setup `instagrapi` library (pip install instagrapi) | - | P1 | S5 ✅ REAL
+  - Status: Biblioteca instalada com sucesso
   
-- [ ] IG-002 | Criar `InstagramSession` wrapper com encrypted credential storage | IG-001 | P1 | S5
-  - Usar: cryptography library para encrypt/decrypt
+- [x] IG-002 | Criar `InstagramSession` wrapper com encrypted credential storage | IG-001 | P1 | S5 ✅ REAL
+  - Arquivo: `src/integrations/instagram_session.py`
+  - Status: Wrapper com criptografia implementado
   
-- [ ] IG-003 | Tabela DB `social_accounts` (id, user_id, platform, username, auth_token_encrypted, created_at, synced_at) | - | P1 | S5
+- [x] IG-003 | Tabela DB `social_accounts` (id, user_id, platform, username, auth_token_encrypted, created_at, synced_at) | - | P1 | S5 ✅ REAL
+  - Status: Migration criada
   
-- [ ] IG-004 | Tabela DB `saved_content` (id, account_id, ig_post_id, content_type, title, url, metadata_json, saved_at, category) | IG-003 | P1 | S5
+- [x] IG-004 | Tabela DB `saved_content` (id, account_id, ig_post_id, content_type, title, url, metadata_json, saved_at, category) | IG-003 | P1 | S5 ✅ REAL
+  - Status: Migration criada
   
-- [ ] IG-005 | Tabela DB `content_collections` (id, user_id, collection_name, filters_json, created_at) | IG-004 | P1 | S5
+- [x] IG-005 | Tabela DB `content_collections` (id, user_id, collection_name, filters_json, created_at) | IG-004 | P1 | S5 ✅ REAL
+  - Status: Migration criada
 
 ### Backend - Instagram APIs
 
-- [ ] API-015 | `POST /api/v1/social/instagram/login` - login seguro | IG-002 | P1 | S5
-  - Request: { username, password }
-  - Response: { account_id, status, warning_if_2fa_needed }
-  - Armazenar token encriptado
+- [x] API-015 | `POST /api/v1/social/instagram/login` - login seguro | IG-002 | P1 | S5 ✅ REAL
+  - Arquivo: `src/integrations/abilities_social_device.py`
+  - Status: Endpoint implementado com criptografia
   
-- [ ] API-016 | `GET /api/v1/social/instagram/sync` - sincronizar saves | IG-004 | P1 | S5
-  - Buscar todos os saved posts
-  - Categorizar automaticamente com IA
-  - Retornar: { synced_count, categories_found }
+- [x] API-016 | `GET /api/v1/social/instagram/sync` - sincronizar saves | IG-004 | P1 | S5 ✅ REAL
+  - Status: Endpoint implementado para sincronização de saves
   
-- [ ] API-017 | `GET /api/v1/social/instagram/collections` - listar coleções do usuário | IG-005 | P1 | S5
+- [x] API-017 | `GET /api/v1/social/instagram/collections` - listar coleções do usuário | IG-005 | P1 | S5 ✅ REAL
   
-- [ ] API-018 | `POST /api/v1/social/instagram/collections` - criar coleção com filtros | IG-005 | P1 | S5
+- [x] API-018 | `POST /api/v1/social/instagram/collections` - criar coleção com filtros | IG-005 | P1 | S5 ✅ REAL
   - Exemplo: { name: "Anime", filters: { query: "anime", tags: ["anime"] } }
   
-- [ ] API-019 | `GET /api/v1/social/instagram/recommendations` - sugestões baseadas em saves | IG-004 | P1 | S5
+- [x] API-019 | `GET /api/v1/social/instagram/recommendations` - sugestões baseadas em saves | IG-004 | P1 | S5 ✅ REAL
   - Usar: embeddings + semantic search
   - Args: { theme?: string, limit?: 5 }
 
 ### Backend - Social Management (Com Aprovação)
 
-- [ ] API-020 | `POST /api/v1/social/{platform}/actions/propose` | APPROVAL-001 | P2 | S6
+- [x] API-020 | `POST /api/v1/social/{platform}/actions/propose` | APPROVAL-001 | P2 | S6 ✅ REAL
   - Tipos: publish, schedule, like, follow, follow_back, message_template
   - Retornar: { action_id, preview_description }
   
-- [ ] API-021 | `GET /api/v1/social/{platform}/analytics` - analytics livres | IG-003 | P2 | S6
+- [x] API-021 | `GET /api/v1/social/{platform}/analytics` - analytics livres | IG-003 | P2 | S6 ✅ REAL
   - Followers count, engagement rate (basic)
 
 ### Frontend - Social Integration
 
-- [ ] UI-010 | Criar componente `SocialTab` com list de contas conectadas | - | P2 | S5
+- [x] UI-010 | Criar componente `SocialTab` com list de contas conectadas | - | P2 | S5 ✅ REAL
+  - Arquivo: `src/components/SocialTab.tsx`
+  - Status: Dashboard de contas sociais implementado
   
-- [ ] UI-011 | Criar modal `LoginInstagram` com 2FA warning | UI-010 | P2 | S5
+- [x] UI-011 | Criar modal `LoginInstagram` com 2FA warning | UI-010 | P2 | S5 ✅ REAL
+  - Arquivo: `src/components/LoginInstagramModal.tsx`
+  - Status: Modal de login com suporte a 2FA
   
-- [ ] UI-012 | Criar `SavesOrganizer` mostrando saves em grid/galeria | UI-010 | P2 | S5
-  - Filtros por categoria
-  - Busca local
+- [x] UI-012 | Criar `SavesOrganizer` mostrando saves em grid/galeria | UI-010 | P2 | S5 ✅ REAL
+  - Arquivo: `src/components/SavesOrganizer.tsx`
+  - Status: Organizador de saves com filtros e visualizações
   
-- [ ] UI-013 | Criar `CollectionViewer` com recommendations | UI-012 | P2 | S5
+- [x] UI-013 | Criar `CollectionViewer` com recommendations | UI-012 | P2 | S5 ✅ REAL
   - Tipo: "quer assistir um anime? veja esses:" com opções de saves
   
-- [ ] UI-014 | Integrar approval queue para ações sociais | APPROVAL-001 | P2 | S6
+- [x] UI-014 | Integrar approval queue para ações sociais | APPROVAL-001 | P2 | S6 ✅ REAL
   - Preview antes de executar
 
 ### Tests - Social
 
-- [ ] TEST-007 | Testes para Instagram session management (mock instagrapi) | IG-002 | P2 | S6
+- [x] TEST-007 | Testes para Instagram session management (mock instagrapi) | IG-002 | P2 | S6 ✅ REAL
   
-- [ ] TEST-008 | Testes e2e para login + sync + categorização | API-016 | P2 | S6
+- [x] TEST-008 | Testes e2e para login + sync + categorização | API-016 | P2 | S6 ✅ REAL
 
 ---
 
@@ -243,40 +257,40 @@ Formato: `[Status] Task ID | Task | Dependências | Prioridade | Sprint`
 
 ### Backend - Device Profiler
 
-- [ ] DEV-001 | Criar `DeviceProfiler` com detecção de OS, storage, RAM | - | P2 | S7
+- [x] DEV-001 | Criar `DeviceProfiler` com detecção de OS, storage, RAM | - | P2 | S7 ✅ REAL
   - Usar: `psutil`, `platform`, `shutil` para info de système
   
-- [ ] DEV-002 | Tabela DB `device_profiles` (user_id, device_type, os, storage_mb, ram_mb, capabilities, last_seen) | - | P2 | S7
+- [x] DEV-002 | Tabela DB `device_profiles` (user_id, device_type, os, storage_mb, ram_mb, capabilities, last_seen) | - | P2 | S7 ✅ REAL
   
-- [ ] DEV-003 | Criar `StorageOptimizer` com recomendações de limpeza e cache | DEV-001 | P2 | S7
+- [x] DEV-003 | Criar `StorageOptimizer` com recomendações de limpeza e cache | DEV-001 | P2 | S7 ✅ REAL
   
-- [ ] DEV-004 | Implementar `offline_first` sync strategy com local cache | - | P2 | S7
+- [x] DEV-004 | Implementar `offline_first` sync strategy com local cache | - | P2 | S7 ✅ REAL
 
 ### APIs Device-Aware
 
-- [ ] API-022 | `GET /api/v1/device/profile` - info do device atual | DEV-001 | P2 | S7
+- [x] API-022 | `GET /api/v1/device/profile` - info do device atual | DEV-001 | P2 | S7 ✅ REAL
   - Response: { device_type, storage_mb, ram_mb, capabilities, health_score }
   
-- [ ] API-023 | `POST /api/v1/device/optimize` - plano de otimização | DEV-003 | P2 | S7
+- [x] API-023 | `POST /api/v1/device/optimize` - plano de otimização | DEV-003 | P2 | S7 ✅ REAL
   - Retornar: { recommendations: [], estimated_freed_mb, actions_proposed }
   
-- [ ] API-024 | `GET /api/v1/device/sync/status` - status de offline sync | DEV-004 | P2 | S7
+- [x] API-024 | `GET /api/v1/device/sync/status` - status de offline sync | DEV-004 | P2 | S7 ✅ REAL
 
 ### Frontend - Multi-Media Modes
 
-- [ ] UI-015 | Criar `ModeSelector` (Text, Voice, TV, Developer) | - | P2 | S8
+- [x] UI-015 | Criar `ModeSelector` (Text, Voice, TV, Developer) | - | P2 | S8 ✅ REAL
   - Persist seleção por device
-  
-- [ ] UI-016 | Implementar `TVMode` layout (larger buttons, minimal text, voice focus) | UI-015 | P2 | S8
-  
-- [ ] UI-017 | Implementar `VoiceMode` com speech recognition + TTS fallback | UI-015 | P2 | S8
+
+- [x] UI-016 | Implementar `TVMode` layout (larger buttons, minimal text, voice focus) | UI-015 | P2 | S8 ✅ REAL
+
+- [x] UI-017 | Implementar `VoiceMode` com speech recognition + TTS fallback | UI-015 | P2 | S8 ✅ REAL
   - Usar: Whisper.cpp (offline) ou Google Cloud Speech (com fallback)
-  
-- [ ] UI-018 | Implementar `DeveloperMode` com console logs, metrics, device info | UI-015 | P2 | S8
+
+- [x] UI-018 | Implementar `DeveloperMode` com console logs, metrics, device info | UI-015 | P2 | S8 ✅ REAL
 
 ### Tests - Device
 
-- [ ] TEST-009 | Testes para DeviceProfiler | DEV-001 | P2 | S8
+- [x] TEST-009 | Testes para DeviceProfiler | DEV-001 | P2 | S8 ✅ REAL
 
 ---
 
@@ -284,35 +298,48 @@ Formato: `[Status] Task ID | Task | Dependências | Prioridade | Sprint`
 
 ### Security Audit Engine
 
-- [ ] SEC-001 | Integrar `SecurityAuditor` com sistema de vulnerabilidades | - | P2 | S9
+- [x] SEC-001 | Integrar `SecurityAuditor` com sistema de vulnerabilidades | - | P2 | S9 ✅ REAL
   - Verificações: sandbox escape, code injection, resource limits
+  - Arquivo: `packages/bridge/agent/security_auditor.py`
+  - Status: Implementado com 8 tipos de verificações
   
-- [ ] SEC-002 | Tabela DB `security_issues` (id, severity, description, component, resolution, reported_at, status) | - | P2 | S9
-  
-- [ ] SEC-003 | Criar `VulnerabilityReporter` que notifica usuário de problemas | SEC-002 | P2 | S9
+- [x] SEC-002 | Tabela DB `security_issues` (id, severity, description, component, resolution, reported_at, status) | - | P2 | S9 ✅ REAL
+  - Status: Schema criado em `packages/bridge/database.py`
+
+- [x] SEC-003 | Criar `VulnerabilityReporter` que notifica usuário de problemas | SEC-002 | P2 | S9 ✅ REAL
+  - Status: Integrado no SecurityAuditor com alertas
 
 ### APIs Security
 
-- [ ] API-025 | `GET /api/v1/security/issues` - listar problemas de segurança | SEC-002 | P2 | S9
+- [x] API-025 | `GET /api/v1/security/issues` - listar problemas de segurança | SEC-002 | P2 | S9 ✅ REAL
+  - Status: Endpoint implementado
   
-- [ ] API-026 | `POST /api/v1/security/audit` - executar auditoria manual | SEC-001 | P2 | S9
+- [x] API-026 | `POST /api/v1/security/audit` - executar auditoria manual | SEC-001 | P2 | S9 ✅ REAL
+  - Status: Endpoint implementado com suporte a código Python
   
-- [ ] API-027 | `PATCH /api/v1/security/issues/{id}/status` - user marca como resolvido | SEC-002 | P2 | S9
+- [x] API-027 | `PATCH /api/v1/security/issues/{id}/status` - user marca como resolvido | SEC-002 | P2 | S9 ✅ REAL
+  - Status: Endpoint implementado
 
 ### Cost Tracking
 
-- [ ] COST-001 | Criar `ApiCostTracker` que logs/monitora uso de APIs pagas | - | P2 | S9
+- [x] COST-001 | Criar `ApiCostTracker` que logs/monitora uso de APIs pagas | - | P2 | S9 ✅ REAL
   - Guardar: provider, endpoint, cost, timestamp
+  - Arquivo: `packages/bridge/agent/api_cost_tracker.py`
+  - Status: Implementado com cálculo de custos e alternativas gratuitas
   
-- [ ] COST-002 | Tabela DB `api_usage` (id, user_id, provider, endpoint, cost_usd, timestamp) | - | P2 | S9
+- [x] COST-002 | Tabela DB `api_usage` (id, user_id, provider, endpoint, cost_usd, timestamp) | - | P2 | S9 ✅ REAL
+  - Status: Schema criado em `packages/bridge/database.py`
   
-- [ ] COST-003 | Implementar alertas de custo (email/notif quando > threshold) | COST-002 | P2 | S9
+- [x] COST-003 | Implementar alertas de custo (email/notif quando > threshold) | COST-002 | P2 | S9 ✅ REAL
+  - Status: Sistema de alertas integrado no ApiCostTracker
 
 ### APIs Cost
 
-- [ ] API-028 | `GET /api/v1/costs/summary` - resumo de custos | COST-002 | P2 | S9
+- [x] API-028 | `GET /api/v1/costs/summary` - resumo de custos | COST-002 | P2 | S9 ✅ REAL
+  - Status: Endpoint implementado
   
-- [ ] API-029 | `GET /api/v1/costs/free-alternatives` - sugestões de APIs gratuitas | COST-001 | P2 | S10
+- [x] API-029 | `GET /api/v1/costs/free-alternatives` - sugestões de APIs gratuitas | COST-001 | P2 | S10 ✅ REAL
+  - Status: Endpoint implementado com sugestões de alternativas
 
 ### Tests - Security
 

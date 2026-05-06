@@ -138,6 +138,36 @@ class ActionProposal(Base):
     status = Column(String(32), default="pending")  # pending, approved, rejected, executed
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class SecurityIssue(Base):
+    """Problemas de segurança detectados"""
+    __tablename__ = "security_issues"
+    
+    id = Column(String, primary_key=True, index=True)
+    severity = Column(String(32), nullable=False)  # critical, high, medium, low
+    description = Column(Text, nullable=False)
+    component = Column(String(255), nullable=False)
+    resolution = Column(Text, nullable=False)
+    reported_at = Column(DateTime(timezone=True), server_default=func.now())
+    status = Column(String(32), default="open")  # open, resolved, ignored
+    details = Column(Text, nullable=True)  # JSON string
+
+
+class ApiUsage(Base):
+    """Registro de uso de APIs externas com custos"""
+    __tablename__ = "api_usage"
+    
+    id = Column(String, primary_key=True, index=True)
+    user_id = Column(String, nullable=False, index=True)
+    provider = Column(String(64), nullable=False)  # openai, anthropic, google, etc
+    endpoint = Column(String(255), nullable=False)
+    cost_usd = Column(Float, default=0.0)
+    model = Column(String(128), nullable=True)
+    tokens_used = Column(Integer, nullable=True)
+    response_time_ms = Column(Float, nullable=True)
+    metadata = Column(Text, nullable=True)  # JSON string
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     executed_at = Column(DateTime(timezone=True), nullable=True)
 
 

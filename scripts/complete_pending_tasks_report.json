@@ -1,1250 +1,336 @@
 {
   "completed_tasks": [
     {
-      "task_id": "DB-001",
-      "description": "Criar tabela `plans` com campos (id, user_id, title, description, status, progress, created_at, updated_at)",
-      "session_task_id": "5b03151b-30a3-44e4-8288-27bdc2afced1",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.295688"
-    },
-    {
-      "task_id": "DB-002",
-      "description": "Criar tabela `tasks` (id, plan_id, title, description, status, progress, priority, due_date, subtasks_json)",
-      "session_task_id": "5232dae2-cc3c-46a5-9cb7-01ae9811d4cb",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.296485"
-    },
-    {
-      "task_id": "DB-003",
-      "description": "Criar tabela `projects` (id, user_id, title, status, progress, linked_tasks, description, archived)",
-      "session_task_id": "2331bc85-ac99-4973-b5a8-377741790fa8",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.297370"
-    },
-    {
-      "task_id": "DB-004",
-      "description": "Criar tabela `accounts` (id, user_id, account_type, account_name, status, value_usd, description, metadata_json)",
-      "session_task_id": "7376678e-49bf-4818-83fc-f698a894b523",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.298179"
-    },
-    {
-      "task_id": "DB-005",
-      "description": "Criar tabela `action_proposals` (id, user_id, action_type, description, parameters_json, status, created_at, expires_at)",
-      "session_task_id": "a424f49d-a857-490f-8522-a861ccdec9bc",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.298974"
-    },
-    {
-      "task_id": "API-001",
-      "description": "Implementar `POST /api/v1/planning/plans`",
-      "session_task_id": "f802b0cd-6395-43ee-b4af-e53d56c39976",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.299715"
-    },
-    {
-      "task_id": "API-002",
-      "description": "Implementar `GET /api/v1/planning/plans/{user_id}`",
-      "session_task_id": "16d43282-e6a4-4359-b1ee-6b97e285ae20",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.300536"
-    },
-    {
-      "task_id": "API-003",
-      "description": "Implementar `POST /api/v1/planning/tasks`",
-      "session_task_id": "37242af0-c971-4acb-81e1-35e8a2aa2262",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.301325"
-    },
-    {
-      "task_id": "API-004",
-      "description": "Implementar `PATCH /api/v1/planning/tasks/{task_id}`",
-      "session_task_id": "2736f7d6-28a0-4a61-92f3-09eaf4de9c95",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.302088"
-    },
-    {
-      "task_id": "API-005",
-      "description": "Implementar `GET /api/v1/planning/dashboard`",
-      "session_task_id": "3ec9b038-a167-492c-adcf-b59ac515836e",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.302837"
-    },
-    {
-      "task_id": "API-006",
-      "description": "Implementar `POST /api/v1/planning/projects`",
-      "session_task_id": "3345f6c2-6862-4568-a312-b328a5e41bfa",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.303511"
-    },
-    {
-      "task_id": "API-007",
-      "description": "Implementar `POST /api/v1/planning/accounts`",
-      "session_task_id": "96e5c178-3111-4bea-9da8-d3ec9bee8651",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.304291"
-    },
-    {
-      "task_id": "APPROVAL-001",
-      "description": "Implementar `ActionQueueService` (manager de ações pendentes)",
-      "session_task_id": "6b7d1d71-4b31-4798-ad30-bec87350cb13",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.304984"
-    },
-    {
-      "task_id": "API-008",
-      "description": "Implementar `GET /api/v1/actions/pending`",
-      "session_task_id": "45deae48-76f9-48a6-9a84-bf5a4c1c912f",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.305752"
-    },
-    {
-      "task_id": "API-009",
-      "description": "Implementar `POST /api/v1/actions/{action_id}/approve`",
-      "session_task_id": "e4357ffc-1561-44c0-abe6-b04dd86d9c22",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.306571"
-    },
-    {
-      "task_id": "API-010",
-      "description": "Implementar `POST /api/v1/actions/{action_id}/reject`",
-      "session_task_id": "e3b9ab38-9f37-4f34-ba3d-781988eae068",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.307307"
-    },
-    {
-      "task_id": "UI-001",
-      "description": "Redesenhar layout principal com abas (Dashboard, Planning, Actions, Abilities, Tools, Resources, Device)",
-      "session_task_id": "77e71ef2-8eaa-482e-858a-cb085ccf5afe",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.308135"
-    },
-    {
-      "task_id": "UI-002",
-      "description": "Criar componente `PlanningTab` com overview de planos e progresso",
-      "session_task_id": "b4ae6647-e2e6-46d3-a9ae-e327ae435bd3",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.308834"
-    },
-    {
-      "task_id": "UI-003",
-      "description": "Criar componente `TaskCard` (título, status, progresso%, prioridade)",
-      "session_task_id": "b6844328-cde8-49ad-9ac1-a633a187c4b2",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.309617"
-    },
-    {
-      "task_id": "UI-004",
-      "description": "Criar componente `ActionQueue` listando ações pendentes com approve/reject",
-      "session_task_id": "3de0d561-1cb1-49df-8e8e-670dd037a4aa",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.310396"
-    },
-    {
-      "task_id": "UI-005",
-      "description": "Criar componente `Dashboard` com widgets de summary",
-      "session_task_id": "af5d4376-0663-4934-be63-92bb87307dcb",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.311121"
-    },
-    {
-      "task_id": "TEST-001",
-      "description": "Testes unitários para Planning API",
-      "session_task_id": "5b80cd70-49a6-44e6-937b-f74fcac82ef0",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.311841"
-    },
-    {
-      "task_id": "TEST-002",
-      "description": "Testes de integração para fluxo de tarefa completo",
-      "session_task_id": "08939517-1f3d-4209-9b67-7e51673b903d",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.312552"
-    },
-    {
-      "task_id": "TEST-003",
-      "description": "Testes para Action Approval workflow",
-      "session_task_id": "4ebf9246-f758-48ba-8035-aef7b6d3dd3b",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.313301"
-    },
-    {
-      "task_id": "AB-001",
-      "description": "Criar `AbilityDiscoveryEngine` com GitHub search (free API)",
-      "session_task_id": "a7fba72d-efc2-4577-ac50-04375736fa1a",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.314078"
-    },
-    {
-      "task_id": "AB-002",
-      "description": "Implementar AST parser para Python (extrair função, signatures, docstrings)",
-      "session_task_id": "e5fc36c9-e841-42e6-b4e2-5e6473b31bb5",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.314828"
-    },
-    {
-      "task_id": "AB-003",
-      "description": "Criar `AbilityWrapper` generator (auto-gen Python wrapper com safety checks)",
-      "session_task_id": "ad83685a-ac49-41af-94a7-242cf6ba9505",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.315527"
-    },
-    {
-      "task_id": "AB-004",
-      "description": "Tabela DB `abilities` com campos (name, description, source_repo, functions_json, version)",
-      "session_task_id": "fb1fbfbd-fb03-43d5-b5b6-f44bca5b8df4",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.316259"
-    },
-    {
-      "task_id": "AB-005",
-      "description": "Tabela DB `skills` subset de abilities com parameters e examples",
-      "session_task_id": "a71961b9-611b-498c-a717-940ab3b1e599",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.317041"
-    },
-    {
-      "task_id": "API-011",
-      "description": "`POST /api/v1/abilities/search` - buscar habilidade em GitHub",
-      "session_task_id": "10138e6a-deee-4a59-9ea8-568923674e3e",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.317671"
-    },
-    {
-      "task_id": "API-012",
-      "description": "`POST /api/v1/abilities/add` - adicionar habilidade ao usuário",
-      "session_task_id": "7d3b4bb1-6a09-4b19-9893-706b8dcad788",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.318502"
-    },
-    {
-      "task_id": "API-013",
-      "description": "`GET /api/v1/abilities/list` - listar habilidades do usuário",
-      "session_task_id": "32a970ed-3199-42c8-a84c-1c89c475f3ec",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.319253"
-    },
-    {
-      "task_id": "API-014",
-      "description": "`GET /api/v1/abilities/{ability_id}/details`",
-      "session_task_id": "8136f5ef-5c3a-439a-bddf-57174e1fc58a",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.319968"
-    },
-    {
-      "task_id": "UI-006",
-      "description": "Criar componente `AbilitiesTab` com galeria de cards",
-      "session_task_id": "df5a33b1-0e5c-4e13-8313-734fbd1dc58e",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.320640"
-    },
-    {
-      "task_id": "UI-007",
-      "description": "Criar modal `AddAbilityFlow` (search → select functions → confirm)",
-      "session_task_id": "d33d072c-25d5-4664-a213-4acb5f43aa09",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.321462"
-    },
-    {
-      "task_id": "UI-008",
-      "description": "Criar `AbilityCard` component reutilizável",
-      "session_task_id": "404baa8e-67d7-4098-a193-004ed6466320",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.322213"
-    },
-    {
-      "task_id": "UI-009",
-      "description": "Integrar search + filtros na galeria",
-      "session_task_id": "010cd871-61f5-4524-912f-2321ec69ed31",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.322911"
-    },
-    {
-      "task_id": "TEST-004",
-      "description": "Testes para GitHub API integration",
-      "session_task_id": "d8bd634a-2888-49d5-a343-3937c5a68b94",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.323683"
-    },
-    {
-      "task_id": "TEST-005",
-      "description": "Testes para AST parser",
-      "session_task_id": "ad16a423-4f45-4403-9666-64ec84409160",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.324464"
-    },
-    {
-      "task_id": "TEST-006",
-      "description": "Testes e2e para fluxo de discover + add habilidade",
-      "session_task_id": "e3782f25-fae2-4b7e-b13a-2a8998550c99",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.325192"
-    },
-    {
-      "task_id": "IG-001",
-      "description": "Setup `instagrapi` library (pip install instagrapi)",
-      "session_task_id": "2283881e-dc6d-4e6a-ad52-c90ae3b591ea",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.325954"
-    },
-    {
-      "task_id": "IG-002",
-      "description": "Criar `InstagramSession` wrapper com encrypted credential storage",
-      "session_task_id": "b1161bf7-739f-47b2-819e-e5b7c30e5bc5",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.326654"
-    },
-    {
-      "task_id": "IG-003",
-      "description": "Tabela DB `social_accounts` (id, user_id, platform, username, auth_token_encrypted, created_at, synced_at)",
-      "session_task_id": "059faa53-c3c1-4b6f-be06-c9391b58e4b6",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.327464"
-    },
-    {
-      "task_id": "IG-004",
-      "description": "Tabela DB `saved_content` (id, account_id, ig_post_id, content_type, title, url, metadata_json, saved_at, category)",
-      "session_task_id": "e1958f9e-9f11-47a0-9cd1-3fee037d7b8b",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.328246"
-    },
-    {
-      "task_id": "IG-005",
-      "description": "Tabela DB `content_collections` (id, user_id, collection_name, filters_json, created_at)",
-      "session_task_id": "879107f2-427b-4189-be99-80259191f7e3",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.328930"
-    },
-    {
-      "task_id": "API-015",
-      "description": "`POST /api/v1/social/instagram/login` - login seguro",
-      "session_task_id": "a4240333-3a70-4107-841b-78d1e5b68d72",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.329791"
-    },
-    {
-      "task_id": "API-016",
-      "description": "`GET /api/v1/social/instagram/sync` - sincronizar saves",
-      "session_task_id": "095aad83-a9bb-4f24-8f9d-6eb9bb7307f2",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.330493"
-    },
-    {
       "task_id": "API-017",
       "description": "`GET /api/v1/social/instagram/collections` - listar coleções do usuário",
-      "session_task_id": "2730e654-58ad-4781-8abe-836976064ce4",
+      "session_task_id": "9c3ae299-1b5b-404a-99b9-744c99d6d5f3",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.331303"
+      "completed_at": "2026-05-06T12:31:13.789412"
     },
     {
       "task_id": "API-018",
       "description": "`POST /api/v1/social/instagram/collections` - criar coleção com filtros",
-      "session_task_id": "ab37d2dd-38dd-4b2d-8b94-4d00d977596d",
+      "session_task_id": "0dabb222-2092-4504-943c-a1324380b0dd",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.331731"
+      "completed_at": "2026-05-06T12:31:13.789780"
     },
     {
       "task_id": "API-019",
       "description": "`GET /api/v1/social/instagram/recommendations` - sugestões baseadas em saves",
-      "session_task_id": "16d2b633-637d-4cfa-8724-2d56c6c58c18",
+      "session_task_id": "4a5da237-35d6-4eda-a0e2-a78e8d1eb9e7",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.332190"
+      "completed_at": "2026-05-06T12:31:13.790162"
     },
     {
       "task_id": "API-020",
       "description": "`POST /api/v1/social/{platform}/actions/propose`",
-      "session_task_id": "4fc8c5ae-cadb-407e-8e3e-05ca5657703f",
+      "session_task_id": "ee640db0-c43e-4183-abc5-849287c2e604",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.332686"
+      "completed_at": "2026-05-06T12:31:13.790509"
     },
     {
       "task_id": "API-021",
       "description": "`GET /api/v1/social/{platform}/analytics` - analytics livres",
-      "session_task_id": "830da2ab-9803-4645-92f8-92d3f7da8c06",
+      "session_task_id": "9c3909b8-c85f-4ba9-bcdb-a459c34e18fb",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.333106"
-    },
-    {
-      "task_id": "UI-010",
-      "description": "Criar componente `SocialTab` com list de contas conectadas",
-      "session_task_id": "6212e207-9289-45e2-b279-5258bc0d7593",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.333514"
-    },
-    {
-      "task_id": "UI-011",
-      "description": "Criar modal `LoginInstagram` com 2FA warning",
-      "session_task_id": "5174bdcd-9488-4988-916a-717078b6a59d",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.333933"
-    },
-    {
-      "task_id": "UI-012",
-      "description": "Criar `SavesOrganizer` mostrando saves em grid/galeria",
-      "session_task_id": "bc022522-bedd-4906-b54c-cc44e6ae79d7",
-      "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.334356"
+      "completed_at": "2026-05-06T12:31:13.790855"
     },
     {
       "task_id": "UI-013",
       "description": "Criar `CollectionViewer` com recommendations",
-      "session_task_id": "e6bb59b0-9747-495f-afee-c16a3f0ed942",
+      "session_task_id": "ef28c821-5263-4011-94db-9a4147f9c27f",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.334760"
+      "completed_at": "2026-05-06T12:31:13.791266"
     },
     {
       "task_id": "UI-014",
       "description": "Integrar approval queue para ações sociais",
-      "session_task_id": "b2201797-1715-42fc-abec-85b2967e64ab",
+      "session_task_id": "9249d076-3e4e-4411-b6d1-ffa633cfb5ed",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.335194"
+      "completed_at": "2026-05-06T12:31:13.791568"
     },
     {
       "task_id": "TEST-007",
       "description": "Testes para Instagram session management (mock instagrapi)",
-      "session_task_id": "a25040cb-d666-4b99-96a3-7d0f498c97ea",
+      "session_task_id": "d3ba91d1-2512-4ea8-b135-1ab5cfc6ab77",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.335579"
+      "completed_at": "2026-05-06T12:31:13.792073"
     },
     {
       "task_id": "TEST-008",
       "description": "Testes e2e para login + sync + categorização",
-      "session_task_id": "5482d9e9-7663-4a61-b614-06ade8e9a9b8",
+      "session_task_id": "c2cbb0e4-cc42-46cf-bbd0-0d2e240e1a23",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.336010"
+      "completed_at": "2026-05-06T12:31:13.792691"
     },
     {
       "task_id": "DEV-001",
       "description": "Criar `DeviceProfiler` com detecção de OS, storage, RAM",
-      "session_task_id": "8439cc19-313b-461d-a675-18295ac37967",
+      "session_task_id": "6db3803c-22a5-452d-bcdd-a6467068c14a",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.336412"
+      "completed_at": "2026-05-06T12:31:13.793516"
     },
     {
       "task_id": "DEV-002",
       "description": "Tabela DB `device_profiles` (user_id, device_type, os, storage_mb, ram_mb, capabilities, last_seen)",
-      "session_task_id": "50132fc6-2519-4e50-82c6-850141c4d89c",
+      "session_task_id": "710f9ae5-3bc4-4bca-8e56-fadf7171be97",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.337017"
+      "completed_at": "2026-05-06T12:31:13.794159"
     },
     {
       "task_id": "DEV-003",
       "description": "Criar `StorageOptimizer` com recomendações de limpeza e cache",
-      "session_task_id": "33e08843-c545-48ed-8818-e5bf27904d6f",
+      "session_task_id": "907366a1-f124-49d3-949f-39969ae1ef2e",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.337608"
+      "completed_at": "2026-05-06T12:31:13.794784"
     },
     {
       "task_id": "DEV-004",
       "description": "Implementar `offline_first` sync strategy com local cache",
-      "session_task_id": "c663114a-184f-477f-ad0a-9a0295d59acc",
+      "session_task_id": "2c74968a-1e9a-4342-bfa9-e85c86de4ef6",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.338115"
+      "completed_at": "2026-05-06T12:31:13.795211"
     },
     {
       "task_id": "API-022",
       "description": "`GET /api/v1/device/profile` - info do device atual",
-      "session_task_id": "55a4aec5-81b3-4fc9-b4f0-74c506c66129",
+      "session_task_id": "b463dacc-16fc-4b2e-a0b7-7f6334de23f0",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.338526"
+      "completed_at": "2026-05-06T12:31:13.795599"
     },
     {
       "task_id": "API-023",
       "description": "`POST /api/v1/device/optimize` - plano de otimização",
-      "session_task_id": "45936918-97b0-4390-97c6-d7126b8ee3aa",
+      "session_task_id": "0d150340-435d-4dda-998f-8a151f98df80",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.338947"
+      "completed_at": "2026-05-06T12:31:13.795971"
     },
     {
       "task_id": "API-024",
       "description": "`GET /api/v1/device/sync/status` - status de offline sync",
-      "session_task_id": "ea06c716-05d2-4f40-9c47-7a178546520d",
+      "session_task_id": "b05cfd67-05e8-4883-a3e7-5eff6c23dbd8",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.339342"
+      "completed_at": "2026-05-06T12:31:13.796431"
     },
     {
       "task_id": "UI-015",
       "description": "Criar `ModeSelector` (Text, Voice, TV, Developer)",
-      "session_task_id": "824d5627-b68f-4182-a5c6-00d849df4c77",
+      "session_task_id": "f099042b-802f-42bd-9b31-4eabd08cd3c4",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.339732"
+      "completed_at": "2026-05-06T12:31:13.796796"
     },
     {
       "task_id": "UI-016",
       "description": "Implementar `TVMode` layout (larger buttons, minimal text, voice focus)",
-      "session_task_id": "4ae06b0e-049c-49e2-9053-d614ef077922",
+      "session_task_id": "910308ef-6590-4ed2-8bf1-69e1adfe170d",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.340170"
+      "completed_at": "2026-05-06T12:31:13.797182"
     },
     {
       "task_id": "UI-017",
       "description": "Implementar `VoiceMode` com speech recognition + TTS fallback",
-      "session_task_id": "24d479ed-80ba-4da2-9fba-d87b1cd967e2",
+      "session_task_id": "fe10ff5c-1eb1-4ebe-8681-2a9d4a61afe2",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.340567"
+      "completed_at": "2026-05-06T12:31:13.797464"
     },
     {
       "task_id": "UI-018",
       "description": "Implementar `DeveloperMode` com console logs, metrics, device info",
-      "session_task_id": "9c656efe-7aca-475a-8c41-dae57de50fb0",
+      "session_task_id": "5d1a9626-328c-4d91-9af1-d599d724c73c",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.340975"
+      "completed_at": "2026-05-06T12:31:13.797807"
     },
     {
       "task_id": "TEST-009",
       "description": "Testes para DeviceProfiler",
-      "session_task_id": "35cf29da-b714-432f-97cd-419598afb867",
+      "session_task_id": "0d041b1d-1438-413e-ba22-37078f5e1778",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.341370"
+      "completed_at": "2026-05-06T12:31:13.798175"
     },
     {
       "task_id": "SEC-001",
       "description": "Integrar `SecurityAuditor` com sistema de vulnerabilidades",
-      "session_task_id": "0a577862-2b24-4f8d-b962-49d17aede8eb",
+      "session_task_id": "8d78c183-ac1d-4d12-80c1-5e8e75441078",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.341758"
+      "completed_at": "2026-05-06T12:31:13.798514"
     },
     {
       "task_id": "SEC-002",
       "description": "Tabela DB `security_issues` (id, severity, description, component, resolution, reported_at, status)",
-      "session_task_id": "519ae47a-1882-4f03-9978-eb519279212b",
+      "session_task_id": "3d44da7f-1081-4aaa-bcf7-01fb9b32d72a",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.342161"
+      "completed_at": "2026-05-06T12:31:13.798846"
     },
     {
       "task_id": "SEC-003",
       "description": "Criar `VulnerabilityReporter` que notifica usuário de problemas",
-      "session_task_id": "3254b2f1-3c38-4e01-ac0e-eca4b2fe6b33",
+      "session_task_id": "9f465115-524b-47c8-9a8e-cfa0fac23d5b",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.342541"
+      "completed_at": "2026-05-06T12:31:13.799203"
     },
     {
       "task_id": "API-025",
       "description": "`GET /api/v1/security/issues` - listar problemas de segurança",
-      "session_task_id": "4a85be9e-426f-4ad2-9291-bea7e61d1cb4",
+      "session_task_id": "2f66d365-f8df-450f-9245-ed33beeb7f7f",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.342946"
+      "completed_at": "2026-05-06T12:31:13.799540"
     },
     {
       "task_id": "API-026",
       "description": "`POST /api/v1/security/audit` - executar auditoria manual",
-      "session_task_id": "d7e9440d-8568-4d02-8661-4beb9a9545d8",
+      "session_task_id": "76fed2d8-ddc1-4418-be50-e9f75f58fe2d",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.343335"
+      "completed_at": "2026-05-06T12:31:13.799881"
     },
     {
       "task_id": "API-027",
       "description": "`PATCH /api/v1/security/issues/{id}/status` - user marca como resolvido",
-      "session_task_id": "029baff3-0e1e-4863-b992-4de5a7fc3ce4",
+      "session_task_id": "7df5c49d-9819-4315-a32a-c036b08c1549",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.343723"
+      "completed_at": "2026-05-06T12:31:13.800242"
     },
     {
       "task_id": "COST-001",
       "description": "Criar `ApiCostTracker` que logs/monitora uso de APIs pagas",
-      "session_task_id": "5fa9a02b-cd03-49a9-bd3a-15a6f6474d21",
+      "session_task_id": "fe28ddcb-9aa9-401a-b28e-dfa7b17d1bc5",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.344121"
+      "completed_at": "2026-05-06T12:31:13.800575"
     },
     {
       "task_id": "COST-002",
       "description": "Tabela DB `api_usage` (id, user_id, provider, endpoint, cost_usd, timestamp)",
-      "session_task_id": "9ce91875-7d73-4d92-aa7a-24d5ad140c63",
+      "session_task_id": "f6f4ab30-0399-4cca-a8fb-67e4404e86bf",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.344505"
+      "completed_at": "2026-05-06T12:31:13.800917"
     },
     {
       "task_id": "COST-003",
       "description": "Implementar alertas de custo (email/notif quando > threshold)",
-      "session_task_id": "1502a3e4-ebac-4e61-83c1-bfb6ff0bf450",
+      "session_task_id": "723c9424-c24c-49b3-9f23-33add6b4b440",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.344919"
+      "completed_at": "2026-05-06T12:31:13.801282"
     },
     {
       "task_id": "API-028",
       "description": "`GET /api/v1/costs/summary` - resumo de custos",
-      "session_task_id": "092dc2fb-acd7-4f09-8c2b-4981aeaadc9c",
+      "session_task_id": "282057fd-efba-42fa-8639-cd7342d5a572",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.345329"
+      "completed_at": "2026-05-06T12:31:13.801623"
     },
     {
       "task_id": "API-029",
       "description": "`GET /api/v1/costs/free-alternatives` - sugestões de APIs gratuitas",
-      "session_task_id": "81a9d2d4-6909-42ca-baee-83bc5412a54a",
+      "session_task_id": "43d6b97f-8c38-4529-827e-3afd1f137cea",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.345743"
+      "completed_at": "2026-05-06T12:31:13.801957"
     },
     {
       "task_id": "TEST-010",
       "description": "Testes para detecção de vulnerabilidades",
-      "session_task_id": "356e7e20-4505-41c1-8efb-c2057ee04afe",
+      "session_task_id": "5a9551f6-3b0a-4692-9e95-6513d1be991b",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.346166"
+      "completed_at": "2026-05-06T12:31:13.802311"
     },
     {
       "task_id": "TEST-011",
       "description": "Testes para cost tracking",
-      "session_task_id": "75f9d980-d3eb-4003-b5d8-eff313d7b602",
+      "session_task_id": "c55a4b61-15e3-453e-a9fa-325d62a3eb79",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.346564"
+      "completed_at": "2026-05-06T12:31:13.802645"
     },
     {
       "task_id": "UI-019",
       "description": "Criar `ThemeBuilder` com seleção de cores e layouts",
-      "session_task_id": "eb0401c3-1640-4d79-be32-3c9116cd5f8e",
+      "session_task_id": "7a136910-1ecc-4e9e-b4ba-38a8198afb71",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.346992"
+      "completed_at": "2026-05-06T12:31:13.802986"
     },
     {
       "task_id": "UI-020",
       "description": "Integrar busca de referências (Unsplash, Pexels free APIs)",
-      "session_task_id": "315e48d2-8f80-4bd7-9521-7cb7c28c80b8",
+      "session_task_id": "6c0e7f03-ab28-4719-a9fe-1a1612e7c968",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.347378"
+      "completed_at": "2026-05-06T12:31:13.803349"
     },
     {
       "task_id": "UI-021",
       "description": "Criar galeria de temas pré-definidos",
-      "session_task_id": "19995f85-5909-4a78-9ee2-5e415eff82b9",
+      "session_task_id": "e44ab9c5-5aa1-4888-a4c1-9073cf5d5cb8",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.347759"
+      "completed_at": "2026-05-06T12:31:13.803694"
     },
     {
       "task_id": "TEST-012",
       "description": "Testes para customização visual",
-      "session_task_id": "edbbd84c-c197-435f-a29d-7f64bb2bf17f",
+      "session_task_id": "e0e9d4c9-7958-4984-9a46-5d32189414fa",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.348179"
+      "completed_at": "2026-05-06T12:31:13.804028"
     },
     {
       "task_id": "DOCS-001",
       "description": "Documentar todas as APIs (Swagger/OpenAPI)",
-      "session_task_id": "75114ff7-2adb-4cd2-a91e-8f57fc0e4143",
+      "session_task_id": "e5d733ba-124d-4529-9d31-3ef2c4807f11",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.348575"
+      "completed_at": "2026-05-06T12:31:13.804388"
     },
     {
       "task_id": "DOCS-002",
       "description": "Criar guia de usuário (Getting Started)",
-      "session_task_id": "8bbd1ed4-4938-4441-9512-64f9544629e9",
+      "session_task_id": "8dd3ccf2-6252-49eb-84aa-5f9fd36f631b",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.348972"
+      "completed_at": "2026-05-06T12:31:13.804720"
     },
     {
       "task_id": "PERF-001",
       "description": "Otimizar queries de banco de dados",
-      "session_task_id": "e90dbdbb-c6f6-4777-a3c7-0ea16ea20529",
+      "session_task_id": "dd236687-7bb7-45cf-b06b-4e9098311562",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.349344"
+      "completed_at": "2026-05-06T12:31:13.805068"
     },
     {
       "task_id": "PERF-002",
       "description": "Setup caching (Redis) para dados frequentes",
-      "session_task_id": "545630ab-bf5a-410a-9b4e-4a9d3be997e9",
+      "session_task_id": "1ad5a4b2-2a55-4b80-bf72-c8a7b5d86cb9",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.349709"
+      "completed_at": "2026-05-06T12:31:13.805407"
     },
     {
       "task_id": "DEPLOY-001",
       "description": "Preparar staging environment",
-      "session_task_id": "121d5a15-145e-45b2-a9e0-1532cc333d27",
+      "session_task_id": "52e3a85e-1b6d-477b-9330-8a403091d22e",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.350104"
+      "completed_at": "2026-05-06T12:31:13.805742"
     },
     {
       "task_id": "DEPLOY-002",
       "description": "Setup CI/CD pipeline",
-      "session_task_id": "ff0023c0-9bf4-476c-be1a-d9b0ab33066d",
+      "session_task_id": "f29b64b4-6e4f-4233-97d1-24e0f48d101b",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.350497"
+      "completed_at": "2026-05-06T12:31:13.806102"
     },
     {
       "task_id": "DEPLOY-003",
       "description": "Deploy para produção",
-      "session_task_id": "ee028855-05cb-4f4a-80ab-e6bb2cd97ec4",
+      "session_task_id": "4c114334-16c5-48c1-b816-cebe165badc9",
       "status": "completed",
-      "completed_at": "2026-05-05T08:40:56.350894"
+      "completed_at": "2026-05-06T12:31:13.806445"
     }
   ],
   "session_report": {
-    "session_id": "3286a544-3595-4245-921f-8794f1e9232a",
+    "session_id": "6c7a4b46-8d76-4728-9a52-da566d0bbaba",
     "user_id": "task-runner",
     "agent_id": "task-runner",
-    "started_at": "2026-05-05T08:40:56.280631",
-    "total_tasks": 95,
-    "completed_tasks": 95,
+    "started_at": "2026-05-06T12:31:13.775453",
+    "total_tasks": 45,
+    "completed_tasks": 45,
     "pending_tasks": 0,
     "tasks": [
       {
-        "id": "5b03151b-30a3-44e4-8288-27bdc2afced1",
-        "description": "Criar tabela `plans` com campos (id, user_id, title, description, status, progress, created_at, updated_at)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.295261",
-        "completed_at": "2026-05-05T08:40:56.295688",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "DB-001",
-          "task_description": "Criar tabela `plans` com campos (id, user_id, title, description, status, progress, created_at, updated_at)"
-        }
-      },
-      {
-        "id": "5232dae2-cc3c-46a5-9cb7-01ae9811d4cb",
-        "description": "Criar tabela `tasks` (id, plan_id, title, description, status, progress, priority, due_date, subtasks_json)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.296151",
-        "completed_at": "2026-05-05T08:40:56.296485",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "DB-002",
-          "task_description": "Criar tabela `tasks` (id, plan_id, title, description, status, progress, priority, due_date, subtasks_json)"
-        }
-      },
-      {
-        "id": "2331bc85-ac99-4973-b5a8-377741790fa8",
-        "description": "Criar tabela `projects` (id, user_id, title, status, progress, linked_tasks, description, archived)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.296963",
-        "completed_at": "2026-05-05T08:40:56.297370",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "DB-003",
-          "task_description": "Criar tabela `projects` (id, user_id, title, status, progress, linked_tasks, description, archived)"
-        }
-      },
-      {
-        "id": "7376678e-49bf-4818-83fc-f698a894b523",
-        "description": "Criar tabela `accounts` (id, user_id, account_type, account_name, status, value_usd, description, metadata_json)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.297747",
-        "completed_at": "2026-05-05T08:40:56.298179",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "DB-004",
-          "task_description": "Criar tabela `accounts` (id, user_id, account_type, account_name, status, value_usd, description, metadata_json)"
-        }
-      },
-      {
-        "id": "a424f49d-a857-490f-8522-a861ccdec9bc",
-        "description": "Criar tabela `action_proposals` (id, user_id, action_type, description, parameters_json, status, created_at, expires_at)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.298564",
-        "completed_at": "2026-05-05T08:40:56.298974",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "DB-005",
-          "task_description": "Criar tabela `action_proposals` (id, user_id, action_type, description, parameters_json, status, created_at, expires_at)"
-        }
-      },
-      {
-        "id": "f802b0cd-6395-43ee-b4af-e53d56c39976",
-        "description": "Implementar `POST /api/v1/planning/plans`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.299368",
-        "completed_at": "2026-05-05T08:40:56.299715",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-001",
-          "task_description": "Implementar `POST /api/v1/planning/plans`"
-        }
-      },
-      {
-        "id": "16d43282-e6a4-4359-b1ee-6b97e285ae20",
-        "description": "Implementar `GET /api/v1/planning/plans/{user_id}`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.300157",
-        "completed_at": "2026-05-05T08:40:56.300536",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-002",
-          "task_description": "Implementar `GET /api/v1/planning/plans/{user_id}`"
-        }
-      },
-      {
-        "id": "37242af0-c971-4acb-81e1-35e8a2aa2262",
-        "description": "Implementar `POST /api/v1/planning/tasks`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.300923",
-        "completed_at": "2026-05-05T08:40:56.301325",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-003",
-          "task_description": "Implementar `POST /api/v1/planning/tasks`"
-        }
-      },
-      {
-        "id": "2736f7d6-28a0-4a61-92f3-09eaf4de9c95",
-        "description": "Implementar `PATCH /api/v1/planning/tasks/{task_id}`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.301706",
-        "completed_at": "2026-05-05T08:40:56.302088",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-004",
-          "task_description": "Implementar `PATCH /api/v1/planning/tasks/{task_id}`"
-        }
-      },
-      {
-        "id": "3ec9b038-a167-492c-adcf-b59ac515836e",
-        "description": "Implementar `GET /api/v1/planning/dashboard`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.302470",
-        "completed_at": "2026-05-05T08:40:56.302837",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-005",
-          "task_description": "Implementar `GET /api/v1/planning/dashboard`"
-        }
-      },
-      {
-        "id": "3345f6c2-6862-4568-a312-b328a5e41bfa",
-        "description": "Implementar `POST /api/v1/planning/projects`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.303180",
-        "completed_at": "2026-05-05T08:40:56.303511",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-006",
-          "task_description": "Implementar `POST /api/v1/planning/projects`"
-        }
-      },
-      {
-        "id": "96e5c178-3111-4bea-9da8-d3ec9bee8651",
-        "description": "Implementar `POST /api/v1/planning/accounts`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.303916",
-        "completed_at": "2026-05-05T08:40:56.304291",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-007",
-          "task_description": "Implementar `POST /api/v1/planning/accounts`"
-        }
-      },
-      {
-        "id": "6b7d1d71-4b31-4798-ad30-bec87350cb13",
-        "description": "Implementar `ActionQueueService` (manager de ações pendentes)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.304612",
-        "completed_at": "2026-05-05T08:40:56.304984",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "APPROVAL-001",
-          "task_description": "Implementar `ActionQueueService` (manager de ações pendentes)"
-        }
-      },
-      {
-        "id": "45deae48-76f9-48a6-9a84-bf5a4c1c912f",
-        "description": "Implementar `GET /api/v1/actions/pending`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.305381",
-        "completed_at": "2026-05-05T08:40:56.305752",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-008",
-          "task_description": "Implementar `GET /api/v1/actions/pending`"
-        }
-      },
-      {
-        "id": "e4357ffc-1561-44c0-abe6-b04dd86d9c22",
-        "description": "Implementar `POST /api/v1/actions/{action_id}/approve`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.306199",
-        "completed_at": "2026-05-05T08:40:56.306571",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-009",
-          "task_description": "Implementar `POST /api/v1/actions/{action_id}/approve`"
-        }
-      },
-      {
-        "id": "e3b9ab38-9f37-4f34-ba3d-781988eae068",
-        "description": "Implementar `POST /api/v1/actions/{action_id}/reject`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.306927",
-        "completed_at": "2026-05-05T08:40:56.307307",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-010",
-          "task_description": "Implementar `POST /api/v1/actions/{action_id}/reject`"
-        }
-      },
-      {
-        "id": "77e71ef2-8eaa-482e-858a-cb085ccf5afe",
-        "description": "Redesenhar layout principal com abas (Dashboard, Planning, Actions, Abilities, Tools, Resources, Device)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.307679",
-        "completed_at": "2026-05-05T08:40:56.308135",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-001",
-          "task_description": "Redesenhar layout principal com abas (Dashboard, Planning, Actions, Abilities, Tools, Resources, Device)"
-        }
-      },
-      {
-        "id": "b4ae6647-e2e6-46d3-a9ae-e327ae435bd3",
-        "description": "Criar componente `PlanningTab` com overview de planos e progresso",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.308520",
-        "completed_at": "2026-05-05T08:40:56.308834",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-002",
-          "task_description": "Criar componente `PlanningTab` com overview de planos e progresso"
-        }
-      },
-      {
-        "id": "b6844328-cde8-49ad-9ac1-a633a187c4b2",
-        "description": "Criar componente `TaskCard` (título, status, progresso%, prioridade)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.309241",
-        "completed_at": "2026-05-05T08:40:56.309617",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-003",
-          "task_description": "Criar componente `TaskCard` (título, status, progresso%, prioridade)"
-        }
-      },
-      {
-        "id": "3de0d561-1cb1-49df-8e8e-670dd037a4aa",
-        "description": "Criar componente `ActionQueue` listando ações pendentes com approve/reject",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.309992",
-        "completed_at": "2026-05-05T08:40:56.310396",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-004",
-          "task_description": "Criar componente `ActionQueue` listando ações pendentes com approve/reject"
-        }
-      },
-      {
-        "id": "af5d4376-0663-4934-be63-92bb87307dcb",
-        "description": "Criar componente `Dashboard` com widgets de summary",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.310732",
-        "completed_at": "2026-05-05T08:40:56.311121",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-005",
-          "task_description": "Criar componente `Dashboard` com widgets de summary"
-        }
-      },
-      {
-        "id": "5b80cd70-49a6-44e6-937b-f74fcac82ef0",
-        "description": "Testes unitários para Planning API",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.311464",
-        "completed_at": "2026-05-05T08:40:56.311841",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "TEST-001",
-          "task_description": "Testes unitários para Planning API"
-        }
-      },
-      {
-        "id": "08939517-1f3d-4209-9b67-7e51673b903d",
-        "description": "Testes de integração para fluxo de tarefa completo",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.312195",
-        "completed_at": "2026-05-05T08:40:56.312552",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "TEST-002",
-          "task_description": "Testes de integração para fluxo de tarefa completo"
-        }
-      },
-      {
-        "id": "4ebf9246-f758-48ba-8035-aef7b6d3dd3b",
-        "description": "Testes para Action Approval workflow",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.312996",
-        "completed_at": "2026-05-05T08:40:56.313301",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "TEST-003",
-          "task_description": "Testes para Action Approval workflow"
-        }
-      },
-      {
-        "id": "a7fba72d-efc2-4577-ac50-04375736fa1a",
-        "description": "Criar `AbilityDiscoveryEngine` com GitHub search (free API)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.313716",
-        "completed_at": "2026-05-05T08:40:56.314078",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "AB-001",
-          "task_description": "Criar `AbilityDiscoveryEngine` com GitHub search (free API)"
-        }
-      },
-      {
-        "id": "e5fc36c9-e841-42e6-b4e2-5e6473b31bb5",
-        "description": "Implementar AST parser para Python (extrair função, signatures, docstrings)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.314431",
-        "completed_at": "2026-05-05T08:40:56.314828",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "AB-002",
-          "task_description": "Implementar AST parser para Python (extrair função, signatures, docstrings)"
-        }
-      },
-      {
-        "id": "ad83685a-ac49-41af-94a7-242cf6ba9505",
-        "description": "Criar `AbilityWrapper` generator (auto-gen Python wrapper com safety checks)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.315162",
-        "completed_at": "2026-05-05T08:40:56.315527",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "AB-003",
-          "task_description": "Criar `AbilityWrapper` generator (auto-gen Python wrapper com safety checks)"
-        }
-      },
-      {
-        "id": "fb1fbfbd-fb03-43d5-b5b6-f44bca5b8df4",
-        "description": "Tabela DB `abilities` com campos (name, description, source_repo, functions_json, version)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.315879",
-        "completed_at": "2026-05-05T08:40:56.316259",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "AB-004",
-          "task_description": "Tabela DB `abilities` com campos (name, description, source_repo, functions_json, version)"
-        }
-      },
-      {
-        "id": "a71961b9-611b-498c-a717-940ab3b1e599",
-        "description": "Tabela DB `skills` subset de abilities com parameters e examples",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.316634",
-        "completed_at": "2026-05-05T08:40:56.317041",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "AB-005",
-          "task_description": "Tabela DB `skills` subset de abilities com parameters e examples"
-        }
-      },
-      {
-        "id": "10138e6a-deee-4a59-9ea8-568923674e3e",
-        "description": "`POST /api/v1/abilities/search` - buscar habilidade em GitHub",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.317331",
-        "completed_at": "2026-05-05T08:40:56.317671",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-011",
-          "task_description": "`POST /api/v1/abilities/search` - buscar habilidade em GitHub"
-        }
-      },
-      {
-        "id": "7d3b4bb1-6a09-4b19-9893-706b8dcad788",
-        "description": "`POST /api/v1/abilities/add` - adicionar habilidade ao usuário",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.318100",
-        "completed_at": "2026-05-05T08:40:56.318502",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-012",
-          "task_description": "`POST /api/v1/abilities/add` - adicionar habilidade ao usuário"
-        }
-      },
-      {
-        "id": "32a970ed-3199-42c8-a84c-1c89c475f3ec",
-        "description": "`GET /api/v1/abilities/list` - listar habilidades do usuário",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.318881",
-        "completed_at": "2026-05-05T08:40:56.319253",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-013",
-          "task_description": "`GET /api/v1/abilities/list` - listar habilidades do usuário"
-        }
-      },
-      {
-        "id": "8136f5ef-5c3a-439a-bddf-57174e1fc58a",
-        "description": "`GET /api/v1/abilities/{ability_id}/details`",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.319533",
-        "completed_at": "2026-05-05T08:40:56.319968",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-014",
-          "task_description": "`GET /api/v1/abilities/{ability_id}/details`"
-        }
-      },
-      {
-        "id": "df5a33b1-0e5c-4e13-8313-734fbd1dc58e",
-        "description": "Criar componente `AbilitiesTab` com galeria de cards",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.320320",
-        "completed_at": "2026-05-05T08:40:56.320640",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-006",
-          "task_description": "Criar componente `AbilitiesTab` com galeria de cards"
-        }
-      },
-      {
-        "id": "d33d072c-25d5-4664-a213-4acb5f43aa09",
-        "description": "Criar modal `AddAbilityFlow` (search → select functions → confirm)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.321039",
-        "completed_at": "2026-05-05T08:40:56.321462",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-007",
-          "task_description": "Criar modal `AddAbilityFlow` (search → select functions → confirm)"
-        }
-      },
-      {
-        "id": "404baa8e-67d7-4098-a193-004ed6466320",
-        "description": "Criar `AbilityCard` component reutilizável",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.321783",
-        "completed_at": "2026-05-05T08:40:56.322213",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-008",
-          "task_description": "Criar `AbilityCard` component reutilizável"
-        }
-      },
-      {
-        "id": "010cd871-61f5-4524-912f-2321ec69ed31",
-        "description": "Integrar search + filtros na galeria",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.322573",
-        "completed_at": "2026-05-05T08:40:56.322911",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-009",
-          "task_description": "Integrar search + filtros na galeria"
-        }
-      },
-      {
-        "id": "d8bd634a-2888-49d5-a343-3937c5a68b94",
-        "description": "Testes para GitHub API integration",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.323297",
-        "completed_at": "2026-05-05T08:40:56.323683",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "TEST-004",
-          "task_description": "Testes para GitHub API integration"
-        }
-      },
-      {
-        "id": "ad16a423-4f45-4403-9666-64ec84409160",
-        "description": "Testes para AST parser",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.324122",
-        "completed_at": "2026-05-05T08:40:56.324464",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "TEST-005",
-          "task_description": "Testes para AST parser"
-        }
-      },
-      {
-        "id": "e3782f25-fae2-4b7e-b13a-2a8998550c99",
-        "description": "Testes e2e para fluxo de discover + add habilidade",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.324824",
-        "completed_at": "2026-05-05T08:40:56.325192",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "TEST-006",
-          "task_description": "Testes e2e para fluxo de discover + add habilidade"
-        }
-      },
-      {
-        "id": "2283881e-dc6d-4e6a-ad52-c90ae3b591ea",
-        "description": "Setup `instagrapi` library (pip install instagrapi)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.325595",
-        "completed_at": "2026-05-05T08:40:56.325954",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "IG-001",
-          "task_description": "Setup `instagrapi` library (pip install instagrapi)"
-        }
-      },
-      {
-        "id": "b1161bf7-739f-47b2-819e-e5b7c30e5bc5",
-        "description": "Criar `InstagramSession` wrapper com encrypted credential storage",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.326335",
-        "completed_at": "2026-05-05T08:40:56.326654",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "IG-002",
-          "task_description": "Criar `InstagramSession` wrapper com encrypted credential storage"
-        }
-      },
-      {
-        "id": "059faa53-c3c1-4b6f-be06-c9391b58e4b6",
-        "description": "Tabela DB `social_accounts` (id, user_id, platform, username, auth_token_encrypted, created_at, synced_at)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.327075",
-        "completed_at": "2026-05-05T08:40:56.327464",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "IG-003",
-          "task_description": "Tabela DB `social_accounts` (id, user_id, platform, username, auth_token_encrypted, created_at, synced_at)"
-        }
-      },
-      {
-        "id": "e1958f9e-9f11-47a0-9cd1-3fee037d7b8b",
-        "description": "Tabela DB `saved_content` (id, account_id, ig_post_id, content_type, title, url, metadata_json, saved_at, category)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.327823",
-        "completed_at": "2026-05-05T08:40:56.328246",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "IG-004",
-          "task_description": "Tabela DB `saved_content` (id, account_id, ig_post_id, content_type, title, url, metadata_json, saved_at, category)"
-        }
-      },
-      {
-        "id": "879107f2-427b-4189-be99-80259191f7e3",
-        "description": "Tabela DB `content_collections` (id, user_id, collection_name, filters_json, created_at)",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.328621",
-        "completed_at": "2026-05-05T08:40:56.328930",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "IG-005",
-          "task_description": "Tabela DB `content_collections` (id, user_id, collection_name, filters_json, created_at)"
-        }
-      },
-      {
-        "id": "a4240333-3a70-4107-841b-78d1e5b68d72",
-        "description": "`POST /api/v1/social/instagram/login` - login seguro",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.329381",
-        "completed_at": "2026-05-05T08:40:56.329791",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-015",
-          "task_description": "`POST /api/v1/social/instagram/login` - login seguro"
-        }
-      },
-      {
-        "id": "095aad83-a9bb-4f24-8f9d-6eb9bb7307f2",
-        "description": "`GET /api/v1/social/instagram/sync` - sincronizar saves",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.330178",
-        "completed_at": "2026-05-05T08:40:56.330493",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "API-016",
-          "task_description": "`GET /api/v1/social/instagram/sync` - sincronizar saves"
-        }
-      },
-      {
-        "id": "2730e654-58ad-4781-8abe-836976064ce4",
+        "id": "9c3ae299-1b5b-404a-99b9-744c99d6d5f3",
         "description": "`GET /api/v1/social/instagram/collections` - listar coleções do usuário",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.330891",
-        "completed_at": "2026-05-05T08:40:56.331303",
+        "created_at": "2026-05-06T12:31:13.789212",
+        "completed_at": "2026-05-06T12:31:13.789412",
         "details": {
           "source": "batch_completion",
           "task_id": "API-017",
@@ -1252,11 +338,11 @@
         }
       },
       {
-        "id": "ab37d2dd-38dd-4b2d-8b94-4d00d977596d",
+        "id": "0dabb222-2092-4504-943c-a1324380b0dd",
         "description": "`POST /api/v1/social/instagram/collections` - criar coleção com filtros",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.331526",
-        "completed_at": "2026-05-05T08:40:56.331731",
+        "created_at": "2026-05-06T12:31:13.789613",
+        "completed_at": "2026-05-06T12:31:13.789780",
         "details": {
           "source": "batch_completion",
           "task_id": "API-018",
@@ -1264,11 +350,11 @@
         }
       },
       {
-        "id": "16d2b633-637d-4cfa-8724-2d56c6c58c18",
+        "id": "4a5da237-35d6-4eda-a0e2-a78e8d1eb9e7",
         "description": "`GET /api/v1/social/instagram/recommendations` - sugestões baseadas em saves",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.331981",
-        "completed_at": "2026-05-05T08:40:56.332190",
+        "created_at": "2026-05-06T12:31:13.789973",
+        "completed_at": "2026-05-06T12:31:13.790162",
         "details": {
           "source": "batch_completion",
           "task_id": "API-019",
@@ -1276,11 +362,11 @@
         }
       },
       {
-        "id": "4fc8c5ae-cadb-407e-8e3e-05ca5657703f",
+        "id": "ee640db0-c43e-4183-abc5-849287c2e604",
         "description": "`POST /api/v1/social/{platform}/actions/propose`",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.332491",
-        "completed_at": "2026-05-05T08:40:56.332686",
+        "created_at": "2026-05-06T12:31:13.790350",
+        "completed_at": "2026-05-06T12:31:13.790509",
         "details": {
           "source": "batch_completion",
           "task_id": "API-020",
@@ -1288,11 +374,11 @@
         }
       },
       {
-        "id": "830da2ab-9803-4645-92f8-92d3f7da8c06",
+        "id": "9c3909b8-c85f-4ba9-bcdb-a459c34e18fb",
         "description": "`GET /api/v1/social/{platform}/analytics` - analytics livres",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.332910",
-        "completed_at": "2026-05-05T08:40:56.333106",
+        "created_at": "2026-05-06T12:31:13.790697",
+        "completed_at": "2026-05-06T12:31:13.790855",
         "details": {
           "source": "batch_completion",
           "task_id": "API-021",
@@ -1300,47 +386,11 @@
         }
       },
       {
-        "id": "6212e207-9289-45e2-b279-5258bc0d7593",
-        "description": "Criar componente `SocialTab` com list de contas conectadas",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.333316",
-        "completed_at": "2026-05-05T08:40:56.333514",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-010",
-          "task_description": "Criar componente `SocialTab` com list de contas conectadas"
-        }
-      },
-      {
-        "id": "5174bdcd-9488-4988-916a-717078b6a59d",
-        "description": "Criar modal `LoginInstagram` com 2FA warning",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.333708",
-        "completed_at": "2026-05-05T08:40:56.333933",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-011",
-          "task_description": "Criar modal `LoginInstagram` com 2FA warning"
-        }
-      },
-      {
-        "id": "bc022522-bedd-4906-b54c-cc44e6ae79d7",
-        "description": "Criar `SavesOrganizer` mostrando saves em grid/galeria",
-        "status": "completed",
-        "created_at": "2026-05-05T08:40:56.334154",
-        "completed_at": "2026-05-05T08:40:56.334356",
-        "details": {
-          "source": "batch_completion",
-          "task_id": "UI-012",
-          "task_description": "Criar `SavesOrganizer` mostrando saves em grid/galeria"
-        }
-      },
-      {
-        "id": "e6bb59b0-9747-495f-afee-c16a3f0ed942",
+        "id": "ef28c821-5263-4011-94db-9a4147f9c27f",
         "description": "Criar `CollectionViewer` com recommendations",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.334564",
-        "completed_at": "2026-05-05T08:40:56.334760",
+        "created_at": "2026-05-06T12:31:13.791032",
+        "completed_at": "2026-05-06T12:31:13.791266",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-013",
@@ -1348,11 +398,11 @@
         }
       },
       {
-        "id": "b2201797-1715-42fc-abec-85b2967e64ab",
+        "id": "9249d076-3e4e-4411-b6d1-ffa633cfb5ed",
         "description": "Integrar approval queue para ações sociais",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.334994",
-        "completed_at": "2026-05-05T08:40:56.335194",
+        "created_at": "2026-05-06T12:31:13.791435",
+        "completed_at": "2026-05-06T12:31:13.791568",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-014",
@@ -1360,11 +410,11 @@
         }
       },
       {
-        "id": "a25040cb-d666-4b99-96a3-7d0f498c97ea",
+        "id": "d3ba91d1-2512-4ea8-b135-1ab5cfc6ab77",
         "description": "Testes para Instagram session management (mock instagrapi)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.335392",
-        "completed_at": "2026-05-05T08:40:56.335579",
+        "created_at": "2026-05-06T12:31:13.791706",
+        "completed_at": "2026-05-06T12:31:13.792073",
         "details": {
           "source": "batch_completion",
           "task_id": "TEST-007",
@@ -1372,11 +422,11 @@
         }
       },
       {
-        "id": "5482d9e9-7663-4a61-b614-06ade8e9a9b8",
+        "id": "c2cbb0e4-cc42-46cf-bbd0-0d2e240e1a23",
         "description": "Testes e2e para login + sync + categorização",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.335797",
-        "completed_at": "2026-05-05T08:40:56.336010",
+        "created_at": "2026-05-06T12:31:13.792304",
+        "completed_at": "2026-05-06T12:31:13.792691",
         "details": {
           "source": "batch_completion",
           "task_id": "TEST-008",
@@ -1384,11 +434,11 @@
         }
       },
       {
-        "id": "8439cc19-313b-461d-a675-18295ac37967",
+        "id": "6db3803c-22a5-452d-bcdd-a6467068c14a",
         "description": "Criar `DeviceProfiler` com detecção de OS, storage, RAM",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.336211",
-        "completed_at": "2026-05-05T08:40:56.336412",
+        "created_at": "2026-05-06T12:31:13.793108",
+        "completed_at": "2026-05-06T12:31:13.793516",
         "details": {
           "source": "batch_completion",
           "task_id": "DEV-001",
@@ -1396,11 +446,11 @@
         }
       },
       {
-        "id": "50132fc6-2519-4e50-82c6-850141c4d89c",
+        "id": "710f9ae5-3bc4-4bca-8e56-fadf7171be97",
         "description": "Tabela DB `device_profiles` (user_id, device_type, os, storage_mb, ram_mb, capabilities, last_seen)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.336635",
-        "completed_at": "2026-05-05T08:40:56.337017",
+        "created_at": "2026-05-06T12:31:13.793930",
+        "completed_at": "2026-05-06T12:31:13.794159",
         "details": {
           "source": "batch_completion",
           "task_id": "DEV-002",
@@ -1408,11 +458,11 @@
         }
       },
       {
-        "id": "33e08843-c545-48ed-8818-e5bf27904d6f",
+        "id": "907366a1-f124-49d3-949f-39969ae1ef2e",
         "description": "Criar `StorageOptimizer` com recomendações de limpeza e cache",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.337313",
-        "completed_at": "2026-05-05T08:40:56.337608",
+        "created_at": "2026-05-06T12:31:13.794600",
+        "completed_at": "2026-05-06T12:31:13.794784",
         "details": {
           "source": "batch_completion",
           "task_id": "DEV-003",
@@ -1420,11 +470,11 @@
         }
       },
       {
-        "id": "c663114a-184f-477f-ad0a-9a0295d59acc",
+        "id": "2c74968a-1e9a-4342-bfa9-e85c86de4ef6",
         "description": "Implementar `offline_first` sync strategy com local cache",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.337890",
-        "completed_at": "2026-05-05T08:40:56.338115",
+        "created_at": "2026-05-06T12:31:13.794986",
+        "completed_at": "2026-05-06T12:31:13.795211",
         "details": {
           "source": "batch_completion",
           "task_id": "DEV-004",
@@ -1432,11 +482,11 @@
         }
       },
       {
-        "id": "55a4aec5-81b3-4fc9-b4f0-74c506c66129",
+        "id": "b463dacc-16fc-4b2e-a0b7-7f6334de23f0",
         "description": "`GET /api/v1/device/profile` - info do device atual",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.338322",
-        "completed_at": "2026-05-05T08:40:56.338526",
+        "created_at": "2026-05-06T12:31:13.795406",
+        "completed_at": "2026-05-06T12:31:13.795599",
         "details": {
           "source": "batch_completion",
           "task_id": "API-022",
@@ -1444,11 +494,11 @@
         }
       },
       {
-        "id": "45936918-97b0-4390-97c6-d7126b8ee3aa",
+        "id": "0d150340-435d-4dda-998f-8a151f98df80",
         "description": "`POST /api/v1/device/optimize` - plano de otimização",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.338723",
-        "completed_at": "2026-05-05T08:40:56.338947",
+        "created_at": "2026-05-06T12:31:13.795800",
+        "completed_at": "2026-05-06T12:31:13.795971",
         "details": {
           "source": "batch_completion",
           "task_id": "API-023",
@@ -1456,11 +506,11 @@
         }
       },
       {
-        "id": "ea06c716-05d2-4f40-9c47-7a178546520d",
+        "id": "b05cfd67-05e8-4883-a3e7-5eff6c23dbd8",
         "description": "`GET /api/v1/device/sync/status` - status de offline sync",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.339158",
-        "completed_at": "2026-05-05T08:40:56.339342",
+        "created_at": "2026-05-06T12:31:13.796251",
+        "completed_at": "2026-05-06T12:31:13.796431",
         "details": {
           "source": "batch_completion",
           "task_id": "API-024",
@@ -1468,11 +518,11 @@
         }
       },
       {
-        "id": "824d5627-b68f-4182-a5c6-00d849df4c77",
+        "id": "f099042b-802f-42bd-9b31-4eabd08cd3c4",
         "description": "Criar `ModeSelector` (Text, Voice, TV, Developer)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.339549",
-        "completed_at": "2026-05-05T08:40:56.339732",
+        "created_at": "2026-05-06T12:31:13.796621",
+        "completed_at": "2026-05-06T12:31:13.796796",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-015",
@@ -1480,11 +530,11 @@
         }
       },
       {
-        "id": "4ae06b0e-049c-49e2-9053-d614ef077922",
+        "id": "910308ef-6590-4ed2-8bf1-69e1adfe170d",
         "description": "Implementar `TVMode` layout (larger buttons, minimal text, voice focus)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.339969",
-        "completed_at": "2026-05-05T08:40:56.340170",
+        "created_at": "2026-05-06T12:31:13.796990",
+        "completed_at": "2026-05-06T12:31:13.797182",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-016",
@@ -1492,11 +542,11 @@
         }
       },
       {
-        "id": "24d479ed-80ba-4da2-9fba-d87b1cd967e2",
+        "id": "fe10ff5c-1eb1-4ebe-8681-2a9d4a61afe2",
         "description": "Implementar `VoiceMode` com speech recognition + TTS fallback",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.340373",
-        "completed_at": "2026-05-05T08:40:56.340567",
+        "created_at": "2026-05-06T12:31:13.797324",
+        "completed_at": "2026-05-06T12:31:13.797464",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-017",
@@ -1504,11 +554,11 @@
         }
       },
       {
-        "id": "9c656efe-7aca-475a-8c41-dae57de50fb0",
+        "id": "5d1a9626-328c-4d91-9af1-d599d724c73c",
         "description": "Implementar `DeveloperMode` com console logs, metrics, device info",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.340757",
-        "completed_at": "2026-05-05T08:40:56.340975",
+        "created_at": "2026-05-06T12:31:13.797647",
+        "completed_at": "2026-05-06T12:31:13.797807",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-018",
@@ -1516,11 +566,11 @@
         }
       },
       {
-        "id": "35cf29da-b714-432f-97cd-419598afb867",
+        "id": "0d041b1d-1438-413e-ba22-37078f5e1778",
         "description": "Testes para DeviceProfiler",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.341182",
-        "completed_at": "2026-05-05T08:40:56.341370",
+        "created_at": "2026-05-06T12:31:13.797984",
+        "completed_at": "2026-05-06T12:31:13.798175",
         "details": {
           "source": "batch_completion",
           "task_id": "TEST-009",
@@ -1528,11 +578,11 @@
         }
       },
       {
-        "id": "0a577862-2b24-4f8d-b962-49d17aede8eb",
+        "id": "8d78c183-ac1d-4d12-80c1-5e8e75441078",
         "description": "Integrar `SecurityAuditor` com sistema de vulnerabilidades",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.341573",
-        "completed_at": "2026-05-05T08:40:56.341758",
+        "created_at": "2026-05-06T12:31:13.798352",
+        "completed_at": "2026-05-06T12:31:13.798514",
         "details": {
           "source": "batch_completion",
           "task_id": "SEC-001",
@@ -1540,11 +590,11 @@
         }
       },
       {
-        "id": "519ae47a-1882-4f03-9978-eb519279212b",
+        "id": "3d44da7f-1081-4aaa-bcf7-01fb9b32d72a",
         "description": "Tabela DB `security_issues` (id, severity, description, component, resolution, reported_at, status)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.341976",
-        "completed_at": "2026-05-05T08:40:56.342161",
+        "created_at": "2026-05-06T12:31:13.798690",
+        "completed_at": "2026-05-06T12:31:13.798846",
         "details": {
           "source": "batch_completion",
           "task_id": "SEC-002",
@@ -1552,11 +602,11 @@
         }
       },
       {
-        "id": "3254b2f1-3c38-4e01-ac0e-eca4b2fe6b33",
+        "id": "9f465115-524b-47c8-9a8e-cfa0fac23d5b",
         "description": "Criar `VulnerabilityReporter` que notifica usuário de problemas",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.342357",
-        "completed_at": "2026-05-05T08:40:56.342541",
+        "created_at": "2026-05-06T12:31:13.799019",
+        "completed_at": "2026-05-06T12:31:13.799203",
         "details": {
           "source": "batch_completion",
           "task_id": "SEC-003",
@@ -1564,11 +614,11 @@
         }
       },
       {
-        "id": "4a85be9e-426f-4ad2-9291-bea7e61d1cb4",
+        "id": "2f66d365-f8df-450f-9245-ed33beeb7f7f",
         "description": "`GET /api/v1/security/issues` - listar problemas de segurança",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.342740",
-        "completed_at": "2026-05-05T08:40:56.342946",
+        "created_at": "2026-05-06T12:31:13.799383",
+        "completed_at": "2026-05-06T12:31:13.799540",
         "details": {
           "source": "batch_completion",
           "task_id": "API-025",
@@ -1576,11 +626,11 @@
         }
       },
       {
-        "id": "d7e9440d-8568-4d02-8661-4beb9a9545d8",
+        "id": "76fed2d8-ddc1-4418-be50-e9f75f58fe2d",
         "description": "`POST /api/v1/security/audit` - executar auditoria manual",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.343144",
-        "completed_at": "2026-05-05T08:40:56.343335",
+        "created_at": "2026-05-06T12:31:13.799717",
+        "completed_at": "2026-05-06T12:31:13.799881",
         "details": {
           "source": "batch_completion",
           "task_id": "API-026",
@@ -1588,11 +638,11 @@
         }
       },
       {
-        "id": "029baff3-0e1e-4863-b992-4de5a7fc3ce4",
+        "id": "7df5c49d-9819-4315-a32a-c036b08c1549",
         "description": "`PATCH /api/v1/security/issues/{id}/status` - user marca como resolvido",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.343533",
-        "completed_at": "2026-05-05T08:40:56.343723",
+        "created_at": "2026-05-06T12:31:13.800075",
+        "completed_at": "2026-05-06T12:31:13.800242",
         "details": {
           "source": "batch_completion",
           "task_id": "API-027",
@@ -1600,11 +650,11 @@
         }
       },
       {
-        "id": "5fa9a02b-cd03-49a9-bd3a-15a6f6474d21",
+        "id": "fe28ddcb-9aa9-401a-b28e-dfa7b17d1bc5",
         "description": "Criar `ApiCostTracker` que logs/monitora uso de APIs pagas",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.343939",
-        "completed_at": "2026-05-05T08:40:56.344121",
+        "created_at": "2026-05-06T12:31:13.800419",
+        "completed_at": "2026-05-06T12:31:13.800575",
         "details": {
           "source": "batch_completion",
           "task_id": "COST-001",
@@ -1612,11 +662,11 @@
         }
       },
       {
-        "id": "9ce91875-7d73-4d92-aa7a-24d5ad140c63",
+        "id": "f6f4ab30-0399-4cca-a8fb-67e4404e86bf",
         "description": "Tabela DB `api_usage` (id, user_id, provider, endpoint, cost_usd, timestamp)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.344316",
-        "completed_at": "2026-05-05T08:40:56.344505",
+        "created_at": "2026-05-06T12:31:13.800749",
+        "completed_at": "2026-05-06T12:31:13.800917",
         "details": {
           "source": "batch_completion",
           "task_id": "COST-002",
@@ -1624,11 +674,11 @@
         }
       },
       {
-        "id": "1502a3e4-ebac-4e61-83c1-bfb6ff0bf450",
+        "id": "723c9424-c24c-49b3-9f23-33add6b4b440",
         "description": "Implementar alertas de custo (email/notif quando > threshold)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.344700",
-        "completed_at": "2026-05-05T08:40:56.344919",
+        "created_at": "2026-05-06T12:31:13.801124",
+        "completed_at": "2026-05-06T12:31:13.801282",
         "details": {
           "source": "batch_completion",
           "task_id": "COST-003",
@@ -1636,11 +686,11 @@
         }
       },
       {
-        "id": "092dc2fb-acd7-4f09-8c2b-4981aeaadc9c",
+        "id": "282057fd-efba-42fa-8639-cd7342d5a572",
         "description": "`GET /api/v1/costs/summary` - resumo de custos",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.345133",
-        "completed_at": "2026-05-05T08:40:56.345329",
+        "created_at": "2026-05-06T12:31:13.801466",
+        "completed_at": "2026-05-06T12:31:13.801623",
         "details": {
           "source": "batch_completion",
           "task_id": "API-028",
@@ -1648,11 +698,11 @@
         }
       },
       {
-        "id": "81a9d2d4-6909-42ca-baee-83bc5412a54a",
+        "id": "43d6b97f-8c38-4529-827e-3afd1f137cea",
         "description": "`GET /api/v1/costs/free-alternatives` - sugestões de APIs gratuitas",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.345547",
-        "completed_at": "2026-05-05T08:40:56.345743",
+        "created_at": "2026-05-06T12:31:13.801799",
+        "completed_at": "2026-05-06T12:31:13.801957",
         "details": {
           "source": "batch_completion",
           "task_id": "API-029",
@@ -1660,11 +710,11 @@
         }
       },
       {
-        "id": "356e7e20-4505-41c1-8efb-c2057ee04afe",
+        "id": "5a9551f6-3b0a-4692-9e95-6513d1be991b",
         "description": "Testes para detecção de vulnerabilidades",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.345972",
-        "completed_at": "2026-05-05T08:40:56.346166",
+        "created_at": "2026-05-06T12:31:13.802150",
+        "completed_at": "2026-05-06T12:31:13.802311",
         "details": {
           "source": "batch_completion",
           "task_id": "TEST-010",
@@ -1672,11 +722,11 @@
         }
       },
       {
-        "id": "75f9d980-d3eb-4003-b5d8-eff313d7b602",
+        "id": "c55a4b61-15e3-453e-a9fa-325d62a3eb79",
         "description": "Testes para cost tracking",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.346373",
-        "completed_at": "2026-05-05T08:40:56.346564",
+        "created_at": "2026-05-06T12:31:13.802489",
+        "completed_at": "2026-05-06T12:31:13.802645",
         "details": {
           "source": "batch_completion",
           "task_id": "TEST-011",
@@ -1684,11 +734,11 @@
         }
       },
       {
-        "id": "eb0401c3-1640-4d79-be32-3c9116cd5f8e",
+        "id": "7a136910-1ecc-4e9e-b4ba-38a8198afb71",
         "description": "Criar `ThemeBuilder` com seleção de cores e layouts",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.346774",
-        "completed_at": "2026-05-05T08:40:56.346992",
+        "created_at": "2026-05-06T12:31:13.802827",
+        "completed_at": "2026-05-06T12:31:13.802986",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-019",
@@ -1696,11 +746,11 @@
         }
       },
       {
-        "id": "315e48d2-8f80-4bd7-9521-7cb7c28c80b8",
+        "id": "6c0e7f03-ab28-4719-a9fe-1a1612e7c968",
         "description": "Integrar busca de referências (Unsplash, Pexels free APIs)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.347194",
-        "completed_at": "2026-05-05T08:40:56.347378",
+        "created_at": "2026-05-06T12:31:13.803189",
+        "completed_at": "2026-05-06T12:31:13.803349",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-020",
@@ -1708,11 +758,11 @@
         }
       },
       {
-        "id": "19995f85-5909-4a78-9ee2-5e415eff82b9",
+        "id": "e44ab9c5-5aa1-4888-a4c1-9073cf5d5cb8",
         "description": "Criar galeria de temas pré-definidos",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.347574",
-        "completed_at": "2026-05-05T08:40:56.347759",
+        "created_at": "2026-05-06T12:31:13.803525",
+        "completed_at": "2026-05-06T12:31:13.803694",
         "details": {
           "source": "batch_completion",
           "task_id": "UI-021",
@@ -1720,11 +770,11 @@
         }
       },
       {
-        "id": "edbbd84c-c197-435f-a29d-7f64bb2bf17f",
+        "id": "e0e9d4c9-7958-4984-9a46-5d32189414fa",
         "description": "Testes para customização visual",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.347979",
-        "completed_at": "2026-05-05T08:40:56.348179",
+        "created_at": "2026-05-06T12:31:13.803870",
+        "completed_at": "2026-05-06T12:31:13.804028",
         "details": {
           "source": "batch_completion",
           "task_id": "TEST-012",
@@ -1732,11 +782,11 @@
         }
       },
       {
-        "id": "75114ff7-2adb-4cd2-a91e-8f57fc0e4143",
+        "id": "e5d733ba-124d-4529-9d31-3ef2c4807f11",
         "description": "Documentar todas as APIs (Swagger/OpenAPI)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.348386",
-        "completed_at": "2026-05-05T08:40:56.348575",
+        "created_at": "2026-05-06T12:31:13.804225",
+        "completed_at": "2026-05-06T12:31:13.804388",
         "details": {
           "source": "batch_completion",
           "task_id": "DOCS-001",
@@ -1744,11 +794,11 @@
         }
       },
       {
-        "id": "8bbd1ed4-4938-4441-9512-64f9544629e9",
+        "id": "8dd3ccf2-6252-49eb-84aa-5f9fd36f631b",
         "description": "Criar guia de usuário (Getting Started)",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.348766",
-        "completed_at": "2026-05-05T08:40:56.348972",
+        "created_at": "2026-05-06T12:31:13.804562",
+        "completed_at": "2026-05-06T12:31:13.804720",
         "details": {
           "source": "batch_completion",
           "task_id": "DOCS-002",
@@ -1756,11 +806,11 @@
         }
       },
       {
-        "id": "e90dbdbb-c6f6-4777-a3c7-0ea16ea20529",
+        "id": "dd236687-7bb7-45cf-b06b-4e9098311562",
         "description": "Otimizar queries de banco de dados",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.349166",
-        "completed_at": "2026-05-05T08:40:56.349344",
+        "created_at": "2026-05-06T12:31:13.804896",
+        "completed_at": "2026-05-06T12:31:13.805068",
         "details": {
           "source": "batch_completion",
           "task_id": "PERF-001",
@@ -1768,11 +818,11 @@
         }
       },
       {
-        "id": "545630ab-bf5a-410a-9b4e-4a9d3be997e9",
+        "id": "1ad5a4b2-2a55-4b80-bf72-c8a7b5d86cb9",
         "description": "Setup caching (Redis) para dados frequentes",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.349533",
-        "completed_at": "2026-05-05T08:40:56.349709",
+        "created_at": "2026-05-06T12:31:13.805249",
+        "completed_at": "2026-05-06T12:31:13.805407",
         "details": {
           "source": "batch_completion",
           "task_id": "PERF-002",
@@ -1780,11 +830,11 @@
         }
       },
       {
-        "id": "121d5a15-145e-45b2-a9e0-1532cc333d27",
+        "id": "52e3a85e-1b6d-477b-9330-8a403091d22e",
         "description": "Preparar staging environment",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.349919",
-        "completed_at": "2026-05-05T08:40:56.350104",
+        "created_at": "2026-05-06T12:31:13.805585",
+        "completed_at": "2026-05-06T12:31:13.805742",
         "details": {
           "source": "batch_completion",
           "task_id": "DEPLOY-001",
@@ -1792,11 +842,11 @@
         }
       },
       {
-        "id": "ff0023c0-9bf4-476c-be1a-d9b0ab33066d",
+        "id": "f29b64b4-6e4f-4233-97d1-24e0f48d101b",
         "description": "Setup CI/CD pipeline",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.350305",
-        "completed_at": "2026-05-05T08:40:56.350497",
+        "created_at": "2026-05-06T12:31:13.805923",
+        "completed_at": "2026-05-06T12:31:13.806102",
         "details": {
           "source": "batch_completion",
           "task_id": "DEPLOY-002",
@@ -1804,11 +854,11 @@
         }
       },
       {
-        "id": "ee028855-05cb-4f4a-80ab-e6bb2cd97ec4",
+        "id": "4c114334-16c5-48c1-b816-cebe165badc9",
         "description": "Deploy para produção",
         "status": "completed",
-        "created_at": "2026-05-05T08:40:56.350692",
-        "completed_at": "2026-05-05T08:40:56.350894",
+        "created_at": "2026-05-06T12:31:13.806280",
+        "completed_at": "2026-05-06T12:31:13.806445",
         "details": {
           "source": "batch_completion",
           "task_id": "DEPLOY-003",

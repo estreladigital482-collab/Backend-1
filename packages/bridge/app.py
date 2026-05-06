@@ -39,6 +39,12 @@ from embedding_service import get_embedding_service
 from agent import get_agent_service
 from agent.planning_service import planning_service
 from agent.action_queue_service import ActionQueueService
+from agent.instagram_session import InstagramSession
+from agent.device_profiler import DeviceProfiler
+from agent.storage_optimizer import StorageOptimizer
+from agent.offline_first_sync import OfflineFirstSync
+from agent.security_auditor import SecurityAuditor
+from agent.api_cost_tracker import ApiCostTracker
 from mcp_server import server as mcp_server
 from orchestrator import get_central_orchestrator
 
@@ -68,6 +74,9 @@ init_db()
 memory_engine = MemoryEngine()
 agent_service = get_agent_service()
 action_queue_service = ActionQueueService()
+security_auditor = SecurityAuditor()
+cost_tracker = ApiCostTracker()
+offline_sync_engines: dict[str, OfflineFirstSync] = {}
 
 # Initialize MCP SSE Transport
 mcp_transport = SseServerTransport("/api/v1/mcp/messages")
@@ -337,10 +346,355 @@ def reject_action(
     return {"action": result}
 
 
+def get_offline_sync_engine(user_id: str) -> OfflineFirstSync:
+    if user_id not in offline_sync_engines:
+        offline_sync_engines[user_id] = OfflineFirstSync(user_id=user_id)
+    return offline_sync_engines[user_id]
+
+
+@app.post("/api/v1/social/instagram/login")
+def instagram_login(payload: dict, current_user: dict[str, Any] = Depends(get_current_user)):
+    """Login seguro no Instagram."""
+    username = payload.get('username')
+    password = payload.get('password')
+    verification_code = payload.get('verification_code')
+    user_id = current_user.get('sub', 'dev-user')
+
+    if not username or not password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="username and password are required")
+
+    session = InstagramSession(user_id)
+    result = session.login(username, password, verification_code)
+    if result.get('success'):
+        return {
+            'account_id': f"instagram_{result['account']['id']}",
+            'status': 'authenticated',
+            'account': result['account']
+        }
+
+    if result.get('requires_2fa'):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=result.get('error', '2FA required'))
+
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.get('error', 'Login failed'))
+
+
+@app.get("/api/v1/social/instagram/sync")
+def instagram_sync(user_id: str | None = None, current_user: dict[str, Any] = Depends(get_current_user)):
+    """Sincronizar posts salvos do Instagram."""
+    userid = user_id or current_user.get('sub', 'dev-user')
+    session = InstagramSession(userid)
+
+    if not session.restore_session():
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Session not found. Login first.")
+
+    try:
+        saved_posts = session.get_saved_posts(limit=50)
+        return {
+            'synced_count': len(saved_posts),
+            'posts': saved_posts[:10],
+            'total_available': len(saved_posts)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@app.get("/api/v1/social/instagram/collections")
+def list_instagram_collections(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Listar coleções do Instagram."""
+    return {
+        'collections': [
+            {
+                'id': 'collection-1',
+                'name': 'Anime Favorites',
+                'filters': {'query': 'anime'},
+                'item_count': 25
+            }
+        ]
+    }
+
+
+@app.post("/api/v1/social/instagram/collections")
+def create_instagram_collection(payload: dict, current_user: dict[str, Any] = Depends(get_current_user)):
+    """Criar nova coleção do Instagram."""
+    name = payload.get('name')
+    filters = payload.get('filters', {})
+
+    if not name:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Name is required')
+
+    return {
+        'collection_id': 'collection-123',
+        'name': name,
+        'filters': filters,
+        'status': 'created'
+    }
+
+
+@app.get("/api/v1/social/instagram/recommendations")
+def get_instagram_recommendations(theme: str | None = None, limit: int = 5, current_user: dict[str, Any] = Depends(get_current_user)):
+    """Obter recomendações baseadas em posts salvos."""
+    return {
+        'recommendations': [
+            {
+                'type': 'similar_content',
+                'title': f'Conteúdo similar ao tema: {theme or "geral"}',
+                'items': [
+                    {'id': 'rec-1', 'title': 'Anime recommendation 1', 'type': 'post'},
+                    {'id': 'rec-2', 'title': 'Anime recommendation 2', 'type': 'post'}
+                ]
+            }
+        ],
+        'theme': theme,
+        'limit': limit
+    }
+
+
+@app.post("/api/v1/social/{platform}/actions/propose")
+def propose_social_action(platform: str, payload: dict, current_user: dict[str, Any] = Depends(get_current_user)):
+    """Propor ação social para aprovação."""
+    action_type = payload.get('action_type')
+    description = payload.get('description')
+    parameters = payload.get('parameters', {})
+
+    if not action_type or not description:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='action_type and description are required')
+
+    result = action_queue_service.submit_action_proposal(
+        user_id=current_user.get('sub', 'dev-user'),
+        action_type=f'social_{platform}_{action_type}',
+        description=description,
+        parameters=parameters
+    )
+    return {'action_id': result['id'], 'preview_description': description, 'status': 'proposed', 'requires_approval': True}
+
+
+@app.get("/api/v1/social/{platform}/analytics")
+def get_social_analytics(platform: str, current_user: dict[str, Any] = Depends(get_current_user)):
+    """Obter analytics básicos da plataforma social."""
+    return {
+        'platform': platform,
+        'followers': 1250,
+        'engagement_rate': 4.2,
+        'posts_this_month': 15,
+        'last_updated': datetime.now().isoformat()
+    }
+
+
+@app.get("/api/v1/device/profile")
+def get_device_profile(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Obter perfil do dispositivo."""
+    profiler = DeviceProfiler()
+    profile = profiler.get_device_profile()
+    return {
+        'device_type': profile.device_type,
+        'os': profile.os,
+        'os_version': profile.os_version,
+        'architecture': profile.architecture,
+        'storage_total_mb': profile.storage_total_mb,
+        'storage_free_mb': profile.storage_free_mb,
+        'ram_total_mb': profile.ram_total_mb,
+        'ram_available_mb': profile.ram_available_mb,
+        'cpu_cores': profile.cpu_cores,
+        'cpu_freq_mhz': profile.cpu_freq_mhz,
+        'capabilities': profile.capabilities,
+        'health_score': profile.health_score
+    }
+
+
+@app.post("/api/v1/device/optimize")
+def optimize_device(payload: dict, current_user: dict[str, Any] = Depends(get_current_user)):
+    """Gerar plano de otimização do dispositivo."""
+    optimizer = StorageOptimizer()
+    recommendations = optimizer.analyze_storage_usage()
+    return recommendations
+
+
+@app.get("/api/v1/device/sync/status")
+def get_sync_status(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Obter status de sincronização offline."""
+    engine = get_offline_sync_engine(current_user.get('sub', 'dev-user'))
+    return engine.get_sync_status()
+
+
 @app.get("/api/v1/agent/offline_mode")
 def get_agent_offline_mode(current_user: dict[str, Any] = Depends(get_current_user)):
     """Retorna o modo offline do agente."""
     return {"offline_mode": agent_service.offline_mode}
+
+
+# === SECURITY ENDPOINTS ===
+
+@app.post("/api/v1/security/audit")
+def audit_security(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Executa auditoria de segurança em código"""
+    code = payload.get("code", "")
+    language = payload.get("language", "python")
+    component = payload.get("component", "user_code")
+    
+    if not code:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="code is required")
+    
+    issues = security_auditor.audit_code(code, language, component)
+    summary = security_auditor.get_summary()
+    
+    return {
+        "issues": security_auditor.export_issues(),
+        "summary": summary,
+        "timestamp": datetime.now().isoformat()
+    }
+
+
+@app.get("/api/v1/security/issues")
+def list_security_issues(
+    status_filter: str | None = None,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Lista problemas de segurança detectados"""
+    issues = security_auditor.issues
+    
+    if status_filter:
+        issues = [i for i in issues if i.status == status_filter]
+    
+    return {
+        "issues": [i.to_dict() for i in issues],
+        "count": len(issues)
+    }
+
+
+@app.patch("/api/v1/security/issues/{issue_id}/status")
+def update_issue_status(
+    issue_id: str,
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Atualiza status de um problema de segurança"""
+    new_status = payload.get("status")  # open, resolved, ignored
+    
+    if new_status not in ["open", "resolved", "ignored"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid status")
+    
+    for issue in security_auditor.issues:
+        if issue.id == issue_id:
+            issue.status = new_status
+            return {"issue": issue.to_dict(), "status": "updated"}
+    
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Issue not found")
+
+
+@app.get("/api/v1/security/summary")
+def get_security_summary(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Retorna um resumo das issues de segurança"""
+    return security_auditor.get_summary()
+
+
+# === COST TRACKING ENDPOINTS ===
+
+@app.get("/api/v1/costs/summary")
+def get_costs_summary(
+    days: int = 30,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Retorna um resumo de custos de API"""
+    user_id = current_user.get("sub", "dev-user")
+    summary = cost_tracker.get_summary(user_id, days)
+    return summary
+
+
+@app.get("/api/v1/costs/trends")
+def get_costs_trends(
+    days: int = 30,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Retorna tendências de custos"""
+    user_id = current_user.get("sub", "dev-user")
+    trends = cost_tracker.get_usage_trends(user_id, days)
+    return trends
+
+
+@app.get("/api/v1/costs/free-alternatives")
+def get_free_alternatives(
+    provider: str,
+    endpoint: str,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Retorna alternativas gratuitas para um serviço pago"""
+    alternatives = cost_tracker.get_free_alternatives(provider, endpoint)
+    return {
+        "provider": provider,
+        "endpoint": endpoint,
+        "alternatives": alternatives
+    }
+
+
+@app.post("/api/v1/costs/log")
+def log_api_usage(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Registra um uso de API para tracking de custo"""
+    user_id = current_user.get("sub", "dev-user")
+    provider = payload.get("provider")
+    endpoint = payload.get("endpoint")
+    cost_usd = payload.get("cost_usd", 0.0)
+    
+    if not provider or not endpoint:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="provider and endpoint are required")
+    
+    record_id = cost_tracker.log_usage(
+        user_id=user_id,
+        provider=provider,
+        endpoint=endpoint,
+        cost_usd=cost_usd,
+        model=payload.get("model"),
+        tokens_used=payload.get("tokens_used"),
+        response_time_ms=payload.get("response_time_ms"),
+        metadata=payload.get("metadata")
+    )
+    
+    return {
+        "record_id": record_id,
+        "status": "logged",
+        "timestamp": datetime.now().isoformat()
+    }
+
+
+@app.post("/api/v1/costs/calculate")
+def calculate_api_cost(
+    payload: dict,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Calcula o custo estimado de uma requisição de API"""
+    provider = payload.get("provider")
+    model = payload.get("model")
+    prompt_tokens = payload.get("prompt_tokens", 0)
+    completion_tokens = payload.get("completion_tokens", 0)
+    
+    if not provider or not model:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="provider and model are required")
+    
+    cost = cost_tracker.calculate_cost(provider, model, prompt_tokens, completion_tokens)
+    
+    return {
+        "provider": provider,
+        "model": model,
+        "prompt_tokens": prompt_tokens,
+        "completion_tokens": completion_tokens,
+        "estimated_cost_usd": round(cost, 6),
+        "total_tokens": prompt_tokens + completion_tokens
+    }
+
+
+@app.get("/api/v1/costs/alerts")
+def get_cost_alerts(current_user: dict[str, Any] = Depends(get_current_user)):
+    """Retorna alertas de custo"""
+    return {
+        "alerts": cost_tracker.alerts,
+        "threshold_usd": cost_tracker.cost_threshold_usd,
+        "count": len(cost_tracker.alerts)
+    }
 
 
 @app.post("/api/v1/agent/offline_mode")

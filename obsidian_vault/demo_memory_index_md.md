@@ -1,0 +1,94 @@
+---
+source: /workspaces/Aura-sphere-/knowledge_vault/Integração/demo_memory_index.md
+filename: demo_memory_index.md
+---
+
+# demo_memory_index.md
+
+---
+category: Integração
+source: packages/bridge/demo_memory_index.json
+created: 2026-05-05T19:45:45.742168
+size: 1413 bytes
+hash: e32962d1d7bf4479cc4a00dd14bebaee
+headers:
+---
+
+# demo_memory_index.json
+
+## Metadados
+- **Categoria**: Integração
+- **Caminho Original**: `packages/bridge/demo_memory_index.json`
+- **Tamanho**: 1413 bytes
+
+## Conteúdo
+
+{
+  "entries": [
+    {
+      "id": "user_query_1",
+      "category": "user",
+      "content_hash": "7705e0707f4d633b79fab5087ffc9e4a2aa4b90901acfe980b4d179d2c54c92f",
+      "keywords": [
+        "uma",
+        "como",
+        "fibonacci",
+        "calcular",
+        "função",
+        "python",
+        "criar",
+        "posso"
+      ],
+      "semantic_vector": null,
+      "timestamp": 1777819324.1630733,
+      "access_count": 3,
+      "last_access": 1777819324.16758,
+      "relevance_score": 1.0,
+      "metadata": {
+        "source": "user",
+        "type": "question"
+      }
+    },
+    {
+      "id": "system_response_1",
+      "category": "code",
+      "content_hash": "1bb9cb3bdbe4643f4a6c0c4a0ff3909e4bd91daee19676d32a7651790fbfa856",
+      "keywords": [
+        "uma",
+        "está",
+        "aqui",
+        "return",
+        "def",
+        "fibonacci",
+        "recursiva",
+        "função",
+        "else",
+        "calcular"
+      ],
+      "semantic_vector": null,
+      "timestamp": 1777819324.1634674,
+      "access_count": 3,
+      "last_access": 1777819324.167992,
+      "relevance_score": 1.0,
+      "metadata": {
+        "source": "system",
+        "type": "code_response"
+      }
+    }
+  ],
+  "metadata": {
+    "total_entries": 2,
+    "categories": {
+      "user": 1,
+      "code": 1,
+      "error": 0,
+      "event": 0,
+      "security": 0
+    },
+    "last_updated": 1777819324.1685636
+  }
+}
+
+## Tags
+#categoria/integração
+

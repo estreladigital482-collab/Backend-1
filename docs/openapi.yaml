@@ -1,0 +1,297 @@
+components:
+  schemas:
+    Ability:
+      properties:
+        description:
+          type: string
+        functions_json:
+          type: object
+        id:
+          type: string
+        name:
+          type: string
+        source_repo:
+          type: string
+        user_id:
+          type: string
+        version:
+          type: string
+      type: object
+    AbilityResponse:
+      properties:
+        ability_id:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+      type: object
+    Action:
+      properties:
+        action_type:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        parameters:
+          type: object
+        status:
+          type: string
+        user_id:
+          type: string
+      type: object
+    DeviceProfile:
+      properties:
+        device_type:
+          type: string
+        health_score:
+          type: integer
+        ram_mb:
+          type: integer
+        storage_mb:
+          type: integer
+      type: object
+    Memory:
+      properties:
+        access_count:
+          type: integer
+        category:
+          type: string
+        content:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        id:
+          type: string
+        pinned:
+          type: boolean
+        type:
+          enum:
+          - user
+          - assistant
+          - system
+          type: string
+      type: object
+    Plan:
+      properties:
+        completed_tasks:
+          type: integer
+        description:
+          type: string
+        id:
+          type: string
+        progress:
+          type: number
+        status:
+          type: string
+        task_count:
+          type: integer
+        title:
+          type: string
+        user_id:
+          type: string
+      type: object
+info:
+  contact:
+    name: Aura-sphere- Team
+  description: API consolidada para Abilities, Memory, Planning, Actions e Device
+    Management
+  title: Aura-sphere- API
+  version: 2.0.0
+openapi: 3.0.0
+paths:
+  /api/v1/abilities/add:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                ability_name:
+                  type: string
+                repo_url:
+                  type: string
+                selected_functions:
+                  items:
+                    type: string
+                  type: array
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbilityResponse'
+          description: Ability added successfully
+      summary: Add ability to user
+      tags:
+      - Abilities
+  /api/v1/abilities/list:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  abilities:
+                    items:
+                      $ref: '#/components/schemas/Ability'
+                    type: array
+                type: object
+          description: List of abilities
+      summary: List user's abilities
+      tags:
+      - Abilities
+  /api/v1/abilities/search:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                keyword:
+                  type: string
+                language:
+                  default: python
+                  type: string
+                min_stars:
+                  default: 10
+                  type: integer
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  count:
+                    type: integer
+                  results:
+                    type: array
+                type: object
+          description: List of repositories found
+      summary: Search abilities on GitHub
+      tags:
+      - Abilities
+  /api/v1/actions/pending:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  pending_actions:
+                    items:
+                      $ref: '#/components/schemas/Action'
+                    type: array
+                type: object
+          description: List of pending actions
+      summary: Get pending actions
+      tags:
+      - Actions
+  /api/v1/device/profile:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceProfile'
+          description: Device information
+      summary: Get device profile
+      tags:
+      - Device
+  /api/v1/memory/list:
+    get:
+      parameters:
+      - in: query
+        name: type
+        schema:
+          enum:
+          - user
+          - assistant
+          - system
+          type: string
+      - in: query
+        name: category
+        schema:
+          type: string
+      - in: query
+        name: pinned
+        schema:
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  memories:
+                    items:
+                      $ref: '#/components/schemas/Memory'
+                    type: array
+                type: object
+          description: List of memories
+      summary: List memories with filters
+      tags:
+      - Memory
+  /api/v1/memory/search:
+    get:
+      parameters:
+      - in: query
+        name: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  memories:
+                    items:
+                      $ref: '#/components/schemas/Memory'
+                    type: array
+                type: object
+          description: Search results
+      summary: Search memories (uses cache)
+      tags:
+      - Memory
+  /api/v1/planning/plans/{user_id}:
+    get:
+      parameters:
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  plans:
+                    items:
+                      $ref: '#/components/schemas/Plan'
+                    type: array
+                type: object
+          description: List of plans
+      summary: Get user plans
+      tags:
+      - Planning
+servers:
+- description: Development server
+  url: http://localhost:5000
+- description: Production server
+  url: https://aura-sphere.vercel.app

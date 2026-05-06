@@ -1,0 +1,61 @@
+---
+source: /workspaces/Aura-sphere-/knowledge_metadata.json
+filename: knowledge_metadata.json
+---
+
+# knowledge_metadata.json
+
+{
+  "created_at": "2026-05-06T02:38:28.990452",
+  "project": "Aura-sphere",
+  "stats": {
+    "total_documents": 389,
+    "total_size_bytes": 2856496,
+    "total_size_mb": 2.72,
+    "categories": {
+      "Arquitetura": {
+        "count": 1,
+        "total_size": 10034
+      },
+      "Backend": {
+        "count": 5,
+        "total_size": 30112
+      },
+      "Configuração": {
+        "count": 19,
+        "total_size": 20794
+      },
+      "Dados": {
+        "count": 1,
+        "total_size": 4912
+      },
+      "Diversos": {
+        "count": 23,
+        "total_size": 557481
+      },
+      "Documentação": {
+        "count": 5,
+        "total_size": 28901
+      },
+      "Frontend": {
+        "count": 156,
+        "total_size": 508447
+      },
+      "Integração": {
+        "count": 168,
+        "total_size": 1460990
+      },
+      "Planejamento": {
+        "count": 11,
+        "total_size": 234825
+      }
+    },
+    "avg_doc_size": 7343.0
+  },
+  "files": {
+    "vault": "/workspaces/Aura-sphere-/knowledge_vault",
+    "index": "/workspaces/Aura-sphere-/knowledge_index.json",
+    "metadata": "/workspaces/Aura-sphere-/knowledge_metadata.json",
+    "vector_store": null
+  }
+}

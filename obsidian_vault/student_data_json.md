@@ -1,0 +1,61 @@
+---
+source: /workspaces/Aura-sphere-/packages/bridge/data/learning/student_data.json
+filename: student_data.json
+---
+
+# student_data.json
+
+{
+  "inglês": {
+    "topic": "inglês",
+    "level": 1,
+    "score": 0,
+    "correct": 0,
+    "incorrect": 1,
+    "weaknesses": [
+      "saudar"
+    ],
+    "history": [
+      "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: saudar, nomes comuns."
+    ],
+    "active_plan": {
+      "topic": "inglês",
+      "level": 1,
+      "steps": [
+        {
+          "title": "vocabulário básico",
+          "goals": [
+            "saudar",
+            "nomes comuns",
+            "cores"
+          ]
+        },
+        {
+          "title": "frases importantes",
+          "goals": [
+            "perguntas simples",
+            "respostas",
+            "expressões úteis"
+          ]
+        },
+        {
+          "title": "gramática inicial",
+          "goals": [
+            "present simple",
+            "pronomes",
+            "preposições"
+          ]
+        },
+        {
+          "title": "conversação básica",
+          "goals": [
+            "diálogo curto",
+            "perguntas pessoais",
+            "situações cotidianas"
+          ]
+        }
+      ]
+    },
+    "last_updated": "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: saudar, nomes comuns."
+  }
+}

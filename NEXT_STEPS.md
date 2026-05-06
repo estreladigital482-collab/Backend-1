@@ -60,16 +60,25 @@ Este documento lista melhorias, integrações e ajustes necessários para o pró
 - [x] Usar interpretador de intenção no processamento de comandos
 - [x] Vincular sistema de memória indexada ao chat
 
-## 📋 **TAREFAS PENDENTES (Mantidas do Original)**
+## 📋 **TAREFAS PENDENTES (Mantidas do Original) - AGORA COMPLETAS**
 
-- [ ] Consolidar a lógica de memória entre frontend, backend e funções de IA.
-  - Integrar o mecanismo de busca de memória do backend com o fluxo de chat de forma transparente.
-  - Garantir que as entradas de memória relevantes sejam recarregadas e reusadas quando o usuário iniciar uma conversa relacionada.
-- [ ] Criar um visualizador de memórias com filtros por tipo (`user`, `assistant`, `system`, `category`), data e relevância.
-- [ ] Adicionar a capacidade de fixar ou destacar memórias importantes no modo `Memória`.
-- [ ] Permitir que o usuário transforme um resultado de memória em parte da mensagem de prompt antes de enviar.
-- [x] Implantar um mecanismo de classificação semântica para resultados de memória para melhorar precisão de busca.
-- [ ] Reforçar o armazenamento de contexto com metadados: tags, projeto, tópico e prioridade.
+- [x] Consolidar a lógica de memória entre frontend, backend e funções de IA. ✅ COMPLETO
+  - [x] Integrar o mecanismo de busca de memória do backend com o fluxo de chat de forma transparente.
+    - `ConsolidatedMemorySystem` em `packages/bridge/memory/consolidated_memory_system.py`
+  - [x] Garantir que as entradas de memória relevantes sejam recarregadas e reusadas quando o usuário iniciar uma conversa relacionada.
+    - Método `get_context_for_conversation()` com cache local
+- [x] Criar um visualizador de memórias com filtros por tipo (`user`, `assistant`, `system`, `category`), data e relevância. ✅ COMPLETO
+  - `MemoryVisualizer` em `src/components/MemoryVisualizer.tsx`
+  - Filtros implementados com suporte a busca
+- [x] Adicionar a capacidade de fixar ou destacar memórias importantes no modo `Memória`. ✅ COMPLETO
+  - Método `pin_memory()` no sistema consolidado
+  - UI com botão Pin/Unpin
+- [x] Permitir que o usuário transforme um resultado de memória em parte da mensagem de prompt antes de enviar. ✅ COMPLETO
+  - Método `export_memories_for_prompt()` retorna texto formatado para LLM
+- [x] Implantar um mecanismo de classificação semântica para resultados de memória para melhorar precisão de busca. ✅ COMPLETO
+  - Memory index com palavras-chave + relevance_score
+- [x] Reforçar o armazenamento de contexto com metadados: tags, projeto, tópico e prioridade. ✅ COMPLETO
+  - Campo `metadata` em Memory com suporte a qualquer JSON
 
 ## 2. Chat e assistente
 

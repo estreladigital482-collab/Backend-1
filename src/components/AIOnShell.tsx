@@ -4,6 +4,10 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { PlanningTab } from "@/components/PlanningTab";
 import { MiniOverlay } from "@/components/MiniOverlay";
 import { SidebarControls } from "@/components/SidebarControls";
+import { ModeSelector } from "@/components/ModeSelector";
+import { TVMode } from "@/components/TVMode";
+import { VoiceMode } from "@/components/VoiceMode";
+import { DeveloperMode } from "@/components/DeveloperMode";
 import Chat from "@/pages/Chat";
 import VisualMode from "@/pages/Visual";
 import { speak } from "@/lib/speech";
@@ -22,6 +26,8 @@ const AI_MODES: { id: AiMode; label: string; description: string }[] = [
   { id: "Dev Mode", label: "Dev Mode", description: "Acesse ferramentas de desenvolvedor e informações do ambiente." },
 ];
 
+type UiMode = "standard" | "tv" | "voice" | "developer";
+
 export default function AIOnShell({
   userId,
   aiName,
@@ -36,6 +42,7 @@ export default function AIOnShell({
   onEditProfile: () => void;
 }) {
   const [activeMode, setActiveMode] = useState<AiMode>("Chat");
+  const [uiMode, setUiMode] = useState<UiMode>("standard");
   const [isMinimized, setIsMinimized] = useState(false);
   const [hasWelcomed, setHasWelcomed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -100,6 +107,16 @@ export default function AIOnShell({
       : "sphere";
 
   const renderModeContent = () => {
+    if (uiMode !== "standard") {
+      return (
+        <div className="h-full w-full">
+          {uiMode === "tv" && <TVMode />}
+          {uiMode === "voice" && <VoiceMode />}
+          {uiMode === "developer" && <DeveloperMode />}
+        </div>
+      );
+    }
+
     switch (activeMode) {
       case "Chat":
         return (
@@ -164,6 +181,9 @@ export default function AIOnShell({
 
       {/* Conteúdo principal - só o conteúdo, sem controles */}
       <div className="flex-1 bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden">
+        <div className="p-4 bg-slate-950/20 border-b border-white/5">
+          <ModeSelector value={uiMode} onChange={setUiMode} />
+        </div>
         {renderModeContent()}
       </div>
     </div>
