@@ -154,6 +154,20 @@ export default function AIOnShell({
           </div>
         );
       default:
+        return (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <ParticleSphere
+                state={sphereState}
+                shape={sphereShape}
+                className="w-32 h-32 mx-auto"
+              />
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Modo {AI_MODES.find(m => m.id === activeMode)?.label}
+                </h2>
+                <p className="text-gray-400 max-w-md">
+                  {AI_MODES.find(m => m.id === activeMode)?.description}
                 </p>
               </div>
             </div>
