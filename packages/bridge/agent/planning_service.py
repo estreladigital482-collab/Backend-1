@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import sys
 sys.path.append("..")
 from database import SessionLocal, Plan, Task, Project, Account
+from agent.cache_manager import CacheManager
 
 
 @dataclass
@@ -46,14 +47,27 @@ class PlanningService:
             }
     
     def get_user_plans(self, user_id: str) -> List[Dict[str, Any]]:
-        """Obter todos os planos do usuário"""
+        """Obter todos os planos do usuário com eager loading para tarefas"""
+        from sqlalchemy.orm import joinedload
+
+        cache_key = f"user_plans:{user_id}"
+        cached = cache_manager.get(cache_key)
+        if cached is not None:
+            return cached
+        
         with SessionLocal() as session:
-            plans = session.query(Plan).filter(Plan.user_id == user_id).all()
+            # Usar joinedload para carregar tarefas junto com planos (evita N+1 queries)
+            plans = (
+                session.query(Plan)
+                .options(joinedload(Plan.tasks))  # Carrega tarefas junto
+                .filter(Plan.user_id == user_id)
+                .all()
+            )
             
             result = []
             for plan in plans:
-                # Recalcular progresso baseado em tarefas
-                tasks = session.query(Task).filter(Task.plan_id == plan.id).all()
+                # Agora as tarefas já estão carregadas, sem query adicional
+                tasks = plan.tasks if hasattr(plan, 'tasks') else []
                 completed = len([t for t in tasks if t.status == "completed"])
                 total = len(tasks)
                 
@@ -70,15 +84,24 @@ class PlanningService:
                     "created_at": plan.created_at.isoformat() if plan.created_at else None
                 })
             
+            cache_manager.set(cache_key, result, ttl=180)
             return result
     
     def _recalculate_plan_progress(self, session, plan_id: int) -> Optional[Plan]:
         """Recalcula progresso e status do plano com base nas tarefas."""
-        plan = session.query(Plan).filter(Plan.id == plan_id).first()
+        from sqlalchemy.orm import joinedload
+        
+        plan = (
+            session.query(Plan)
+            .options(joinedload(Plan.tasks))
+            .filter(Plan.id == plan_id)
+            .first()
+        )
         if not plan:
             return None
 
-        tasks = session.query(Task).filter(Task.plan_id == plan_id).all()
+        # Tarefas já carregadas via joinedload
+        tasks = plan.tasks if hasattr(plan, 'tasks') else []
         completed = len([t for t in tasks if t.status == "completed"])
         total = len(tasks)
 
@@ -115,6 +138,7 @@ class PlanningService:
             session.refresh(task)
 
             self._recalculate_plan_progress(session, plan_id)
+            cache_manager.delete_pattern(f"user_plans:{plan.user_id}*")
             
             return {
                 "task_id": task.id,
@@ -141,6 +165,7 @@ class PlanningService:
             session.commit()
             session.refresh(task)
             self._recalculate_plan_progress(session, task.plan_id)
+            cache_manager.delete_pattern(f"user_plans:{task.plan.user_id}*")
             
             return {
                 "task_id": task.id,
@@ -252,6 +277,6 @@ class PlanningService:
                 for a in accounts
             ]
 
-
+cache_manager = CacheManager()
 # Instância global
 planning_service = PlanningService()

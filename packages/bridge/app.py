@@ -45,6 +45,7 @@ from agent.storage_optimizer import StorageOptimizer
 from agent.offline_first_sync import OfflineFirstSync
 from agent.security_auditor import SecurityAuditor
 from agent.api_cost_tracker import ApiCostTracker
+from agent.cache_manager import CacheManager
 from mcp_server import server as mcp_server
 from orchestrator import get_central_orchestrator
 
@@ -58,7 +59,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
 ALGORITHM = "HS256"
 API_ORIGINS = [os.getenv("CORS_ORIGIN", "http://localhost:3000"), "http://localhost:3000"]
 
-app = FastAPI(title="Aura-Sphere Bridge", version="0.1.0")
+app = FastAPI(
+    title="Aura-Sphere Bridge",
+    version="0.1.0",
+    description="API backend para o Aura Sphere com monitoramento de planos, segurança, custo e integração de dispositivos."
+)
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
@@ -76,6 +81,7 @@ agent_service = get_agent_service()
 action_queue_service = ActionQueueService()
 security_auditor = SecurityAuditor()
 cost_tracker = ApiCostTracker()
+cache_manager = CacheManager()
 offline_sync_engines: dict[str, OfflineFirstSync] = {}
 
 # Initialize MCP SSE Transport
@@ -536,10 +542,13 @@ def audit_security(
     
     if not code:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="code is required")
-    
+
+    user_id = current_user.get("sub", "dev-user")
+    cache_manager.delete_pattern(f"security_summary:{user_id}")
+
     issues = security_auditor.audit_code(code, language, component)
     summary = security_auditor.get_summary()
-    
+
     return {
         "issues": security_auditor.export_issues(),
         "summary": summary,
@@ -576,9 +585,11 @@ def update_issue_status(
     if new_status not in ["open", "resolved", "ignored"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid status")
     
+    user_id = current_user.get("sub", "dev-user")
     for issue in security_auditor.issues:
         if issue.id == issue_id:
             issue.status = new_status
+            cache_manager.delete_pattern(f"security_summary:{user_id}")
             return {"issue": issue.to_dict(), "status": "updated"}
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Issue not found")
@@ -587,7 +598,15 @@ def update_issue_status(
 @app.get("/api/v1/security/summary")
 def get_security_summary(current_user: dict[str, Any] = Depends(get_current_user)):
     """Retorna um resumo das issues de segurança"""
-    return security_auditor.get_summary()
+    user_id = current_user.get("sub", "dev-user")
+    cache_key = f"security_summary:{user_id}"
+    cached = cache_manager.get(cache_key)
+    if cached is not None:
+        return cached
+
+    summary = security_auditor.get_summary()
+    cache_manager.set(cache_key, summary, ttl=120)
+    return summary
 
 
 # === COST TRACKING ENDPOINTS ===
@@ -599,7 +618,13 @@ def get_costs_summary(
 ):
     """Retorna um resumo de custos de API"""
     user_id = current_user.get("sub", "dev-user")
+    cache_key = f"cost_summary:{user_id}:{days}"
+    cached = cache_manager.get(cache_key)
+    if cached is not None:
+        return cached
+
     summary = cost_tracker.get_summary(user_id, days)
+    cache_manager.set(cache_key, summary, ttl=180)
     return summary
 
 
@@ -610,7 +635,13 @@ def get_costs_trends(
 ):
     """Retorna tendências de custos"""
     user_id = current_user.get("sub", "dev-user")
+    cache_key = f"cost_trends:{user_id}:{days}"
+    cached = cache_manager.get(cache_key)
+    if cached is not None:
+        return cached
+
     trends = cost_tracker.get_usage_trends(user_id, days)
+    cache_manager.set(cache_key, trends, ttl=180)
     return trends
 
 
@@ -653,7 +684,10 @@ def log_api_usage(
         response_time_ms=payload.get("response_time_ms"),
         metadata=payload.get("metadata")
     )
-    
+
+    cache_manager.delete_pattern(f"cost_summary:{user_id}:*")
+    cache_manager.delete_pattern(f"cost_trends:{user_id}:*")
+
     return {
         "record_id": record_id,
         "status": "logged",

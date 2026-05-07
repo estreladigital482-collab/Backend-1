@@ -70,6 +70,8 @@ Acesse em **http://localhost:3000** 🎉
 - **[GIT_WORKFLOW.md](./GIT_WORKFLOW.md)** - Guia de workflow Git com auto-commit
 - **[NEXT_STEPS.md](./NEXT_STEPS.md)** - Próximas tarefas para o projeto
 - **[HISTORY.md](./HISTORY.md)** - Histórico de desenvolvimento
+- **[docs/API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md)** - Documentação de APIs e exemplos
+- **[docs/USER_GUIDE.md](./docs/USER_GUIDE.md)** - Guia do usuário Aura Sphere
 
 ## 🔌 API Endpoints
 

@@ -1,7 +1,7 @@
 import os
 
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, func, Float
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, func, Float, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.dialects.postgresql import ARRAY
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./data.db")
@@ -70,13 +70,14 @@ class Plan(Base):
     __tablename__ = "plans"
     
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, nullable=False, index=True)
+    user_id = Column(String, nullable=False, index=True)  # Adicionado índice
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(String(32), default="active")  # active, completed, archived
-    progress = Column(Float, default=0.0)  # 0-100
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    status = Column(String(32), default="active", index=True)  # Adicionado índice
+    progress = Column(Float, default=0.0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)  # Adicionado índice
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    tasks = relationship("Task", back_populates="plan", lazy="joined")
 
 
 class Project(Base):
@@ -116,14 +117,15 @@ class Task(Base):
     __tablename__ = "tasks"
     
     id = Column(Integer, primary_key=True, index=True)
-    plan_id = Column(Integer, nullable=False, index=True)
+    plan_id = Column(Integer, ForeignKey("plans.id"), nullable=False, index=True)
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(String(32), default="pending")  # pending, in_progress, completed
+    status = Column(String(32), default="pending", index=True)  # pending, in_progress, completed
     progress = Column(Float, default=0.0)  # 0-100
-    priority = Column(Integer, default=5)  # 1-10
-    due_date = Column(DateTime(timezone=True), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    priority = Column(Integer, default=5, index=True)  # 1-10
+    due_date = Column(DateTime(timezone=True), nullable=True, index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    plan = relationship("Plan", back_populates="tasks")
 
 
 class ActionProposal(Base):
