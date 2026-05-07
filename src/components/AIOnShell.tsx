@@ -7,9 +7,7 @@ import { SidebarControls } from "@/components/SidebarControls";
 import { ModeSelector } from "@/components/ModeSelector";
 import { TVMode } from "@/components/TVMode";
 import { VoiceMode } from "@/components/VoiceMode";
-import { DeveloperMode } from "@/components/DeveloperMode";
-import Chat from "@/pages/Chat";
-import VisualMode from "@/pages/Visual";
+import { VersionDashboard } from "@/components/VersionDashboard";
 import { speak } from "@/lib/speech";
 import type { AiMode, SphereState, VoiceId } from "@/lib/types";
 
@@ -129,25 +127,33 @@ export default function AIOnShell({
             onRequestMode={(mode) => setActiveMode(mode)}
           />
         );
-      case "Planejamento":
-        return <PlanningTab />;
-      case "Visual":
-        return <VisualMode />;
-      default:
+      case "Memória":
         return (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <ParticleSphere
-                state={sphereState}
-                shape={sphereShape}
-                className="w-32 h-32 mx-auto"
-              />
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Modo {AI_MODES.find(m => m.id === activeMode)?.label}
-                </h2>
-                <p className="text-gray-400 max-w-md">
-                  {AI_MODES.find(m => m.id === activeMode)?.description}
+          <div className="h-full p-6 overflow-auto">
+            <MemoryViewer
+              userId={userId}
+              onMemorySelect={(memory) => {
+                // Integração futura: usar memória no chat
+                console.log('Memória selecionada:', memory);
+              }}
+            />
+          </div>
+        );
+      case "Planejamento":
+        return <VisualMode />;
+      case "Dev Mode":
+        return (
+          <div className="h-full p-6 overflow-auto">
+            <VersionDashboard
+              currentVersion="1.2.3"
+              onVersionChange={(versionId) => {
+                console.log('Mudando para versão:', versionId);
+                // Integração futura: implementar mudança de versão
+              }}
+            />
+          </div>
+        );
+      default:
                 </p>
               </div>
             </div>
@@ -166,24 +172,58 @@ export default function AIOnShell({
   }
 
   return (
-    <div className="h-screen w-screen bg-black flex">
-      {/* Sidebar lateral */}
-      <SidebarControls
-        activeMode={activeMode}
-        onModeChange={setActiveMode}
-        onMinimize={() => setIsMinimized(true)}
-        onClose={onSignOut}
-        aiName={aiName}
-        voiceId={voiceId}
-        onEditProfile={onEditProfile}
-        onSignOut={onSignOut}
-      />
+    <div className="h-screen w-screen bg-black flex flex-col md:flex-row">
+      {/* Sidebar lateral - oculto em mobile, mostrado como overlay */}
+      <div className="hidden md:block">
+        <SidebarControls
+          activeMode={activeMode}
+          onModeChange={setActiveMode}
+          onMinimize={() => setIsMinimized(true)}
+          onClose={onSignOut}
+          aiName={aiName}
+          voiceId={voiceId}
+          onEditProfile={onEditProfile}
+          onSignOut={onSignOut}
+        />
+      </div>
 
-      {/* Conteúdo principal - só o conteúdo, sem controles */}
-      <div className="flex-1 bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden">
-        <div className="p-4 bg-slate-950/20 border-b border-white/5">
+      {/* Menu mobile - bottom navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-white/10 z-50">
+        <div className="flex justify-around items-center py-2 px-4">
+          {AI_MODES.slice(0, 5).map((mode) => (
+            <button
+              key={mode.id}
+              onClick={() => setActiveMode(mode.id)}
+              className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+                activeMode === mode.id
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <span className="text-xs font-medium">{mode.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Conteúdo principal */}
+      <div className="flex-1 bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden pb-16 md:pb-0">
+        {/* Header mobile */}
+        <div className="md:hidden p-4 bg-slate-950/20 border-b border-white/5 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-white">{aiName}</h1>
+            <span className="text-sm text-gray-400">
+              {AI_MODES.find(m => m.id === activeMode)?.label}
+            </span>
+          </div>
           <ModeSelector value={uiMode} onChange={setUiMode} />
         </div>
+
+        {/* Header desktop */}
+        <div className="hidden md:block p-4 bg-slate-950/20 border-b border-white/5">
+          <ModeSelector value={uiMode} onChange={setUiMode} />
+        </div>
+
         {renderModeContent()}
       </div>
     </div>
