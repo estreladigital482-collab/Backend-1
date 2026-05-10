@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocalAuth } from "@/hooks/useLocalAuth";
 import { useSyncService } from "@/hooks/useSyncService";
+import { useAuth } from "@/hooks/useAuth";
 import { AuthGateway } from "@/components/AuthGateway";
 import { SyncStatus } from "@/components/SyncStatus";
-import Login from "./Login";
+import { supabase } from "@/integrations/supabase/client";
 import Onboarding from "./Onboarding";
 import AIOnShell from "@/components/AIOnShell";
 
@@ -15,13 +16,13 @@ type Profile = {
 
 const Index = () => {
   const { user: googleUser, loading: googleLoading } = useAuth();
-  const { user: localUser, isAuthenticated: isLocalAuthenticated } = useLocalAuth();
+  const { user: localUser, isOnline } = useLocalAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<{ id: string; name?: string; isLocal?: boolean } | null>(null);
   // Serviço de sincronização
-  const { performFullSync } = useSyncService({
+  const { performFullSync, migrateLocalData } = useSyncService({
     userId: currentUser?.id || '',
     isOnline,
     onSyncComplete: (success, syncedCount) => {
@@ -30,12 +31,31 @@ const Index = () => {
       }
     },
   });
-  // Sincronização automática quando volta online
+  const [hasMigratedLocalData, setHasMigratedLocalData] = useState(false);
+
   useEffect(() => {
-    if (isOnline && currentUser && localUser?.isLocal) {
+    if (googleUser) {
+      setCurrentUser(googleUser);
+    } else if (localUser?.isLocal) {
+      setCurrentUser(localUser);
+    }
+  }, [googleUser, localUser]);
+
+  useEffect(() => {
+    if (isOnline && currentUser?.id && localUser?.isLocal) {
       performFullSync();
     }
-  }, [isOnline, currentUser, localUser, performFullSync]);
+  }, [isOnline, currentUser?.id, localUser?.isLocal, performFullSync]);
+
+  useEffect(() => {
+    if (googleUser && localUser?.isLocal && !hasMigratedLocalData) {
+      migrateLocalData(googleUser.id).then((success) => {
+        if (success) {
+          setHasMigratedLocalData(true);
+        }
+      });
+    }
+  }, [googleUser, localUser, hasMigratedLocalData, migrateLocalData]);
 
   // Modo demonstração - bypass autenticação
   const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true' || window.location.search.includes('demo=true');
@@ -128,7 +148,7 @@ const Index = () => {
   }
 
   // Para usuários locais, ir direto para AIOnShell
-  if (localUser?.isLocal) {
+  if (currentUser?.isLocal && localUser?.isLocal) {
     return (
       <div className="min-h-[100dvh] flex flex-col">
         <div className="flex justify-between items-center p-4 border-b bg-white/80 backdrop-blur-sm">

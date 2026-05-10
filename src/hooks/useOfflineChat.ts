@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useLocalAuth } from './useLocalAuth';
+import type { ChatMessage } from '@/lib/types';
 
-interface OfflineMessage {
+interface OfflineMessage extends ChatMessage {
   id: string;
-  content: string;
   timestamp: string;
   status: 'pending' | 'sent' | 'failed';
 }
@@ -18,25 +18,25 @@ export function useOfflineChat() {
     const savedMessages = getLocalMessages();
     setMessages(savedMessages);
     updatePendingCount(savedMessages);
-  }, []);
+  }, [getLocalMessages]);
 
   // Salvar mensagens quando mudarem
   useEffect(() => {
     saveLocalMessages(messages);
     updatePendingCount(messages);
-  }, [messages]);
+  }, [messages, saveLocalMessages]);
 
   const updatePendingCount = (msgs: OfflineMessage[]) => {
     const pending = msgs.filter(m => m.status === 'pending').length;
     setPendingCount(pending);
   };
 
-  const addMessage = (content: string) => {
+  const addMessage = (message: Omit<OfflineMessage, 'id' | 'status' | 'timestamp'>) => {
     const newMessage: OfflineMessage = {
       id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      content,
       timestamp: new Date().toISOString(),
       status: isOnline ? 'sent' : 'pending',
+      ...message,
     };
 
     setMessages(prev => [...prev, newMessage]);

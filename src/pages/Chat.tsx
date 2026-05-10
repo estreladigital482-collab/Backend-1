@@ -5,12 +5,17 @@ import { Input } from "@/components/ui/input";
 import { ParticleSphere } from "@/components/ParticleSphere";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChatMessage as ChatMessageCard } from "@/components/ChatMessage";
+import { ConflictResolutionModal } from "@/components/ConflictResolutionModal";
 import { supabase } from "@/integrations/supabase/client";
 import { getApiBase, getAuthHeaders } from "@/lib/api";
 import type { AiMode, AiProvider, ChatMessage, ParticleShape, SphereState, VoiceId } from "@/lib/types";
 import { createRecognition, getVoiceConfig, speak, stopSpeaking } from "@/lib/speech";
 import { inferShape } from "@/lib/shapes";
-import { useVoiceActivity } from "@/hooks/useVoiceActivity";
+import { useOfflineChat } from '@/hooks/useOfflineChat';
+import { useLocalAuth } from '@/hooks/useLocalAuth';
+import { useSyncService } from '@/hooks/useSyncService';
+import { useVoiceActivity } from '@/hooks/useVoiceActivity';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { toast } from "sonner";
 
 const detectModeCommand = (text: string): AiMode | undefined => {
@@ -88,6 +93,8 @@ export default function Chat({
   onSignOut,
   onEditProfile,
   onRequestMode,
+  selectedMemory,
+  onMemoryUse,
 }: {
   userId: string;
   aiName: string;
@@ -95,6 +102,8 @@ export default function Chat({
   onSignOut: () => void;
   onEditProfile: () => void;
   onRequestMode?: (mode: AiMode) => void;
+  selectedMemory?: MemorySearchResult | null;
+  onMemoryUse?: () => void;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -107,9 +116,26 @@ export default function Chat({
   const [searchResults, setSearchResults] = useState<MemorySearchResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [memoryEnabled, setMemoryEnabled] = useState(true);
+  const [selectedMemoryLocal, setSelectedMemoryLocal] = useState<MemorySearchResult | null>(null);
+  const [showConflictModal, setShowConflictModal] = useState(false);
+  const [syncConflicts, setSyncConflicts] = useState<any[]>([]);
+  const [isSyncing, setIsSyncing] = useState(false);
   const recognitionRef = useRef<ReturnType<typeof createRecognition> | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lang = getVoiceConfig(voiceId).lang;
+
+  const { isOnline: networkOnline } = useLocalAuth();
+  const { messages: queuedMessages, addMessage, markAsSent, markAsFailed } = useOfflineChat();
+  const { performFullSync, resolveConflict } = useSyncService({ userId, isOnline: networkOnline });
+  const isLocalMode = userId.startsWith('local_');
+
+  const activeMemory = selectedMemory ?? selectedMemoryLocal;
+
+  useEffect(() => {
+    if (isLocalMode) {
+      setMessages(queuedMessages as ChatMessage[]);
+    }
+  }, [isLocalMode, queuedMessages]);
 
   // Live mic volume — drives particle vibration. Active only while recording.
   const { volume: micVolume, active: micActive } = useVoiceActivity(recording);
@@ -180,6 +206,11 @@ export default function Chat({
   }, [messages]);
 
   const persist = async (msg: ChatMessage) => {
+    if (isLocalMode || !networkOnline) {
+      addMessage({ role: msg.role, content: msg.content });
+      return;
+    }
+
     const { error } = await supabase
       .from("chat_messages")
       .insert({ user_id: userId, role: msg.role, content: msg.content });
@@ -189,9 +220,29 @@ export default function Chat({
     }
   };
 
+  const saveLocalMemory = async (msg: ChatMessage, category: string = "chat") => {
+    const stored = JSON.parse(localStorage.getItem('aura_sphere_memories') || '[]');
+    const newMemory = {
+      id: `memory_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      user_id: userId,
+      role: msg.role,
+      content: msg.content,
+      category,
+      tags: [category, 'offline'],
+      timestamp: new Date().toISOString(),
+      relevance: 0.75,
+    };
+    localStorage.setItem('aura_sphere_memories', JSON.stringify([newMemory, ...stored]));
+  };
+
   const saveMemory = async (msg: ChatMessage, category: string = "chat") => {
+    if (isLocalMode || !networkOnline) {
+      await saveLocalMemory(msg, category);
+      return;
+    }
+
     try {
-      await fetch(`${API_BASE}/api/v1/memory`, {
+      const response = await fetch(`${API_BASE}/api/v1/memory`, {
         method: "POST",
         headers: AUTH_HEADERS,
         body: JSON.stringify({
@@ -201,14 +252,34 @@ export default function Chat({
           category,
         }),
       });
+
+      if (!response.ok) {
+        await saveLocalMemory(msg, category);
+      }
     } catch (e) {
       console.warn("Memory save failed", e);
+      await saveLocalMemory(msg, category);
     }
   };
 
   const searchMemoryEntries = async (query: string): Promise<MemorySearchResult[]> => {
     const trimmed = query.trim();
     if (!trimmed) return [];
+
+    if (!networkOnline || isLocalMode) {
+      const localItems = JSON.parse(localStorage.getItem('aura_sphere_memories') || '[]') as Array<Record<string, unknown>>;
+      return localItems
+        .filter((item) =>
+          (item.content as string).toLowerCase().includes(trimmed.toLowerCase()) ||
+          ((item.tags as string[]) || []).some((tag) => tag.toLowerCase().includes(trimmed.toLowerCase())),
+        )
+        .map((item) => ({
+          id: String(item.id),
+          role: (item.role as 'user' | 'assistant' | 'system') ?? 'assistant',
+          content: String(item.content),
+          category: String(item.category ?? 'memória'),
+        }));
+    }
 
     const response = await fetch(
       `${API_BASE}/api/v1/search?user_id=${encodeURIComponent(userId)}&q=${encodeURIComponent(trimmed)}`,
@@ -222,12 +293,12 @@ export default function Chat({
     }
 
     const result = (await response.json()) as {
-      results?: Array<{ id: string; role: "user" | "assistant" | "system"; content: string; category: string }>;
+      results?: Array<{ id: string; role: string; content: string; category: string }>;
     };
 
     return (result.results ?? []).map((item) => ({
       id: item.id,
-      role: item.role,
+      role: (item.role as 'user' | 'assistant' | 'system') ?? 'assistant',
       content: item.content,
       category: item.category,
     }));
@@ -317,12 +388,25 @@ export default function Chat({
     persist(userMsg);
     saveMemory(userMsg, "user");
 
+    if (isLocalMode || !networkOnline) {
+      setState("idle");
+      onMemoryUse?.();
+      return;
+    }
+
     setState("thinking");
 
     try {
-        const selectedPreset = PROMPT_PRESETS.find((preset) => preset.id === presetId);
+      const selectedPreset = PROMPT_PRESETS.find((preset) => preset.id === presetId);
       const systemMessage = selectedPreset
         ? { role: "system" as const, content: selectedPreset.systemPrompt }
+        : null;
+
+      const selectedMemoryMessage = activeMemory
+        ? {
+            role: "system" as const,
+            content: `Use a memória selecionada para contextualizar a resposta:\n${activeMemory.content}`,
+          }
         : null;
 
       const memoryEntries = memoryEnabled ? await searchMemoryEntries(trimmed) : [];
@@ -340,7 +424,7 @@ export default function Chat({
           }
         : null;
 
-      const messagesForApi = [systemMessage, memoryMessage].filter(Boolean) as ChatMessage[];
+      const messagesForApi = [systemMessage, selectedMemoryMessage, memoryMessage].filter(Boolean) as ChatMessage[];
       const payloadMessages = messagesForApi.length > 0 ? [...messagesForApi, ...next] : next;
 
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
@@ -416,6 +500,8 @@ export default function Chat({
         const assistantMsg = { role: "assistant", content: assistantText };
         await persist(assistantMsg);
         await saveMemory(assistantMsg, "assistant");
+        onMemoryUse?.();
+        setSelectedMemoryLocal(null);
         speak(assistantText, voiceId, () => setState("idle"));
       } else {
         setState("idle");
@@ -488,7 +574,8 @@ export default function Chat({
           <h1 className="text-base font-semibold tracking-tight">{aiName}</h1>
           <p className="text-xs text-muted-foreground">{STATE_LABELS[state]}</p>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-2 items-center">
+          <OfflineIndicator />
           <Button variant="ghost" size="icon" onClick={onEditProfile} aria-label="Configurações">
             <Settings className="h-5 w-5" />
           </Button>
@@ -497,6 +584,23 @@ export default function Chat({
           </Button>
         </div>
       </header>
+
+      {activeMemory ? (
+        <section className="px-4 py-3 bg-violet-950/90 border-b border-violet-700 text-sm text-white">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="font-medium">Memória selecionada</div>
+              <p className="text-muted-foreground text-[0.85rem] line-clamp-2">{activeMemory.content}</p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => {
+              onMemoryUse?.();
+              setSelectedMemoryLocal(null);
+            }}>
+              Limpar contexto
+            </Button>
+          </div>
+        </section>
+      ) : null}
 
       <section className="px-4 py-3 border-b border-border/50 bg-background/80 backdrop-blur-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -704,6 +808,27 @@ export default function Chat({
           </Button>
         </form>
       </footer>
+
+      {/* Conflict Resolution Modal */}
+      <ConflictResolutionModal
+        isOpen={showConflictModal}
+        conflicts={syncConflicts}
+        onResolve={async (resolutions) => {
+          setIsSyncing(true);
+          for (const [conflictId, resolution] of Object.entries(resolutions)) {
+            const conflict = syncConflicts.find(c => c.id === conflictId);
+            if (conflict) {
+              await resolveConflict(conflict, resolution as any);
+            }
+          }
+          setSyncConflicts([]);
+          setShowConflictModal(false);
+          setIsSyncing(false);
+          toast.success("Conflitos resolvidos com sucesso!");
+        }}
+        onCancel={() => setShowConflictModal(false)}
+        isSyncing={isSyncing}
+      />
     </main>
   );
 }

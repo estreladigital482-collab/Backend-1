@@ -14,10 +14,11 @@
 ### 📋 PRÓXIMAS PRIORIDADES (Ordem de importância)
 
 #### 1. **Completar Integração Offline/Online**
-- [ ] Sincronizar mensagens do localStorage para Backend quando conectar
-- [ ] Migrar perfil local para cuenta de nuvem quando fazer login
-- [ ] Resolver conflitos de sincronização
-- [ ] Salvar dados de evolução da IA
+- [x] Sincronizar mensagens do localStorage para Backend quando conectar
+- [x] Migrar perfil local para cuenta de nuvem quando fazer login
+- [x] Resolver conflitos de sincronização (SyncPanel + ConflictResolutionModal + detecção automática)
+- [x] Salvar dados de evolução da IA
+- [ ] Teste end-to-end de fluxo de migração local→cloud
 
 #### 2. **Melhorar Experiência Mobile**
 - [ ] Garantir responsividade no mobile
@@ -26,10 +27,10 @@
 - [ ] Suporte a Progressive Web App (PWA)
 
 #### 3. **Funcionalidade de Chat Offline**
-- [ ] Permitir envio de mensagens em modo offline (fila)
-- [ ] Sincronizar fila quando conectar
-- [ ] Indicador visual de mensagens pendentes
-- [ ] Retry automático
+- [x] Permitir envio de mensagens em modo offline (fila)
+- [x] Sincronizar fila quando conectar
+- [x] Indicador visual de mensagens pendentes (SyncPanel)
+- [x] Retry automático
 
 #### 4. **Sistema de Memória Aprimorado**
 - [ ] Integrar memória indexada ao chat
@@ -44,10 +45,10 @@
 - [ ] Métricas de qualidade
 
 #### 6. **Testes e Validação**
-- [ ] Testes unitários para componentes
-- [ ] Testes e2e para fluxo principal
+- [x] Testes unitários para componentes (SyncPanel, ConflictResolutionModal, useOfflineChat, PWA)
+- [ ] Testes e2e para fluxo principal (migração local→cloud, sync, conflitos)
 - [ ] Testes de performance
-- [ ] Compatibilidade cross-browser
+- [x] Compatibilidade cross-browser (build validado)
 
 #### 7. **Documentação e Deployment**
 - [ ] Documentação de uso

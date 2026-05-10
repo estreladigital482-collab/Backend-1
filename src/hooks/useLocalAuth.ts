@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { ChatMessage } from '@/lib/types';
 
 interface LocalUser {
   id: string;
@@ -8,6 +9,11 @@ interface LocalUser {
   createdAt: string;
   isLocal: true;
 }
+
+type LocalStoredMessage = ChatMessage & {
+  status?: 'pending' | 'sent' | 'failed';
+  timestamp?: string;
+};
 
 interface LocalAuthState {
   user: LocalUser | null;
@@ -84,7 +90,17 @@ export function useLocalAuth() {
     }));
   };
 
-  const getLocalMessages = () => {
+  const clearLocalSession = () => {
+    localStorage.removeItem(LOCAL_USER_KEY);
+    localStorage.removeItem(LOCAL_MESSAGES_KEY);
+    setState(prev => ({
+      ...prev,
+      user: null,
+      isAuthenticated: false,
+    }));
+  };
+
+  const getLocalMessages = (): LocalStoredMessage[] => {
     try {
       const messages = localStorage.getItem(LOCAL_MESSAGES_KEY);
       return messages ? JSON.parse(messages) : [];
@@ -94,7 +110,7 @@ export function useLocalAuth() {
     }
   };
 
-  const saveLocalMessages = (messages: any[]) => {
+  const saveLocalMessages = (messages: LocalStoredMessage[]) => {
     localStorage.setItem(LOCAL_MESSAGES_KEY, JSON.stringify(messages));
   };
 
@@ -102,6 +118,7 @@ export function useLocalAuth() {
     ...state,
     createLocalUser,
     logout,
+    clearLocalSession,
     getLocalMessages,
     saveLocalMessages,
   };

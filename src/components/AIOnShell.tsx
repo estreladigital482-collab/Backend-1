@@ -8,7 +8,11 @@ import { ModeSelector } from "@/components/ModeSelector";
 import { TVMode } from "@/components/TVMode";
 import { VoiceMode } from "@/components/VoiceMode";
 import { VersionDashboard } from "@/components/VersionDashboard";
+import { MemoryViewer } from "@/components/MemoryViewer";
+import { SyncPanel } from "@/components/SyncPanel";
+import Chat from "@/pages/Chat";
 import { speak } from "@/lib/speech";
+import { useLocalAuth } from "@/hooks/useLocalAuth";
 import type { AiMode, SphereState, VoiceId } from "@/lib/types";
 
 const AI_MODES: { id: AiMode; label: string; description: string }[] = [
@@ -39,12 +43,20 @@ export default function AIOnShell({
   onSignOut: () => void;
   onEditProfile: () => void;
 }) {
+  const { isOnline } = useLocalAuth();
   const [activeMode, setActiveMode] = useState<AiMode>("Chat");
   const [uiMode, setUiMode] = useState<UiMode>("standard");
   const [isMinimized, setIsMinimized] = useState(false);
   const [hasWelcomed, setHasWelcomed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showInitialPresentation, setShowInitialPresentation] = useState(true);
+  const [selectedMemory, setSelectedMemory] = useState<{
+    id: string;
+    content: string;
+    category: string;
+    tags: string[];
+    relevance: number;
+  } | null>(null);
 
   // Tela de carregamento finalizada
   const handleLoadingComplete = () => {
@@ -125,6 +137,8 @@ export default function AIOnShell({
             onEditProfile={onEditProfile}
             onSignOut={onSignOut}
             onRequestMode={(mode) => setActiveMode(mode)}
+            selectedMemory={selectedMemory}
+            onMemoryUse={() => setSelectedMemory(null)}
           />
         );
       case "Memória":
@@ -133,8 +147,8 @@ export default function AIOnShell({
             <MemoryViewer
               userId={userId}
               onMemorySelect={(memory) => {
-                // Integração futura: usar memória no chat
-                console.log('Memória selecionada:', memory);
+                setSelectedMemory(memory);
+                setActiveMode('Chat');
               }}
             />
           </div>
@@ -223,19 +237,25 @@ export default function AIOnShell({
       {/* Conteúdo principal */}
       <div className="flex-1 bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden pb-16 md:pb-0">
         {/* Header mobile */}
-        <div className="md:hidden p-4 bg-slate-950/20 border-b border-white/5 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-semibold text-white">{aiName}</h1>
-            <span className="text-sm text-gray-400">
-              {AI_MODES.find(m => m.id === activeMode)?.label}
-            </span>
+        <div className="md:hidden p-4 bg-slate-950/20 border-b border-white/5 space-y-3">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-semibold text-white">{aiName}</h1>
+              <span className="text-sm text-gray-400">
+                {AI_MODES.find(m => m.id === activeMode)?.label}
+              </span>
+            </div>
+            <ModeSelector value={uiMode} onChange={setUiMode} />
           </div>
-          <ModeSelector value={uiMode} onChange={setUiMode} />
+          <SyncPanel userId={userId} isOnline={isOnline} />
         </div>
 
         {/* Header desktop */}
-        <div className="hidden md:block p-4 bg-slate-950/20 border-b border-white/5">
-          <ModeSelector value={uiMode} onChange={setUiMode} />
+        <div className="hidden md:block p-4 bg-slate-950/20 border-b border-white/5 space-y-3">
+          <div className="flex justify-between items-center mb-3">
+            <ModeSelector value={uiMode} onChange={setUiMode} />
+          </div>
+          <SyncPanel userId={userId} isOnline={isOnline} />
         </div>
 
         {renderModeContent()}

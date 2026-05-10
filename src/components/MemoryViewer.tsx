@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiBase } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,39 +26,40 @@ export function MemoryViewer({ userId, onMemorySelect }: MemoryViewerProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Mock data - em produção, buscar do backend
   useEffect(() => {
-    const mockMemories: MemoryItem[] = [
-      {
-        id: '1',
-        content: 'O usuário prefere respostas em português brasileiro',
-        category: 'preferências',
-        tags: ['idioma', 'português', 'comunicação'],
-        timestamp: new Date().toISOString(),
-        relevance: 0.95,
-      },
-      {
-        id: '2',
-        content: 'Interesse em desenvolvimento de IA e automação',
-        category: 'interesses',
-        tags: ['IA', 'automação', 'desenvolvimento'],
-        timestamp: new Date(Date.now() - 86400000).toISOString(),
-        relevance: 0.88,
-      },
-      {
-        id: '3',
-        content: 'Trabalha com projetos de software e precisa de ajuda com planejamento',
-        category: 'contexto',
-        tags: ['projetos', 'planejamento', 'software'],
-        timestamp: new Date(Date.now() - 172800000).toISOString(),
-        relevance: 0.82,
-      },
-    ];
+    const loadMemories = async () => {
+      setIsLoading(true);
+      const storedMemories = (JSON.parse(localStorage.getItem('aura_sphere_memories') || '[]') as MemoryItem[])
+        .map((memory) => ({
+          ...memory,
+          relevance: memory.relevance ?? 0.75,
+        }));
 
-    setTimeout(() => {
-      setMemories(mockMemories);
-      setIsLoading(false);
-    }, 1000);
+      if (!navigator.onLine) {
+        setMemories(storedMemories);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${getApiBase()}/api/v1/memories?user_id=${encodeURIComponent(userId)}`);
+        if (!response.ok) {
+          throw new Error(`Memory request failed ${response.status}`);
+        }
+
+        const result = (await response.json()) as { memories?: MemoryItem[] };
+        const remoteMemories = result.memories ?? [];
+        const merged = [...storedMemories, ...remoteMemories];
+
+        setMemories(merged);
+      } catch (error) {
+        setMemories(storedMemories);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadMemories();
   }, [userId]);
 
   const filteredMemories = memories.filter(memory => {
