@@ -132,10 +132,10 @@ headers:
 
 **Exemplo de Tarefa:**
 ```
-- [ ] DB-001 | Criar tabela `plans` (id, user_id, title, status, progress) | - | P0 | S1
-- [ ] API-001 | POST /api/v1/planning/plans | DB-001 | P0 | S1
-- [ ] UI-001 | Criar componente PlanningTab | - | P0 | S1
-- [ ] TEST-001 | Testes unitários planning API | API-002 | P0 | S2
+- [x] DB-001 | Criar tabela `plans` (id, user_id, title, status, progress) | - | P0 | S1 ✅ concluído
+- [x] API-001 | POST /api/v1/planning/plans | DB-001 | P0 | S1 ✅ concluído
+- [x] UI-001 | Criar componente PlanningTab | - | P0 | S1 ✅ concluído
+- [x] TEST-001 | Testes unitários planning API | API-002 | P0 | S2 ✅ concluído
 ```
 
 **Como usar:**
@@ -349,7 +349,7 @@ Para rastrear seu progresso:
 
 **Exemplo:**
 ```diff
-- [ ] DB-001 | Criar tabela plans | - | P0 | S1
+- [x] DB-001 | Criar tabela plans | - | P0 | S1 ✅ concluído
 + 🔄 DB-001 | Criar tabela plans | - | P0 | S1
 + ✅ DB-001 | Criar tabela plans | - | P0 | S1
 ```

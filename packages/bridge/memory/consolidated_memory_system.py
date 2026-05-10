@@ -6,6 +6,7 @@ Usa busca semântica e cache local para economizar tokens
 from typing import List, Dict, Optional
 from datetime import datetime
 import json
+from ..utils.data_sanitizer import sanitize_memory_export
 
 class ConsolidatedMemorySystem:
     """Sistema central de memória que integra todas as camadas"""
@@ -134,7 +135,9 @@ class ConsolidatedMemorySystem:
             if tokens_used >= max_tokens:
                 break
             
-            mem_text = f"- [{mem['type']}] {mem['content']}\n"
+            # Sanitizar conteúdo antes de incluir no prompt
+            sanitized_content = sanitize_memory_export(mem['content'])
+            mem_text = f"- [{mem['type']}] {sanitized_content}\n"
             tokens_used += len(mem_text.split())
             context += mem_text
         

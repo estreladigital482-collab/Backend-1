@@ -1,15 +1,52 @@
-name: CI
+name: CI - Tests, Lint, Build & Security
 
 on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  backend-tests:
+  frontend-lint:
+    name: Frontend - ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ESLint
+        run: npm run lint
+
+  frontend-typecheck:
+    name: Frontend - TypeScript Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run TypeScript compiler
+        run: npx tsc --noEmit
+
+  backend-lint:
+    name: Backend - Python Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,6 +54,26 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          cd packages/bridge
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 pylint
+      - name: Run Flake8
+        run: flake8 packages/bridge --max-line-length=120 --extend-ignore=E203,W503
+
+  backend-tests:
+    name: Backend - Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
       - name: Install backend dependencies
         run: |
           cd packages/bridge
@@ -25,11 +82,11 @@ jobs:
       - name: Run backend tests
         run: |
           cd packages/bridge
-          pytest
+          pytest -v --tb=short
 
   frontend-tests:
+    name: Frontend - Unit Tests
     runs-on: ubuntu-latest
-    needs: backend-tests
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
@@ -38,8 +95,99 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - name: Install frontend dependencies
-        run: |
-          npm ci
+        run: npm ci
       - name: Run frontend unit tests
+        run: npm test
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        if: always()
+        continue-on-error: true
+
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    needs: [frontend-typecheck, backend-tests, frontend-tests]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Check bundle size
         run: |
-          npm test
+          BUNDLE_SIZE=$(du -sh dist 2>/dev/null | cut -f1)
+          echo "📦 Bundle size: $BUNDLE_SIZE"
+          BUNDLE_BYTES=$(du -s dist | cut -f1)
+          if [ "$BUNDLE_BYTES" -gt 5242880 ]; then
+            echo "⚠️ Warning: Bundle size > 5MB"
+          fi
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run npm audit
+        run: npm audit --audit-level=high || true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Check Python dependencies
+        run: |
+          cd packages/bridge
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install safety
+          safety check --json || true
+
+  docs-validation:
+    name: Docs Validation
+    runs-on: ubuntu-latest
+    needs: [frontend-lint, backend-lint, frontend-typecheck, backend-tests]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run docs validation
+        run: npm run doc:validate
+
+  quality-summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [frontend-lint, backend-lint, frontend-tests, backend-tests, build, security]
+    steps:
+      - name: Run summary
+        run: |
+          echo "✅ CI Pipeline Completed"
+          echo "Frontend Lint: ${{ needs.frontend-lint.result }}"
+          echo "Backend Lint: ${{ needs.backend-lint.result }}"
+          echo "Frontend Tests: ${{ needs.frontend-tests.result }}"
+          echo "Backend Tests: ${{ needs.backend-tests.result }}"
+          echo "Build: ${{ needs.build.result }}"
+          echo "Security: ${{ needs.security.result }}"

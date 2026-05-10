@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Copy } from "lucide-react";
+import { Copy, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import type { ChatMessage } from "@/lib/types";
@@ -8,9 +8,11 @@ import type { ChatMessage } from "@/lib/types";
 export function ChatMessage({
   message,
   onCopy,
+  onEdit,
 }: {
   message: ChatMessage;
   onCopy: () => void;
+  onEdit?: () => void;
 }) {
   const [hovering, setHovering] = useState(false);
   const isUser = message.role === "user";
@@ -33,6 +35,25 @@ export function ChatMessage({
             {isUser ? "Você" : "Assistente"}
           </span>
           <div className="flex items-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            {!isUser && onEdit ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      onEdit();
+                    }}
+                    aria-label="Editar resposta"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Editar resposta</TooltipContent>
+              </Tooltip>
+            ) : null}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

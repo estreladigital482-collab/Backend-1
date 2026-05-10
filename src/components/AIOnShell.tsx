@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import { ParticleSphere } from "@/components/ParticleSphere";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { PlanningTab } from "@/components/PlanningTab";
@@ -13,6 +14,7 @@ import { SyncPanel } from "@/components/SyncPanel";
 import Chat from "@/pages/Chat";
 import { speak } from "@/lib/speech";
 import { useLocalAuth } from "@/hooks/useLocalAuth";
+import { TourModal } from "@/components/TourModal";
 import type { AiMode, SphereState, VoiceId } from "@/lib/types";
 
 const AI_MODES: { id: AiMode; label: string; description: string }[] = [
@@ -44,9 +46,11 @@ export default function AIOnShell({
   onEditProfile: () => void;
 }) {
   const { isOnline } = useLocalAuth();
+  const { theme, setTheme } = useTheme();
   const [activeMode, setActiveMode] = useState<AiMode>("Chat");
   const [uiMode, setUiMode] = useState<UiMode>("standard");
   const [isMinimized, setIsMinimized] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const [hasWelcomed, setHasWelcomed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showInitialPresentation, setShowInitialPresentation] = useState(true);
@@ -66,6 +70,19 @@ export default function AIOnShell({
       setShowInitialPresentation(false);
       setHasWelcomed(true);
     }, 3000);
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const seenTour = localStorage.getItem("aura_sphere_tour_seen");
+    if (!seenTour) {
+      setShowTour(true);
+    }
+  }, []);
+
+  const closeTour = () => {
+    localStorage.setItem("aura_sphere_tour_seen", "true");
+    setShowTour(false);
   };
 
   // Se está carregando, mostrar tela de carregamento
@@ -217,12 +234,13 @@ export default function AIOnShell({
 
       {/* Menu mobile - bottom navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-white/10 z-50">
-        <div className="flex justify-around items-center py-2 px-4">
+        <div className="flex justify-around items-center py-2 px-4" role="tablist" aria-label="Modos do Aura Sphere">
           {AI_MODES.slice(0, 5).map((mode) => (
             <button
               key={mode.id}
               onClick={() => setActiveMode(mode.id)}
-              className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+              aria-current={activeMode === mode.id ? 'page' : undefined}
+              className={`flex flex-col items-center p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 ${
                 activeMode === mode.id
                   ? 'bg-purple-600 text-white'
                   : 'text-gray-400 hover:text-white hover:bg-white/10'
@@ -234,26 +252,56 @@ export default function AIOnShell({
         </div>
       </div>
 
+      <TourModal isOpen={showTour} onClose={closeTour} />
+
       {/* Conteúdo principal */}
       <div className="flex-1 bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden pb-16 md:pb-0">
         {/* Header mobile */}
         <div className="md:hidden p-4 bg-slate-950/20 border-b border-white/5 space-y-3">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-2">
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-semibold text-white">{aiName}</h1>
               <span className="text-sm text-gray-400">
                 {AI_MODES.find(m => m.id === activeMode)?.label}
               </span>
             </div>
-            <ModeSelector value={uiMode} onChange={setUiMode} />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                aria-label="Alternar tema claro/escuro"
+                className="h-10 w-10 rounded-xl bg-slate-800 text-gray-200 hover:bg-slate-700 transition"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
+                {theme === "dark" ? "☀️" : "🌙"}
+              </button>
+              <ModeSelector value={uiMode} onChange={setUiMode} />
+            </div>
           </div>
           <SyncPanel userId={userId} isOnline={isOnline} />
         </div>
 
         {/* Header desktop */}
         <div className="hidden md:block p-4 bg-slate-950/20 border-b border-white/5 space-y-3">
-          <div className="flex justify-between items-center mb-3">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between mb-3">
             <ModeSelector value={uiMode} onChange={setUiMode} />
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                aria-label="Abrir tour inicial"
+                className="rounded-xl bg-slate-800 px-3 py-2 text-sm text-gray-200 hover:bg-slate-700 transition"
+                onClick={() => setShowTour(true)}
+              >
+                Tour
+              </button>
+              <button
+                type="button"
+                aria-label="Alternar tema claro/escuro"
+                className="rounded-xl bg-slate-800 px-3 py-2 text-sm text-gray-200 hover:bg-slate-700 transition"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
+                {theme === "dark" ? "Modo claro" : "Modo escuro"}
+              </button>
+            </div>
           </div>
           <SyncPanel userId={userId} isOnline={isOnline} />
         </div>

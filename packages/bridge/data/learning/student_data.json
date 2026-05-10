@@ -4,12 +4,18 @@
     "level": 1,
     "score": 0,
     "correct": 0,
-    "incorrect": 1,
+    "incorrect": 4,
     "weaknesses": [
-      "saudar"
+      "saudar",
+      "perguntas simples",
+      "present simple",
+      "diálogo curto"
     ],
     "history": [
-      "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: saudar, nomes comuns."
+      "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: saudar, nomes comuns.",
+      "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: perguntas simples, respostas.",
+      "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: present simple, pronomes.",
+      "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: diálogo curto, perguntas pessoais."
     ],
     "active_plan": {
       "topic": "inglês",
@@ -49,6 +55,6 @@
         }
       ]
     },
-    "last_updated": "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: saudar, nomes comuns."
+    "last_updated": "Avaliação: errada - A resposta está incompleta. Vamos revisar a ideia principal e tentar novamente. Preste atenção em: diálogo curto, perguntas pessoais."
   }
 }

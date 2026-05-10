@@ -3,26 +3,26 @@
   "current_topic": null,
   "current_session": {
     "topic": "inglês",
-    "started_at": "2026-05-05T08:32:13.545033",
+    "started_at": "2026-05-09T10:56:23.243166",
     "status": "stopped",
     "history": [
       {
-        "timestamp": "2026-05-05T08:32:13.545511",
+        "timestamp": "2026-05-09T10:56:23.243716",
         "entry": "Sessão iniciada para inglês"
       },
       {
-        "timestamp": "2026-05-05T08:32:13.549149",
-        "entry": "Ensino aplicado: vocabulário básico"
+        "timestamp": "2026-05-09T10:56:23.247536",
+        "entry": "Ensino aplicado: conversação básica"
       },
       {
-        "timestamp": "2026-05-05T08:32:13.552888",
+        "timestamp": "2026-05-09T10:56:23.251258",
         "entry": "Avaliação realizada: errada"
       },
       {
-        "timestamp": "2026-05-05T08:32:13.561277",
+        "timestamp": "2026-05-09T10:56:23.259620",
         "entry": "Sessão finalizada"
       }
     ],
-    "ended_at": "2026-05-05T08:32:13.561002"
+    "ended_at": "2026-05-09T10:56:23.259355"
   }
 }

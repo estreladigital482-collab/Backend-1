@@ -282,23 +282,23 @@ git sync
 
 ## ✅ Checklist de Setup
 
-- [ ] Tornar scripts executáveis:
+- [x] Tornar scripts executáveis: ✅ concluído
   ```bash
   chmod +x scripts/auto_commit.sh scripts/auto_commit.py scripts/setup_git_hooks.sh
   ```
 
-- [ ] Configurar git localmente (se necessário):
+- [x] Configurar git localmente (se necessário): ✅ concluído
   ```bash
   git config user.name "Seu Nome"
   git config user.email "seu.email@example.com"
   ```
 
-- [ ] Opcionalmente, setup git hooks:
+- [x] Opcionalmente, setup git hooks: ✅ concluído
   ```bash
   ./scripts/setup_git_hooks.sh
   ```
 
-- [ ] Testar com primeiro commit:
+- [x] Testar com primeiro commit: ✅ concluído
   ```bash
   echo "test" > temp.txt
   ./scripts/auto_commit.sh
@@ -306,7 +306,7 @@ git sync
   rm temp.txt
   ```
 
-- [ ] Verificar que funcionou:
+- [x] Verificar que funcionou: ✅ concluído
   ```bash
   git log --oneline -1
   # Deve mostrar seu commit

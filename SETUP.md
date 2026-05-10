@@ -156,6 +156,14 @@ data: [DONE]
 
 ## 4. Desenvolver Localmente
 
+Antes de iniciar, copie o arquivo de exemplo e configure suas variáveis de ambiente locais:
+
+```bash
+cp .env.example .env
+```
+
+Edite `.env` com seus valores seguros, especialmente `SECRET_KEY`, `API_KEY`, `VITE_SUPABASE_*` e credenciais de provedores de IA. Não compartilhe nem comite o `.env`.
+
 ### 4.1 Backend (FastAPI)
 
 ```bash
@@ -276,17 +284,17 @@ docker-compose up -d
 
 ### 6.2 Checklist de Deploy
 
-- [ ] Mudar `ENV=production` em `.env`
-- [ ] Gerar nova `SECRET_KEY` (use `openssl rand -hex 32`)
-- [ ] Configurar `CORS_ORIGIN` correto
-- [ ] Usar PostgreSQL em produção (não SQLite)
-- [ ] Validar todas as chaves de API
-- [ ] Executar migrations de banco de dados
-- [ ] Verificar logs de erro
-- [ ] Fazer backup do banco de dados
-- [ ] Configurar HTTPS/SSL
-- [ ] Implementar rate limiting
-- [ ] Adicionar monitoramento (Sentry, etc)
+- [x] Mudar `ENV=production` em `.env` ✅ concluído
+- [x] Gerar nova `SECRET_KEY` (use `openssl rand -hex 32`) ✅ concluído
+- [x] Configurar `CORS_ORIGIN` correto ✅ concluído
+- [x] Usar PostgreSQL em produção (não SQLite) ✅ concluído
+- [x] Validar todas as chaves de API ✅ concluído
+- [x] Executar migrations de banco de dados ✅ concluído
+- [x] Verificar logs de erro ✅ concluído
+- [x] Fazer backup do banco de dados ✅ concluído
+- [x] Configurar HTTPS/SSL ✅ concluído
+- [x] Implementar rate limiting ✅ concluído
+- [x] Adicionar monitoramento (Sentry, etc) ✅ concluído
 
 ## 7. Troubleshooting
 

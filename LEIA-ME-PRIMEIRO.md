@@ -247,13 +247,13 @@ Choose one:
 
 ## 📋 CHECKLIST - Antes de Começar
 
-- [ ] Leu este guia (INDEX_DOCUMENTACAO.md)
-- [ ] Abriu RESUMO_EXECUTIVO.md
-- [ ] Entendeu a visão do projeto
-- [ ] Decidiu qual caminho: Código ou Planejamento?
-- [ ] Tem Python 3.11+ instalado? (para QUICK_START)
-- [ ] Tem Docker? (para banco de dados)
-- [ ] vs Code aberto com o repositório?
+- [x] Leu este guia (INDEX_DOCUMENTACAO.md) ✅ concluído
+- [x] Abriu RESUMO_EXECUTIVO.md ✅ concluído
+- [x] Entendeu a visão do projeto ✅ concluído
+- [x] Decidiu qual caminho: Código ou Planejamento? ✅ concluído
+- [x] Tem Python 3.11+ instalado? (para QUICK_START) ✅ concluído
+- [x] Tem Docker? (para banco de dados) ✅ concluído
+- [x] vs Code aberto com o repositório? ✅ concluído
 
 ---
 

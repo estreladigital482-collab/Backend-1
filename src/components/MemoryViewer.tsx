@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getApiBase } from '@/lib/api';
+import { getApiBase, getAuthHeaders } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Brain, Clock, Tag } from 'lucide-react';
+import { Search, Plus, Brain, Clock, Tag, ArrowRight, Pin } from 'lucide-react';
 
 interface MemoryItem {
   id: string;
@@ -25,31 +25,55 @@ export function MemoryViewer({ userId, onMemorySelect }: MemoryViewerProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
 
   useEffect(() => {
     const loadMemories = async () => {
       setIsLoading(true);
-      const storedMemories = (JSON.parse(localStorage.getItem('aura_sphere_memories') || '[]') as MemoryItem[])
-        .map((memory) => ({
-          ...memory,
-          relevance: memory.relevance ?? 0.75,
-        }));
+      
+      const cacheKey = `aura_sphere_memories_cache_${userId}`;
+      const cacheTimestampKey = `aura_sphere_memories_timestamp_${userId}`;
+      const getCachedMemories = () => {
+        const cached = localStorage.getItem(cacheKey);
+        return (JSON.parse(cached || '[]') as MemoryItem[])
+          .map((memory) => ({
+            ...memory,
+            relevance: memory.relevance ?? 0.75,
+          }));
+      };
+      
+      const storedMemories = getCachedMemories();
 
       if (!navigator.onLine) {
         setMemories(storedMemories);
         setIsLoading(false);
         return;
       }
+      
+      // Check cache age - refresh if older than 5 minutes
+      const cacheTimestamp = localStorage.getItem(cacheTimestampKey);
+      const cacheAgeMs = cacheTimestamp ? new Date().getTime() - new Date(cacheTimestamp).getTime() : Infinity;
+      const shouldRefresh = cacheAgeMs > 5 * 60 * 1000; // 5 minutes
+      
+      if (!shouldRefresh && storedMemories.length > 0) {
+        setMemories(storedMemories);
+        setIsLoading(false);
+        return;
+      }
 
       try {
-        const response = await fetch(`${getApiBase()}/api/v1/memories?user_id=${encodeURIComponent(userId)}`);
-        if (!response.ok) {
-          throw new Error(`Memory request failed ${response.status}`);
-        }
-
-        const result = (await response.json()) as { memories?: MemoryItem[] };
+        const response = await fetch(`${getApiBase()}/api/v1/memories?user_id=${encodeURIComponent(userId)}`, {
+          headers: getAuthHeaders(),
+        });
+        const result = await response.json();
         const remoteMemories = result.memories ?? [];
         const merged = [...storedMemories, ...remoteMemories];
+        
+        // Cache results with timestamp
+        const cacheKey = `aura_sphere_memories_cache_${userId}`;
+        const cacheTimestampKey = `aura_sphere_memories_timestamp_${userId}`;
+        localStorage.setItem(cacheKey, JSON.stringify(merged));
+        localStorage.setItem(cacheTimestampKey, new Date().toISOString());
 
         setMemories(merged);
       } catch (error) {
@@ -60,14 +84,37 @@ export function MemoryViewer({ userId, onMemorySelect }: MemoryViewerProps) {
     };
 
     loadMemories();
+    const storedPinnedIds = JSON.parse(localStorage.getItem('aura_sphere_memory_pinned') || '[]') as string[];
+    if (Array.isArray(storedPinnedIds)) {
+      setPinnedIds(storedPinnedIds);
+    }
   }, [userId]);
 
-  const filteredMemories = memories.filter(memory => {
-    const matchesSearch = memory.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         memory.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || memory.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const pinMemory = (id: string) => {
+    const nextPinned = pinnedIds.includes(id)
+      ? pinnedIds.filter((p) => p !== id)
+      : [...pinnedIds, id];
+    setPinnedIds(nextPinned);
+    localStorage.setItem('aura_sphere_memory_pinned', JSON.stringify(nextPinned));
+  };
+
+  const handleUseMemory = (memory: MemoryItem) => {
+    onMemorySelect?.(memory);
+  };
+
+  const filteredMemories = memories
+    .filter(memory => {
+      const matchesSearch = memory.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        memory.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesCategory = selectedCategory === 'all' || memory.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      const aPinned = pinnedIds.includes(a.id) ? 0 : 1;
+      const bPinned = pinnedIds.includes(b.id) ? 0 : 1;
+      if (aPinned !== bPinned) return aPinned - bPinned;
+      return b.relevance - a.relevance;
+    });
 
   const categories = ['all', ...Array.from(new Set(memories.map(m => m.category)))];
 
@@ -177,6 +224,29 @@ export function MemoryViewer({ userId, onMemorySelect }: MemoryViewerProps) {
               </div>
               <div className="mt-2 text-xs text-gray-400">
                 Relevância: {Math.round(memory.relevance * 100)}%
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleUseMemory(memory);
+                  }}
+                >
+                  <ArrowRight className="w-3 h-3 mr-2" />Usar memória
+                </Button>
+                <Button
+                  variant={pinnedIds.includes(memory.id) ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    pinMemory(memory.id);
+                  }}
+                >
+                  <Pin className="w-3 h-3 mr-2" />
+                  {pinnedIds.includes(memory.id) ? 'Desfixar' : 'Fixar'}
+                </Button>
               </div>
             </CardContent>
           </Card>

@@ -10,8 +10,6 @@ from typing import Optional, Dict, Any
 from base64 import urlsafe_b64encode
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kex import ECDH
-from cryptography.hazmat.primitives.kex.ec import SECP256R1
 from instagrapi import Client
 from instagrapi.exceptions import LoginRequired
 

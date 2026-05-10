@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Send, Mic, MicOff, LogOut, Settings, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { ParticleSphere } from "@/components/ParticleSphere";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChatMessage as ChatMessageCard } from "@/components/ChatMessage";
@@ -16,6 +17,8 @@ import { useLocalAuth } from '@/hooks/useLocalAuth';
 import { useSyncService } from '@/hooks/useSyncService';
 import { useVoiceActivity } from '@/hooks/useVoiceActivity';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
+import { ReviewResponseModal } from '@/components/ReviewResponseModal';
+import { sanitizeMemoryContent } from '@/lib/utils';
 import { toast } from "sonner";
 
 const detectModeCommand = (text: string): AiMode | undefined => {
@@ -76,12 +79,33 @@ const PROMPT_PRESETS: PromptPreset[] = [
     systemPrompt: "Você é um assistente criativo que propõe ideias de projetos, sugestões e soluções inovadoras.",
   },
   {
+    id: "summary",
+    label: "Resumido",
+    description: "Responda de forma concisa e focada nos pontos principais.",
+    systemPrompt: "Você responde de forma sucinta e direta, resumindo as informações mais importantes sem detalhes extras.",
+  },
+  {
+    id: "formal",
+    label: "Formal",
+    description: "Use tom formal e profissional nas respostas.",
+    systemPrompt: "Você é um assistente profissional que responde de forma formal, clara e respeitosa.",
+  },
+  {
+    id: "technical",
+    label: "Técnico",
+    description: "Use linguagem técnica apropriada e explique conceitos complexos.",
+    systemPrompt: "Você é um assistente técnico que explica conceitos complexos com precisão, usando termos apropriados e exemplos claros.",
+  },
+  {
     id: "memory",
     label: "Memória",
     description: "Mantenha contexto e lembre-se de preferências do usuário.",
     systemPrompt: "Você mantém o contexto e lembra preferências do usuário ao responder, usando o histórico para personalizar a resposta.",
   },
 ];
+
+const PROMPT_PRESET_STORAGE_KEY = "aura_sphere_prompt_presets";
+const SELECTED_PROMPT_PRESET_KEY = "aura_sphere_selected_prompt_preset";
 
 const API_BASE = getApiBase();
 const AUTH_HEADERS = getAuthHeaders();
@@ -113,10 +137,21 @@ export default function Chat({
   const [shape, setShape] = useState<ParticleShape>("sphere");
   const [recording, setRecording] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [historyPage, setHistoryPage] = useState(0);
+  const historyLimit = 20;
+  const [hasMoreHistory, setHasMoreHistory] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<MemorySearchResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [memoryEnabled, setMemoryEnabled] = useState(true);
   const [selectedMemoryLocal, setSelectedMemoryLocal] = useState<MemorySearchResult | null>(null);
+  const [showPresetEditor, setShowPresetEditor] = useState(false);
+  const [customPresets, setCustomPresets] = useState<PromptPreset[]>([]);
+  const [newPresetLabel, setNewPresetLabel] = useState("");
+  const [newPresetDescription, setNewPresetDescription] = useState("");
+  const [newPresetPrompt, setNewPresetPrompt] = useState("");
+  const [editingMessage, setEditingMessage] = useState<ChatMessage | null>(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [showConflictModal, setShowConflictModal] = useState(false);
   const [syncConflicts, setSyncConflicts] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -129,7 +164,152 @@ export default function Chat({
   const { performFullSync, resolveConflict } = useSyncService({ userId, isOnline: networkOnline });
   const isLocalMode = userId.startsWith('local_');
 
+  const allPresets = [...PROMPT_PRESETS, ...customPresets];
+
   const activeMemory = selectedMemory ?? selectedMemoryLocal;
+
+  const normalizeText = (text: string) =>
+    text
+      .toLowerCase()
+      .replace(/[\W_]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const hasRepeatedAssistantContent = () => {
+    const assistantMessages = messages
+      .filter((message) => message.role === "assistant")
+      .map((message) => normalizeText(message.content).slice(0, 240));
+
+    const counts = new Map<string, number>();
+    for (const snippet of assistantMessages) {
+      counts.set(snippet, (counts.get(snippet) ?? 0) + 1);
+      if (counts.get(snippet)! > 1) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  const detectQueryCategory = (text: string) => {
+    const normalized = normalizeText(text);
+    if (/(plano|tarefa|projeto|cronograma|agenda)/.test(normalized)) {
+      return "planejamento";
+    }
+    if (/(código|debug|bug|implementação|script)/.test(normalized)) {
+      return "técnico";
+    }
+    if (/(ideia|brainstorm|criati|inovação)/.test(normalized)) {
+      return "criativo";
+    }
+    return null;
+  };
+
+  const buildDynamicSystemPrompt = (userText: string) => {
+    const selectedPreset = allPresets.find((preset) => preset.id === presetId) ?? PROMPT_PRESETS[0];
+    const extras: string[] = [];
+
+    if (activeMemory) {
+      extras.push(
+        "Considere a memória selecionada como contexto importante e use-a para tornar a resposta mais personalizada e coerente.",
+      );
+    }
+
+    const category = detectQueryCategory(userText);
+    if (category === "planejamento") {
+      extras.push(
+        "Resposta com foco prático e organizado para tarefas e planejamento, incluindo etapas ou sugestões de execução claras.",
+      );
+    } else if (category === "técnico") {
+      extras.push(
+        "Use terminologia técnica adequada e explique conceitos com precisão, exemplos e boas práticas.",
+      );
+    } else if (category === "criativo") {
+      extras.push(
+        "Seja mais inventivo, proponha variações e soluções originais quando for relevante.",
+      );
+    }
+
+    if (hasRepeatedAssistantContent()) {
+      extras.push(
+        "Evite repetir frases, parágrafos ou ideias já fornecidas em respostas anteriores. Reescreva o conteúdo de forma nova sempre que possível.",
+      );
+    }
+
+    if (userText.length > 180) {
+      extras.push(
+        "Responda de forma clara e concisa, evitando explicações excessivamente longas. Use parágrafos curtos e diretos.",
+      );
+    }
+
+    return [selectedPreset.systemPrompt, ...extras].filter(Boolean).join(" ");
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let storedPresets: PromptPreset[] = [];
+    try {
+      storedPresets = JSON.parse(localStorage.getItem(PROMPT_PRESET_STORAGE_KEY) || "[]") as PromptPreset[];
+      if (!Array.isArray(storedPresets)) storedPresets = [];
+    } catch {
+      storedPresets = [];
+    }
+
+    if (storedPresets.length > 0) {
+      setCustomPresets(storedPresets);
+    }
+
+    const storedPresetId = localStorage.getItem(SELECTED_PROMPT_PRESET_KEY);
+    const availablePresetIds = new Set([...PROMPT_PRESETS, ...storedPresets].map((preset) => preset.id));
+    if (storedPresetId && availablePresetIds.has(storedPresetId)) {
+      setPresetId(storedPresetId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(SELECTED_PROMPT_PRESET_KEY, presetId);
+  }, [presetId]);
+
+  const persistCustomPresets = (presets: PromptPreset[]) => {
+    setCustomPresets(presets);
+    if (typeof window === "undefined") return;
+    localStorage.setItem(PROMPT_PRESET_STORAGE_KEY, JSON.stringify(presets));
+  };
+
+  const addCustomPreset = () => {
+    const trimmedLabel = newPresetLabel.trim();
+    const trimmedDescription = newPresetDescription.trim();
+    const trimmedPrompt = newPresetPrompt.trim();
+
+    if (!trimmedLabel || !trimmedPrompt) {
+      toast.error("Preencha o nome e o prompt para criar um preset.");
+      return;
+    }
+
+    const slug = trimmedLabel
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "_");
+
+    const nextId = `custom_${slug}_${Date.now()}`;
+    const nextPreset: PromptPreset = {
+      id: nextId,
+      label: trimmedLabel,
+      description: trimmedDescription || "Preset personalizado",
+      systemPrompt: trimmedPrompt,
+    };
+
+    const nextPresets = [...customPresets, nextPreset];
+    persistCustomPresets(nextPresets);
+    setPresetId(nextId);
+    setShowPresetEditor(false);
+    setNewPresetLabel("");
+    setNewPresetDescription("");
+    setNewPresetPrompt("");
+    toast.success("Preset salvo com sucesso.");
+  };
 
   useEffect(() => {
     if (isLocalMode) {
@@ -174,16 +354,41 @@ export default function Chat({
   }, [recording, micActive, state]);
 
   // Load history
-  useEffect(() => {
-    supabase
+  const loadHistory = async (page = 0) => {
+    setHistoryLoading(true);
+    const from = page * historyLimit;
+    const to = from + historyLimit - 1;
+
+    const { data, error } = await supabase
       .from("chat_messages")
       .select("id, role, content")
       .eq("user_id", userId)
-      .order("created_at", { ascending: true })
-      .limit(100)
-      .then(({ data }) => {
-        if (data) setMessages(data.map((m) => ({ id: m.id, role: (m.role as 'user' | 'assistant'), content: m.content })));
-      });
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    setHistoryLoading(false);
+    if (error) {
+      console.error("Erro ao carregar histórico de chat:", error);
+      return;
+    }
+
+    const pageMessages = (data ?? [])
+      .map((m) => ({ id: m.id, role: (m.role as 'user' | 'assistant'), content: m.content }))
+      .reverse();
+
+    if (page === 0) {
+      setMessages(pageMessages);
+    } else {
+      setMessages((prev) => [...pageMessages, ...prev]);
+    }
+
+    setHasMoreHistory((data?.length ?? 0) === historyLimit);
+    setHistoryPage(page);
+  };
+
+  useEffect(() => {
+    if (!userId) return;
+    loadHistory(0);
   }, [userId]);
 
   useEffect(() => {
@@ -260,6 +465,20 @@ export default function Chat({
       console.warn("Memory save failed", e);
       await saveLocalMemory(msg, category);
     }
+  };
+
+  const startReview = (message: ChatMessage) => {
+    setEditingMessage(message);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleReviewSubmit = async (revisionText: string, comment: string) => {
+    setIsReviewModalOpen(false);
+    if (!editingMessage) return;
+
+    const reviewPrompt = `Por favor, revise a resposta anterior usando este comentário: ${comment || "sem comentário adicional"}.\n\nResposta original:\n${editingMessage.content}\n\nNova versão desejada:\n${revisionText}`;
+    await sendText(reviewPrompt);
+    setEditingMessage(null);
   };
 
   const searchMemoryEntries = async (query: string): Promise<MemorySearchResult[]> => {
@@ -397,10 +616,11 @@ export default function Chat({
     setState("thinking");
 
     try {
-      const selectedPreset = PROMPT_PRESETS.find((preset) => preset.id === presetId);
-      const systemMessage = selectedPreset
-        ? { role: "system" as const, content: selectedPreset.systemPrompt }
-        : null;
+      const selectedPreset = allPresets.find((preset) => preset.id === presetId) ?? PROMPT_PRESETS[0];
+      const systemMessage = {
+        role: "system" as const,
+        content: buildDynamicSystemPrompt(trimmed),
+      };
 
       const selectedMemoryMessage = activeMemory
         ? {
@@ -418,7 +638,7 @@ export default function Chat({
               memoryEntries
                 .slice(0, 3)
                 .map((item, index) =>
-                  `${index + 1}. [${item.role}] ${item.category ?? "chat"}: ${item.content}`,
+                  `${index + 1}. [${item.role}] ${item.category ?? "chat"}: ${sanitizeMemoryContent(item.content)}`,
                 )
                 .join("\n"),
           }
@@ -709,7 +929,7 @@ export default function Chat({
                   <SelectValue placeholder="Selecionar preset" />
                 </SelectTrigger>
                 <SelectContent>
-                  {PROMPT_PRESETS.map((preset) => (
+                  {allPresets.map((preset) => (
                     <SelectItem key={preset.id} value={preset.id}>
                       <div className="flex flex-col text-left">
                         <span>{preset.label}</span>
@@ -720,9 +940,61 @@ export default function Chat({
                 </SelectContent>
               </Select>
             </div>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant={showPresetEditor ? "secondary" : "outline"}
+                size="sm"
+                className="h-10"
+                onClick={() => setShowPresetEditor((prev) => !prev)}
+              >
+                {showPresetEditor ? "Fechar editor" : "Novo preset"}
+              </Button>
+            </div>
           </div>
+
+          {showPresetEditor ? (
+            <div className="mt-4 rounded-3xl border border-border/70 bg-card p-4 space-y-3">
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="sm:col-span-1">
+                  <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Nome</p>
+                  <Input
+                    value={newPresetLabel}
+                    onChange={(e) => setNewPresetLabel(e.target.value)}
+                    placeholder="Ex: Formal"
+                    className="h-10"
+                  />
+                </div>
+                <div className="sm:col-span-1">
+                  <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Descrição</p>
+                  <Input
+                    value={newPresetDescription}
+                    onChange={(e) => setNewPresetDescription(e.target.value)}
+                    placeholder="Ex: Respostas profissionais"
+                    className="h-10"
+                  />
+                </div>
+                <div className="sm:col-span-1 flex items-end">
+                  <Button type="button" size="sm" className="h-10 w-full" onClick={addCustomPreset}>
+                    Salvar preset
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Prompt do sistema</p>
+                <Textarea
+                  value={newPresetPrompt}
+                  onChange={(e) => setNewPresetPrompt(e.target.value)}
+                  placeholder="Digite o prompt do sistema aqui..."
+                  className="min-h-[120px]"
+                />
+              </div>
+            </div>
+          ) : null}
+
           <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-muted-foreground">Preset ativo: {PROMPT_PRESETS.find((preset) => preset.id === presetId)?.label}</div>
+            <div className="text-xs text-muted-foreground">Preset ativo: {allPresets.find((preset) => preset.id === presetId)?.label}</div>
             <Button
               type="button"
               variant={memoryEnabled ? "secondary" : "outline"}
@@ -751,23 +1023,39 @@ export default function Chat({
       </section>
 
       {/* Messages */}
-      <section
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 py-3 space-y-3"
-        aria-live="polite"
-      >
-        {messages.length === 0 && (
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Comece uma conversa — digite ou toque no microfone.
-          </p>
+      <section className="px-4 py-3">
+        {hasMoreHistory && (
+          <div className="mb-3 flex justify-center">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => loadHistory(historyPage + 1)}
+              disabled={historyLoading}
+            >
+              {historyLoading ? "Carregando mensagens..." : "Carregar mais mensagens"}
+            </Button>
+          </div>
         )}
-        {messages.map((m, i) => (
-          <ChatMessageCard
-            key={m.id ?? i}
-            message={m}
-            onCopy={() => copyToClipboard(m.content)}
-          />
-        ))}
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto space-y-3"
+          aria-live="polite"
+          style={{ maxHeight: "60vh" }}
+        >
+          {messages.length === 0 && (
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              Comece uma conversa — digite ou toque no microfone.
+            </p>
+          )}
+          {messages.map((m, i) => (
+            <ChatMessageCard
+              key={m.id ?? i}
+              message={m}
+              onCopy={() => copyToClipboard(m.content)}
+              onEdit={m.role === "assistant" ? () => startReview(m) : undefined}
+            />
+          ))}
+        </div>
       </section>
 
       {/* Input */}
@@ -808,6 +1096,13 @@ export default function Chat({
           </Button>
         </form>
       </footer>
+
+      <ReviewResponseModal
+        isOpen={isReviewModalOpen}
+        originalText={editingMessage?.content ?? ""}
+        onSubmit={handleReviewSubmit}
+        onCancel={() => setIsReviewModalOpen(false)}
+      />
 
       {/* Conflict Resolution Modal */}
       <ConflictResolutionModal

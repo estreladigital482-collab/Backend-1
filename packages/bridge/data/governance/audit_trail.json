@@ -142,5 +142,53 @@
       ]
     },
     "event_id": "6eebcdb43b7a"
+  },
+  {
+    "timestamp": "2026-05-09T10:53:49.572525",
+    "event_type": "data_submission",
+    "entity": "controlled_learning",
+    "action": "submit",
+    "user_id": null,
+    "details": {
+      "data_id": "6865ecdfe3bd",
+      "source": "user_approved",
+      "data_keys": [
+        "category",
+        "description"
+      ]
+    },
+    "event_id": "970bc24a46d8"
+  },
+  {
+    "timestamp": "2026-05-09T10:55:06.820951",
+    "event_type": "data_submission",
+    "entity": "controlled_learning",
+    "action": "submit",
+    "user_id": null,
+    "details": {
+      "data_id": "6865ecdfe3bd",
+      "source": "user_approved",
+      "data_keys": [
+        "category",
+        "description"
+      ]
+    },
+    "event_id": "e76ad8278655"
+  },
+  {
+    "timestamp": "2026-05-09T10:56:23.264514",
+    "event_type": "data_submission",
+    "entity": "controlled_learning",
+    "action": "submit",
+    "user_id": null,
+    "details": {
+      "data_id": "6865ecdfe3bd",
+      "source": "user_approved",
+      "data_keys": [
+        "category",
+        "description"
+      ]
+    },
+    "event_id": "1205ef44e3d4"
   }
 ]

@@ -1,9 +1,13 @@
 import asyncio
 import json
+import logging
 import os
+import re
+import time
 from pathlib import Path
+from threading import Event, Thread
 from typing import Any, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException, Depends, Request, status
@@ -45,14 +49,23 @@ from agent.storage_optimizer import StorageOptimizer
 from agent.offline_first_sync import OfflineFirstSync
 from agent.security_auditor import SecurityAuditor
 from agent.api_cost_tracker import ApiCostTracker
+from utils.data_sanitizer import sanitize_messages
 from agent.cache_manager import CacheManager
-from mcp_server import server as mcp_server
 from orchestrator import get_central_orchestrator
 
-# MCP SSE Transport
-from mcp.server.sse import SseServerTransport
-from mcp.server import NotificationOptions
-from mcp.server.models import InitializationOptions
+# MCP SSE Transport and optional MCP support
+try:
+    from mcp_server import server as mcp_server
+    from mcp.server.sse import SseServerTransport
+    from mcp.server import NotificationOptions
+    from mcp.server.models import InitializationOptions
+    mcp_transport = SseServerTransport("/api/v1/mcp/messages")
+except ImportError:
+    mcp_server = None
+    mcp_transport = None
+    SseServerTransport = None
+    NotificationOptions = None
+    InitializationOptions = None
 
 ENV = os.getenv("ENV", "development")
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
@@ -75,17 +88,68 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("aura_bridge")
+
 init_db()
+
+MEMORY_RETENTION_DAYS = int(os.getenv("MEMORY_RETENTION_DAYS", "90"))
+MEMORY_CLEANUP_INTERVAL_HOURS = int(os.getenv("MEMORY_CLEANUP_INTERVAL_HOURS", "24"))
+ENABLE_MEMORY_CLEANUP = os.getenv("ENABLE_MEMORY_CLEANUP", "true").lower() in ("1", "true", "yes")
+cleanup_stop_event = Event()
+
 memory_engine = MemoryEngine()
 agent_service = get_agent_service()
+
+
+def cleanup_old_memories(retention_days: int) -> int:
+    cutoff = datetime.utcnow() - timedelta(days=retention_days)
+    with SessionLocal() as session:
+        deleted = (
+            session.query(MemoryEntry)
+            .filter(MemoryEntry.created_at < cutoff)
+            .delete(synchronize_session=False)
+        )
+        session.commit()
+    logger.info(
+        f"Memory cleanup removed {deleted} entries older than {retention_days} days."
+    )
+    return deleted
+
+
+def memory_cleanup_worker() -> None:
+    while not cleanup_stop_event.is_set():
+        try:
+            cleanup_old_memories(MEMORY_RETENTION_DAYS)
+        except Exception as exc:
+            logger.error(f"Memory cleanup job failed: {exc}")
+        cleanup_stop_event.wait(MEMORY_CLEANUP_INTERVAL_HOURS * 3600)
+
+
+@app.on_event("startup")
+async def start_memory_cleanup_scheduler() -> None:
+    if ENABLE_MEMORY_CLEANUP:
+        logger.info(
+            f"Starting memory cleanup scheduler: retention={MEMORY_RETENTION_DAYS}d, interval={MEMORY_CLEANUP_INTERVAL_HOURS}h"
+        )
+        thread = Thread(target=memory_cleanup_worker, daemon=True)
+        thread.start()
+
+
+@app.on_event("shutdown")
+async def stop_memory_cleanup_scheduler() -> None:
+    cleanup_stop_event.set()
 action_queue_service = ActionQueueService()
 security_auditor = SecurityAuditor()
 cost_tracker = ApiCostTracker()
 cache_manager = CacheManager()
 offline_sync_engines: dict[str, OfflineFirstSync] = {}
 
-# Initialize MCP SSE Transport
-mcp_transport = SseServerTransport("/api/v1/mcp/messages")
+# Initialize MCP SSE Transport only when available
+if SseServerTransport is not None:
+    mcp_transport = SseServerTransport("/api/v1/mcp/messages")
+else:
+    mcp_transport = None
 
 
 def get_current_user(authorization: str | None = Header(None)) -> dict[str, Any]:
@@ -97,6 +161,11 @@ def get_current_user(authorization: str | None = Header(None)) -> dict[str, Any]
     scheme, _, token = authorization.partition(" ")
     if scheme.lower() != "bearer" or not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Authorization header")
+
+    # Check if token is a valid API key
+    api_key = os.getenv("API_KEY")
+    if api_key and token == api_key:
+        return {"sub": "api-user", "email": "api@local", "name": "API User"}
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -120,6 +189,9 @@ def health():
 @app.get("/api/v1/mcp/sse")
 async def mcp_sse(request: Request):
     """MCP Server-Sent Events endpoint for tool calls."""
+    if mcp_server is None:
+        raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="MCP support is not installed")
+
     async with mcp_transport.connect_sse(
         request.scope, request.receive, request._send
     ) as streams:
@@ -140,6 +212,9 @@ async def mcp_sse(request: Request):
 @app.post("/api/v1/mcp/messages")
 async def mcp_messages(request: Request):
     """MCP message handling endpoint."""
+    if mcp_transport is None:
+        raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="MCP support is not installed")
+
     await mcp_transport.handle_post_message(
         request.scope, request.receive, request._send
     )
@@ -1281,10 +1356,33 @@ def history(user_id: str, current_user: dict[str, Any] = Depends(get_current_use
         }
 
 
+def validate_memory_item(item: MemoryItem):
+    if not item.user_id or len(item.user_id) > 128:
+        raise HTTPException(status_code=400, detail="Invalid user_id for memory entry")
+
+    if item.role not in {"user", "assistant", "system"}:
+        raise HTTPException(status_code=400, detail="Memory role must be 'user', 'assistant', or 'system'")
+
+    if not item.content or not item.content.strip():
+        raise HTTPException(status_code=400, detail="Memory content cannot be empty")
+
+    if len(item.content) > 4000:
+        raise HTTPException(status_code=413, detail="Memory content exceeds maximum allowed length of 4000 characters")
+
+    if item.category and len(item.category) > 64:
+        raise HTTPException(status_code=400, detail="Memory category is too long")
+
+    if item.category and not re.match(r"^[a-zA-Z0-9 _-]+$", item.category):
+        raise HTTPException(status_code=400, detail="Memory category contains invalid characters")
+
+
 @app.post("/api/v1/memory")
 def create_memory(item: MemoryItem, current_user: dict[str, Any] = Depends(get_current_user)):
+    start = time.perf_counter()
     if ENV == "production" and current_user.get("sub") != item.user_id:
         raise HTTPException(status_code=403, detail="Forbidden")
+
+    validate_memory_item(item)
 
     with SessionLocal() as session:
         session.merge(User(id=item.user_id, email=current_user.get("email", "unknown")))
@@ -1292,13 +1390,20 @@ def create_memory(item: MemoryItem, current_user: dict[str, Any] = Depends(get_c
             MemoryEntry(
                 user_id=item.user_id,
                 role=item.role,
-                content=item.content,
+                content=item.content.strip(),
                 category=item.category or "chat",
             )
         )
         session.commit()
 
-    memory_engine.add_memory(item.user_id, item.content, category=item.category or "chat")
+    if hasattr(memory_engine, "add_memory"):
+        try:
+            memory_engine.add_memory(item.user_id, item.content.strip(), category=item.category or "chat")
+        except Exception as e:
+            logger.warning(f"Failed to persist memory to engine: {e}")
+
+    elapsed = time.perf_counter() - start
+    logger.info(f"/api/v1/memory POST completed in {elapsed:.3f}s for user_id={item.user_id}")
     return {"status": "saved"}
 
 
@@ -1309,6 +1414,7 @@ def list_memory(
     current_user: dict[str, Any] = Depends(get_current_user)
 ):
     """Lista memórias salvas de um usuário com filtros opcionais."""
+    start = time.perf_counter()
     if ENV == "production" and current_user.get("sub") != user_id:
         raise HTTPException(status_code=403, detail="Forbidden")
 
@@ -1318,6 +1424,9 @@ def list_memory(
             query = query.filter(MemoryEntry.category == category)
 
         entries = query.order_by(MemoryEntry.created_at.desc()).limit(100).all()
+
+    elapsed = time.perf_counter() - start
+    logger.info(f"/api/v1/memory GET completed in {elapsed:.3f}s for user_id={user_id}")
 
     return {
         "memories": [
@@ -1331,6 +1440,69 @@ def list_memory(
             for entry in entries
         ]
     }
+
+
+@app.get("/api/v1/memory/list", response_model=MemoryListResponse)
+def list_memory_alias(
+    user_id: str,
+    category: Optional[str] = None,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    return list_memory(user_id, category, current_user)
+
+
+@app.delete("/api/v1/memory/{memory_id}")
+def delete_memory_entry(
+    memory_id: int,
+    user_id: str,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    if ENV == "production" and current_user.get("sub") != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    with SessionLocal() as session:
+        entry = (
+            session.query(MemoryEntry)
+            .filter(MemoryEntry.id == memory_id)
+            .filter(MemoryEntry.user_id == user_id)
+            .first()
+        )
+
+        if not entry:
+            raise HTTPException(status_code=404, detail="Memory entry not found")
+
+        session.delete(entry)
+        session.commit()
+
+    if hasattr(memory_engine, "delete_memory"):
+        try:
+            memory_engine.delete_memory(str(memory_id))
+        except Exception as e:
+            logger.warning(f"Failed to remove memory from engine: {e}")
+
+    logger.info(f"/api/v1/memory/{memory_id} DELETE completed for user_id={user_id}")
+    return {"status": "deleted"}
+
+
+@app.get("/api/v1/memories", response_model=MemoryListResponse)
+def list_memories(
+    user_id: str,
+    category: Optional[str] = None,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Alias para /api/v1/memory - Lista memórias salvas de um usuário com filtros opcionais."""
+    return list_memory(user_id, category, current_user)
+
+
+@app.post("/api/v1/memory/cleanup")
+def trigger_memory_cleanup(
+    days: Optional[int] = None,
+    current_user: dict[str, Any] = Depends(get_current_user)
+):
+    """Executa limpeza de memórias antigas manualmente."""
+    retention = days if days is not None else MEMORY_RETENTION_DAYS
+    deleted = cleanup_old_memories(retention)
+    return {"status": "completed", "deleted": deleted, "retention_days": retention}
 
 
 def build_system_prompt(ai_name: str, prompt_type: str = None) -> str:
@@ -1367,8 +1539,15 @@ async def chat(request: ChatRequest, current_user: dict[str, Any] = Depends(get_
             "content": msg.content
         })
     
+    # Sanitizar mensagens para prevenir vazamento de dados sensíveis
+    formatted_messages = sanitize_messages(formatted_messages)
+    
     # Build system prompt dinamicamente
     system_prompt = build_system_prompt(ai_name, prompt_type)
+    
+    # Sanitizar system prompt para segurança adicional
+    from utils.data_sanitizer import sanitize_text
+    system_prompt = sanitize_text(system_prompt)
     
     # Salvar usuário e histórico
     def save_user_and_history():
@@ -1454,6 +1633,7 @@ def search(
     Returns:
         SearchResponse com lista de resultados
     """
+    start = time.perf_counter()
     if ENV == "production" and current_user.get("sub") != user_id:
         raise HTTPException(status_code=403, detail="Forbidden")
     
@@ -1521,6 +1701,8 @@ def search(
             .all()
         )
         
+        elapsed = time.perf_counter() - start
+        logger.info(f"/api/v1/search GET completed in {elapsed:.3f}s for user_id={user_id} q={q[:20]}")
         return {
             "results": [
                 {

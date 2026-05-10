@@ -59,170 +59,44 @@ def get_ability_details(ability_id):
 # Blueprint para Social
 social_bp = Blueprint('social', __name__, url_prefix='/api/v1/social')
 
-@social_bp.route('/instagram/login', methods=['POST'])
-def instagram_login():
-    """Login seguro no Instagram"""
+@social_bp.route('/<platform>/login', methods=['POST'])
+def social_login(platform):
+    """Login seguro em rede social"""
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    verification_code = data.get('verification_code')
-    user_id = data.get('user_id', 'default_user')  # TODO: Obter do JWT
-
-    if not username or not password:
-        return jsonify({'error': 'Username e password são obrigatórios'}), 400
-
-    try:
-        from packages.bridge.agent.instagram_session import InstagramSession
-        session = InstagramSession(user_id)
-
-        result = session.login(username, password, verification_code)
-
-        if result['success']:
-            # Salvar conta no banco
-            # TODO: Implementar persistência no banco
-            return jsonify({
-                'account_id': f"instagram_{result['account']['id']}",
-                'status': 'authenticated',
-                'account': result['account']
-            })
-        else:
-            status_code = 400
-            if result.get('requires_2fa'):
-                status_code = 401  # Unauthorized, precisa 2FA
-            return jsonify(result), status_code
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@social_bp.route('/instagram/sync', methods=['GET'])
-def sync_instagram():
-    """Sincronizar posts salvos do Instagram"""
-    user_id = request.args.get('user_id', 'default_user')  # TODO: Obter do JWT
-
-    try:
-        from packages.bridge.agent.instagram_session import InstagramSession
-        session = InstagramSession(user_id)
-
-        # Tentar restaurar sessão
-        if not session.restore_session():
-            return jsonify({'error': 'Sessão não encontrada. Faça login primeiro.'}), 401
-
-        saved_posts = session.get_saved_posts(limit=50)
-
-        # TODO: Salvar no banco e categorizar com IA
-        # Por enquanto, retornar dados brutos
-        return jsonify({
-            'synced_count': len(saved_posts),
-            'posts': saved_posts[:10],  # Retornar apenas primeiros 10
-            'total_available': len(saved_posts)
-        })
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@social_bp.route('/instagram/collections', methods=['GET'])
-def list_instagram_collections():
-    """Listar coleções do Instagram"""
-    user_id = request.args.get('user_id', 'default_user')  # TODO: Obter do JWT
-
-    # TODO: Buscar coleções do banco
+    # TODO: Implementar login seguro com criptografia
     return jsonify({
-        'collections': [
-            {
-                'id': 'collection-1',
-                'name': 'Anime Favorites',
-                'filters': {'query': 'anime'},
-                'item_count': 25
-            }
-        ]
+        'account_id': 'account-123',
+        'status': 'authenticated',
+        'platform': platform
     })
 
-@social_bp.route('/instagram/collections', methods=['POST'])
-def create_instagram_collection():
-    """Criar nova coleção do Instagram"""
-    data = request.get_json()
-    user_id = data.get('user_id', 'default_user')  # TODO: Obter do JWT
-    name = data.get('name')
-    filters = data.get('filters', {})
-
-    if not name:
-        return jsonify({'error': 'Nome da coleção é obrigatório'}), 400
-
-    # TODO: Salvar no banco
+@social_bp.route('/<platform>/sync', methods=['GET'])
+def sync_platform(platform):
+    """Sincronizar dados da rede social"""
+    # TODO: Implementar sync
     return jsonify({
-        'collection_id': 'collection-123',
-        'name': name,
-        'filters': filters,
-        'status': 'created'
+        'synced_count': 42,
+        'categories_found': ['anime', 'tech', 'design'],
+        'platform': platform
     })
 
-@social_bp.route('/instagram/recommendations', methods=['GET'])
-def get_instagram_recommendations():
-    """Obter recomendações baseadas em posts salvos"""
-    user_id = request.args.get('user_id', 'default_user')  # TODO: Obter do JWT
+@social_bp.route('/<platform>/collections', methods=['GET'])
+def list_collections(platform):
+    """Listar coleções do usuário"""
+    return jsonify({
+        'collections': [],
+        'platform': platform
+    })
+
+@social_bp.route('/<platform>/recommendations', methods=['GET'])
+def get_recommendations(platform):
+    """Obter recomendações baseadas em salves"""
     theme = request.args.get('theme')
-    limit = int(request.args.get('limit', 5))
-
-    # TODO: Implementar lógica de recomendações com embeddings
-    # Por enquanto, retornar dados mock
+    limit = request.args.get('limit', 5)
     return jsonify({
-        'recommendations': [
-            {
-                'type': 'similar_content',
-                'title': f'Conteúdo similar ao tema: {theme}',
-                'items': [
-                    {'id': 'rec-1', 'title': 'Anime recommendation 1'},
-                    {'id': 'rec-2', 'title': 'Anime recommendation 2'}
-                ]
-            }
-        ],
+        'recommendations': [],
         'theme': theme,
         'limit': limit
-    })
-
-@social_bp.route('/<platform>/actions/propose', methods=['POST'])
-def propose_social_action(platform):
-    """Propor ação social para aprovação"""
-    data = request.get_json()
-    user_id = data.get('user_id', 'default_user')  # TODO: Obter do JWT
-    action_type = data.get('action_type')  # publish, schedule, like, follow, follow_back, message_template
-    description = data.get('description')
-    parameters = data.get('parameters', {})
-
-    if not action_type or not description:
-        return jsonify({'error': 'action_type e description são obrigatórios'}), 400
-
-    # Usar ActionQueueService para propor ação
-    from packages.bridge.agent.action_queue_service import ActionQueueService
-    action_service = ActionQueueService()
-
-    action_proposal = action_service.submit_action_proposal(
-        user_id=user_id,
-        action_type=f"social_{platform}_{action_type}",
-        description=description,
-        parameters=parameters
-    )
-
-    return jsonify({
-        'action_id': action_proposal['id'],
-        'preview_description': description,
-        'status': 'proposed',
-        'requires_approval': True
-    })
-
-@social_bp.route('/<platform>/analytics', methods=['GET'])
-def get_social_analytics(platform):
-    """Obter analytics básicos da plataforma social"""
-    user_id = request.args.get('user_id', 'default_user')  # TODO: Obter do JWT
-
-    # TODO: Implementar analytics reais baseados na plataforma
-    # Por enquanto, mock data
-    return jsonify({
-        'platform': platform,
-        'followers': 1250,
-        'engagement_rate': 4.2,
-        'posts_this_month': 15,
-        'last_updated': datetime.now().isoformat()
     })
 
 # Blueprint para Device

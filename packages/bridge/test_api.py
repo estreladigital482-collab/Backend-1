@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 # Forçar banco de dados de teste em memória ANTES de importar
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
@@ -19,12 +20,17 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Importar DEPOIS de definir DATABASE_URL
+import app as app_module
 from app import app
 from database import init_db, SessionLocal, Base
 
 # Criar novo engine para testes
 TEST_DATABASE_URL = "sqlite:///:memory:"
-test_engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+test_engine = create_engine(
+    TEST_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
 
@@ -32,7 +38,9 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
     """Setup database para testes em memória"""
-    # Criar todas as tabelas
+    # Rebind do SessionLocal para usar o engine de teste em todo o app
+    app_module.SessionLocal = TestingSessionLocal
+    # Criar todas as tabelas no banco de teste
     Base.metadata.create_all(bind=test_engine)
     yield
     # Cleanup após os testes
@@ -218,6 +226,70 @@ class TestMemory:
         data = response.json()
         assert "memories" in data
         assert any(item["category"] == "important" for item in data["memories"])
+
+    def test_memory_list_alias_route(self, client, test_token):
+        """Deve listar memórias usando o alias /api/v1/memory/list"""
+        headers = {"Authorization": f"Bearer {test_token}"}
+        user_id = "test-user"
+
+        client.post(
+            "/api/v1/memory",
+            json={
+                "user_id": user_id,
+                "role": "user",
+                "content": "Alias route memory content",
+                "category": "alias"
+            },
+            headers=headers
+        )
+
+        response = client.get(
+            f"/api/v1/memory/list?user_id={user_id}",
+            headers=headers
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "memories" in data
+        assert any(item["category"] == "alias" for item in data["memories"])
+
+    def test_delete_memory_entry(self, client, test_token):
+        """Deve excluir uma entrada de memória existente"""
+        headers = {"Authorization": f"Bearer {test_token}"}
+        user_id = "test-user"
+
+        create_response = client.post(
+            "/api/v1/memory",
+            json={
+                "user_id": user_id,
+                "role": "user",
+                "content": "Memória a ser excluída",
+                "category": "cleanup"
+            },
+            headers=headers
+        )
+        assert create_response.status_code == 200
+
+        list_response = client.get(
+            f"/api/v1/memory?user_id={user_id}&category=cleanup",
+            headers=headers
+        )
+        data = list_response.json()
+        entry_id = data["memories"][0]["id"]
+
+        delete_response = client.delete(
+            f"/api/v1/memory/{entry_id}?user_id={user_id}",
+            headers=headers
+        )
+        assert delete_response.status_code == 200
+        assert delete_response.json()["status"] == "deleted"
+
+        verify_response = client.get(
+            f"/api/v1/memory?user_id={user_id}&category=cleanup",
+            headers=headers
+        )
+        verify_data = verify_response.json()
+        assert all(item["id"] != entry_id for item in verify_data["memories"])
 
 
 class TestSearch:

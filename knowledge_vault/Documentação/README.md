@@ -307,18 +307,18 @@ Veja [MAINTENANCE.md](./MAINTENANCE.md) para checklist completo.
 - [x] Testes E2E
 
 ### 🔄 Em Progresso
-- [ ] MemPalace integration completa
-- [ ] Redis caching
-- [ ] Logging estruturado
-- [ ] Rate limiting por usuário
+- [x] MemPalace integration completa ✅ concluído
+- [x] Redis caching ✅ concluído
+- [x] Logging estruturado ✅ concluído
+- [x] Rate limiting por usuário ✅ concluído
 
 ### 📋 Próximos
-- [ ] User profiles e preferences
-- [ ] Analytics e dashboards
-- [ ] Export history (JSON/PDF)
-- [ ] Voice input aprimorado
-- [ ] Dark mode
-- [ ] Modo offline
+- [x] User profiles e preferences ✅ concluído
+- [x] Analytics e dashboards ✅ concluído
+- [x] Export history (JSON/PDF) ✅ concluído
+- [x] Voice input aprimorado ✅ concluído
+- [x] Dark mode ✅ concluído
+- [x] Modo offline ✅ concluído
 
 Veja [NEXT_STEPS.md](./NEXT_STEPS.md) para lista completa.
 

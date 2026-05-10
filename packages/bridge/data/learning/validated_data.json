@@ -88,5 +88,50 @@
     "status": "pending",
     "validation_timestamp": null,
     "validator_user_id": null
+  },
+  {
+    "id": "6865ecdfe3bd",
+    "timestamp": "2026-05-09T10:53:49.571863",
+    "source": "user_approved",
+    "data": {
+      "category": "backend",
+      "description": "Teste de aprendizado controlado"
+    },
+    "metadata": {
+      "importance": "high"
+    },
+    "status": "pending",
+    "validation_timestamp": null,
+    "validator_user_id": null
+  },
+  {
+    "id": "6865ecdfe3bd",
+    "timestamp": "2026-05-09T10:55:06.819149",
+    "source": "user_approved",
+    "data": {
+      "category": "backend",
+      "description": "Teste de aprendizado controlado"
+    },
+    "metadata": {
+      "importance": "high"
+    },
+    "status": "pending",
+    "validation_timestamp": null,
+    "validator_user_id": null
+  },
+  {
+    "id": "6865ecdfe3bd",
+    "timestamp": "2026-05-09T10:56:23.263844",
+    "source": "user_approved",
+    "data": {
+      "category": "backend",
+      "description": "Teste de aprendizado controlado"
+    },
+    "metadata": {
+      "importance": "high"
+    },
+    "status": "pending",
+    "validation_timestamp": null,
+    "validator_user_id": null
   }
 ]

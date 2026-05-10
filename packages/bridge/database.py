@@ -3,9 +3,18 @@ import os
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, func, Float, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.pool import StaticPool
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./data.db")
-engine = create_engine(DATABASE_URL, future=True)
+if DATABASE_URL.startswith("sqlite") and ":memory:" in DATABASE_URL:
+    engine = create_engine(
+        DATABASE_URL,
+        future=True,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+else:
+    engine = create_engine(DATABASE_URL, future=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -140,6 +149,7 @@ class ActionProposal(Base):
     status = Column(String(32), default="pending")  # pending, approved, rejected, executed
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(DateTime(timezone=True), nullable=True)
+    executed_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class SecurityIssue(Base):
@@ -168,7 +178,7 @@ class ApiUsage(Base):
     model = Column(String(128), nullable=True)
     tokens_used = Column(Integer, nullable=True)
     response_time_ms = Column(Float, nullable=True)
-    metadata = Column(Text, nullable=True)  # JSON string
+    metadata_json = Column(Text, nullable=True)  # JSON string, renamed to avoid SQLAlchemy reserved attribute
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     executed_at = Column(DateTime(timezone=True), nullable=True)
 

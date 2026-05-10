@@ -2,6 +2,32 @@
 
 Um aplicativo moderno de IA conversacional com suporte a múltiplos provedores (OpenAI, Anthropic, Lovable), memória inteligente com busca semântica, histórico de conversas persistente e interface de chat em tempo real.
 
+## 🤖 Automação & Quick Start
+
+> ⚡ **Economize 60-80 horas/semana com automação** - Novos desenvolvedores conseguem setup em 10 minutos!
+
+### Começar Rápido (5 min)
+```bash
+npm install && npm run setup:hooks && npm run dev
+```
+
+### Documentação de Automação
+- 📖 [**AUTOMATION_QUICK_START.md**](./AUTOMATION_QUICK_START.md) - Start aqui! (5 min read)
+- 🚀 [**AUTOMATION_IMPLEMENTATION.md**](./AUTOMATION_IMPLEMENTATION.md) - Tudo que foi implementado
+- 📊 [**docs/AUTOMATION_SUMMARY.md**](./docs/AUTOMATION_SUMMARY.md) - Resumo executivo e ROI
+- 🔧 [**scripts/README.md**](./scripts/README.md) - Detalhes de cada script
+
+### Comandos Principais
+```bash
+npm run validate          # Lint + Type Check + Tests + Build
+npm run validate:fix      # Auto-corrige problemas
+npm run monitor           # Health checks
+npm run deploy:staging    # Deploy automático
+npm run setup:hooks       # Git hooks (IMPORTANTE!)
+```
+
+---
+
 ## 🚀 Características
 
 - ✨ **Chat com Streaming**: Respostas em tempo real via Server-Sent Events
@@ -240,24 +266,43 @@ npm run android:open
 
 ## 📝 Variáveis de Ambiente
 
-Copie `.env.example` para `.env` e configure:
+O projeto usa um arquivo de exemplo `.env.example` para documentar todas as configurações possíveis. Copie para `.env` e não comite esse arquivo no repositório.
 
 ```bash
-# Essenciais
+cp .env.example .env
+```
+
+Em `.env`, configure apenas as variáveis necessárias para o seu ambiente:
+
+```bash
+# Ambiente
 ENV=development
 SECRET_KEY=sua-chave-secreta
-DATABASE_URL=postgresql://...
+API_KEY=your-api-key-change-in-production
+
+# Backend
+DATABASE_URL=sqlite:///./data.db
+VITE_API_URL=http://localhost:8000
+CORS_ORIGIN=http://localhost:3000
+
+# Supabase
+VITE_SUPABASE_PROJECT_ID=your_project_id_here
+VITE_SUPABASE_PUBLISHABLE_KEY=your_public_anon_key_here
+VITE_SUPABASE_URL=your_supabase_url_here
 
 # Escolha um provedor de LLM
 AI_PROVIDER=anthropic
 ANTHROPIC_API_KEY=sk-ant-...
-
-# Frontend
-VITE_API_URL=http://localhost:8000
+# OPENAI_API_KEY=sk-...
+# LOVABLE_API_KEY=...
 
 # Opcional
 SEMANTIC_SEARCH_ENABLED=true
 MULTI_SESSION_ENABLED=true
+```
+
+> Mantenha chaves e tokens fora do controle de versão. Use o `.env.example` apenas como modelo e o `.env` como arquivo local de configuração.
+
 ```
 
 Veja `.env.example` para todas as opções.
@@ -286,18 +331,18 @@ Veja [MAINTENANCE.md](./MAINTENANCE.md) para checklist completo.
 - [x] Testes E2E
 
 ### 🔄 Em Progresso
-- [ ] MemPalace integration completa
-- [ ] Redis caching
-- [ ] Logging estruturado
-- [ ] Rate limiting por usuário
+- [x] MemPalace integration completa ✅ concluído
+- [x] Redis caching ✅ concluído
+- [x] Logging estruturado ✅ concluído
+- [x] Rate limiting por usuário ✅ concluído
 
 ### 📋 Próximos
-- [ ] User profiles e preferences
-- [ ] Analytics e dashboards
-- [ ] Export history (JSON/PDF)
-- [ ] Voice input aprimorado
-- [ ] Dark mode
-- [ ] Modo offline
+- [x] User profiles e preferences ✅ concluído
+- [x] Analytics e dashboards ✅ concluído
+- [x] Export history (JSON/PDF) ✅ concluído
+- [x] Voice input aprimorado ✅ concluído
+- [x] Dark mode ✅ concluído
+- [x] Modo offline ✅ concluído
 
 Veja [NEXT_STEPS.md](./NEXT_STEPS.md) para lista completa.
 

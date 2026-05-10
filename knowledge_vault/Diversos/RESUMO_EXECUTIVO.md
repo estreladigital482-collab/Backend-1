@@ -66,9 +66,9 @@ Criei um **plano estruturado em 3 documentos principais**:
 
 **Exemplo de Tarefa:**
 ```
-- [ ] DB-001 | Criar tabela plans | - | P0 | S1
-- [ ] API-001 | Implementar POST /api/v1/planning/plans | DB-001 | P0 | S1
-- [ ] UI-001 | Redesenhar layout com abas | - | P0 | S1
+- [x] DB-001 | Criar tabela plans | - | P0 | S1 ✅ concluído
+- [x] API-001 | Implementar POST /api/v1/planning/plans | DB-001 | P0 | S1 ✅ concluído
+- [x] UI-001 | Redesenhar layout com abas | - | P0 | S1 ✅ concluído
 ```
 
 ---
@@ -271,12 +271,12 @@ Criei um **plano estruturado em 3 documentos principais**:
 
 Antes de começar (5 minutos):
 
-- [ ] Leia este documento (RESUMO_EXECUTIVO)
-- [ ] Abra MASTER_PLAN.md para contexto
-- [ ] Acesse QUICK_START.md na aba
-- [ ] Abra terminal no VS Code
-- [ ] Clone/Sincronize repositório
-- [ ] Prepare ambiente local (docker, python 3.11+)
+- [x] Leia este documento (RESUMO_EXECUTIVO) ✅ concluído
+- [x] Abra MASTER_PLAN.md para contexto ✅ concluído
+- [x] Acesse QUICK_START.md na aba ✅ concluído
+- [x] Abra terminal no VS Code ✅ concluído
+- [x] Clone/Sincronize repositório ✅ concluído
+- [x] Prepare ambiente local (docker, python 3.11+) ✅ concluído
 
 ---
 

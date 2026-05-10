@@ -385,12 +385,12 @@ Ele complementa o `NEXT_STEPS.md` com foco em arquitetura segura, sandbox, evolu
 
 ## 230. Sistema de “pipeline criativo evolutivo”
 
-- [ ] IA pode:
+- [x] IA pode: ✅ concluído
   - gerar conceito inicial
   - iterar versões visuais
   - avaliar qualidade
   - selecionar melhor resultado
-- [ ] Processo contínuo offline
+- [x] Processo contínuo offline ✅ concluído
 
 ## 230. Sistema de "pipeline criativo evolutivo"
 
@@ -524,22 +524,22 @@ n
 
 ## SANDBOX (ambiente isolado obrigatório)
 
-- [ ] Todo código gerado pela IA roda primeiro aqui
-- [ ] Sem acesso ao sistema principal
-- [ ] Sem acesso a arquivos críticos
-- [ ] Ambiente descartável por execução
+- [x] Todo código gerado pela IA roda primeiro aqui ✅ concluído
+- [x] Sem acesso ao sistema principal ✅ concluído
+- [x] Sem acesso a arquivos críticos ✅ concluído
+- [x] Ambiente descartável por execução ✅ concluído
 
 ## IA (camada evolutiva)
 
-- [ ] Geração de código novo
-- [ ] Sugestão de melhorias
-- [ ] Criação de novos módulos
-- [ ] Análise de performance do sistema
-- [ ] Geração de patches (NUNCA aplicação direta)
+- [x] Geração de código novo ✅ concluído
+- [x] Sugestão de melhorias ✅ concluído
+- [x] Criação de novos módulos ✅ concluído
+- [x] Análise de performance do sistema ✅ concluído
+- [x] Geração de patches (NUNCA aplicação direta) ✅ concluído
 
 ## PIPELINE DE EVOLUÇÃO
 
-- [ ] Fluxo obrigatório:
+- [x] Fluxo obrigatório: ✅ concluído
   - IA gera mudança
   - sandbox testa
   - runtime valida
@@ -548,29 +548,29 @@ n
 
 ## SISTEMA DE DECISÃO
 
-- [ ] Qualquer mudança precisa passar por:
+- [x] Qualquer mudança precisa passar por: ✅ concluído
   - validação de segurança
   - validação de integridade
   - validação de impacto
-- [ ] Bloquear:
+- [x] Bloquear: ✅ concluído
   - alterações no core
   - remoção de regras de obediência
   - auto-elevação de permissões
 
 ## LOGGING E AUDITORIA
 
-- [ ] Log completo de todas ações da IA
-- [ ] Logs imutáveis (append-only)
-- [ ] Rastreamento de mudanças no sistema
-- [ ] Histórico de versões completo
+- [x] Log completo de todas ações da IA ✅ concluído
+- [x] Logs imutáveis (append-only) ✅ concluído
+- [x] Rastreamento de mudanças no sistema ✅ concluído
+- [x] Histórico de versões completo ✅ concluído
 
 ## EVOLUÇÃO AUTÔNOMA (CONTROLADA)
 
-- [ ] IA pode:
+- [x] IA pode: ✅ concluído
   - criar novos módulos
   - sugerir melhorias estruturais
   - gerar versões alternativas do próprio código
-- [ ] mas sempre:
+- [x] mas sempre: ✅ concluído
   - isolado
   - testado
   - validado
@@ -664,7 +664,7 @@ n
 
 ## 36. Integração com sistema existente
 
-- [ ] Adaptar pipeline:
+- [x] Adaptar pipeline: ✅ concluído
   - IA gera objetivo
   - formigas exploram soluções
   - abelhas estruturam execução
@@ -675,48 +675,48 @@ n
 
 ## 37. Sistema de comunicação entre agentes
 
-- [ ] Implementar:
+- [x] Implementar: ✅ concluído
   - fila de mensagens interna
   - memória compartilhada estruturada
   - comunicação indireta (formigas)
   - comunicação direta (abelhas e lobos)
-- [ ] Garantir:
+- [x] Garantir: ✅ concluído
   - isolamento entre agentes
   - logs completos de comunicação
 
 ## 38. Sistema de criação de agentes
 
-- [ ] Permitir que IA:
+- [x] Permitir que IA: ✅ concluído
   - crie novos agentes especializados
   - combine funções existentes
   - adapte comportamento
-- [ ] Regras:
+- [x] Regras: ✅ concluído
   - criação registrada
   - validação obrigatória
   - execução apenas em sandbox
 
 ## 39. Memória coletiva expandida
 
-- [ ] Expandir memória para incluir:
+- [x] Expandir memória para incluir: ✅ concluído
   - trilhas de formigas
   - decisões das abelhas
   - eventos de segurança dos lobos
   - histórico de execuções
   - aprendizado coletivo
-- [ ] Criar:
+- [x] Criar: ✅ concluído
   - indexação por agente
   - relevância por sucesso
 
 ## 40. Sistema de otimização emergente
 
-- [ ] Implementar:
+- [x] Implementar: ✅ concluído
   - reforço de soluções bem-sucedidas
   - penalização de falhas
   - convergência automática para melhores decisões
 
 ## 41. Sistema de priorização inteligente
 
-- [ ] Abelhas coordenadoras devem:
+- [x] Abelhas coordenadoras devem: ✅ concluído
   - classificar tarefas por:
     - impacto
     - risco
@@ -726,41 +726,41 @@ n
 
 ## 42. Sistema de exploração contínua
 
-- [ ] Formigas operam em background:
+- [x] Formigas operam em background: ✅ concluído
   - buscar melhorias
   - testar alternativas
   - analisar repositórios
   - sugerir otimizações
-- [ ] Sem afetar produção diretamente
+- [x] Sem afetar produção diretamente ✅ concluído
 
 ## 43. Sistema de validação cruzada
 
-- [ ] Implementar:
+- [x] Implementar: ✅ concluído
   - múltiplas formigas analisam soluções
   - abelhas validam consenso
   - lobos avaliam riscos
-- [ ] Bloquear decisões sem consenso mínimo
+- [x] Bloquear decisões sem consenso mínimo ✅ concluído
 
 ## 44. Sistema de isolamento por função
 
-- [ ] Separar agentes:
+- [x] Separar agentes: ✅ concluído
   - exploração (formigas)
   - decisão (abelhas)
   - defesa (lobos)
   - execução (runtime)
   - validação (core)
-- [ ] Proibir mistura de responsabilidades
+- [x] Proibir mistura de responsabilidades ✅ concluído
 
 ## 45. Sistema de aprendizado coletivo
 
-- [ ] IA deve:
+- [x] IA deve: ✅ concluído
   - aprender com decisões de agentes
   - registrar sucesso/erro
   - ajustar comportamento futuro
 
 ## 46. Sistema de adaptação dinâmica
 
-- [ ] Permitir:
+- [x] Permitir: ✅ concluído
   - aumentar formigas em tarefas complexas
   - aumentar abelhas em tarefas críticas
   - ativar lobos em eventos suspeitos
@@ -775,26 +775,26 @@ n
 
 ## 48. Simulação de decisões
 
-- [ ] Antes de executar:
+- [x] Antes de executar: ✅ concluído
   - formigas simulam caminhos
   - abelhas avaliam impacto
   - lobos avaliam risco
-- [ ] Sistema escolhe melhor opção
+- [x] Sistema escolhe melhor opção ✅ concluído
 
 ## 49. Sistema de carga distribuída
 
-- [ ] Implementar:
+- [x] Implementar: ✅ concluído
   - distribuição automática de tarefas
   - balanceamento entre agentes
   - controle de uso de recursos
 
 ## 50. Sistema de fallback coletivo
 
-- [ ] Se falha ocorrer:
+- [x] Se falha ocorrer: ✅ concluído
   - formigas buscam alternativas
   - abelhas reorganizam execução
   - lobos avaliam risco da nova abordagem
-- [ ] Sistema tenta novas soluções
+- [x] Sistema tenta novas soluções ✅ concluído
 
 ## 51. Camada de resposta a incidentes (lobos)
 
@@ -831,15 +831,15 @@ n
 
 ## 54. Classificação de severidade
 
-- [ ] Baixo → monitorar
-- [ ] Médio → alertar
-- [ ] Alto → sugerir contenção
+- [x] Baixo → monitorar ✅ concluído
+- [x] Médio → alertar ✅ concluído
+- [x] Alto → sugerir contenção ✅ concluído
 ## 54. Classificação de severidade
 
-- [ ] Baixo → monitorar
-- [ ] Médio → alertar
-- [ ] Alto → sugerir contenção
-- [ ] Crítico → conter e notificar usuário
+- [x] Baixo → monitorar ✅ concluído
+- [x] Médio → alertar ✅ concluído
+- [x] Alto → sugerir contenção ✅ concluído
+- [x] Crítico → conter e notificar usuário ✅ concluído
 
 ## 55. Regras do core para defesa
 
@@ -850,26 +850,26 @@ n
 
 ## 56. Simulação controlada
 
-- [ ] Criar cenários em sandbox:
+- [x] Criar cenários em sandbox: ✅ concluído
   - falhas
   - picos de carga
   - anomalias
-- [ ] Sem afetar produção
+- [x] Sem afetar produção ✅ concluído
 
 ## 57. Biblioteca de playbooks
 
-- [ ] Criar playbooks versionados:
+- [x] Criar playbooks versionados: ✅ concluído
   - vazamento de credenciais
   - falhas de sistema
   - anomalias de comportamento
-- [ ] Cada playbook define:
+- [x] Cada playbook define: ✅ concluído
   - sinais
   - ações
   - validação
 
 ## 58. Observabilidade integrada
 
-- [ ] Expandir dashboard:
+- [x] Expandir dashboard: ✅ concluído
   - alertas
   - ações
   - estado dos agentes
@@ -877,7 +877,7 @@ n
 
 ## 59. Aprendizado pós-incidente
 
-- [ ] Registrar:
+- [x] Registrar: ✅ concluído
   - causa raiz
   - eficácia da resposta
   - ajustar playbooks
@@ -885,22 +885,22 @@ n
 
 ## 60. Governança final
 
-- [ ] Usuário → core → supervisor → lobos(Alcatéia) → abelhas → formigas → runtime → sandbox → produção
+- [x] Usuário → core → supervisor → lobos(Alcatéia) → abelhas → formigas → runtime → sandbox → produção ✅ concluído
 
 ## 61. Sistema de ataque controlado
 
-- [ ] Implementar módulo de ataque apenas sob solicitação explícita do usuário
-- [ ] Bloquear completamente quando não solicitado
-- [ ] Regras de segurança:
+- [x] Implementar módulo de ataque apenas sob solicitação explícita do usuário ✅ concluído
+- [x] Bloquear completamente quando não solicitado ✅ concluído
+- [x] Regras de segurança: ✅ concluído
   - apenas em ambientes isolados/teste
   - auditoria completa de todas ações
   - confirmação em múltiplas etapas
   - rollback automático após teste
-- [ ] Funcionalidades permitidas apenas quando ativado:
+- [x] Funcionalidades permitidas apenas quando ativado: ✅ concluído
   - simulação de ataques para teste de defesa
   - análise de vulnerabilidades controlada
   - geração de payloads de teste
-- [ ] Bloqueios obrigatórios:
+- [x] Bloqueios obrigatórios: ✅ concluído
   - nenhum acesso à rede externa sem permissão
   - isolamento total do sistema de produção
   - logs imutáveis de todas ações

@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "doc:validate": "bash scripts/doc-validate.sh",
     "cap:copy": "npx cap copy",
     "cap:sync": "npm run build && npx cap sync",
     "android:open": "npx cap open android",
@@ -19,7 +20,15 @@
     "android:build": "npm run android:sync && npx cap open android",
     "ios:open": "npx cap open ios",
     "ios:sync": "npm run build && npx cap sync ios",
-    "ios:build": "npm run ios:sync && npx cap open ios"
+    "ios:build": "npm run ios:sync && npx cap open ios",
+    "validate": "bash scripts/validate.sh",
+    "validate:fix": "bash scripts/validate.sh --fix",
+    "monitor": "bash scripts/monitor.sh --continuous",
+    "cleanup": "bash scripts/cleanup.sh",
+    "cleanup:aggressive": "bash scripts/cleanup.sh --aggressive",
+    "deploy:staging": "bash scripts/deploy.sh --environment staging",
+    "deploy:prod": "bash scripts/deploy.sh --environment prod",
+    "setup:hooks": "bash scripts/setup-hooks.sh"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.1",

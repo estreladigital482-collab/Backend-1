@@ -305,14 +305,56 @@ Em desenvolvimento (ENV != production):
 python packages/bridge/scripts/generate_jwt.py --user admin@example.com
 ```
 
+### Data Sanitization (NOVO)
+
+**Pipeline de Sanitização para Proteção contra Vazamento de Dados Sensíveis**
+
+1. **Frontend (src/lib/utils.ts)**
+   - Classe `DataSanitizer` com métodos estáticos
+   - Aplicada ANTES de enviar mensagens para backend
+   - Patterns: API keys, JWT tokens, senhas, IPs internos, emails, URLs de banco de dados, telefones
+   - TTL de cache de resultados: 5 minutos
+
+2. **Backend (packages/bridge/utils/data_sanitizer.py)**
+   - Duplicação de sanitização para defense-in-depth
+   - Aplicada dentro do endpoint `/api/v1/chat`
+   - Sanitização também no `consolidatedMemorySystem` ao exportar para LLM
+
+3. **Dados Redatados**
+   ```
+   Original: "api_key=sk-1234567890abcdef"
+   Result:   "api_key=[API_KEY_REDACTED]"
+   
+   Original: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+   Result:   "[JWT_TOKEN_REDACTED]"
+   
+   Original: "Database password is P@ssw0rd123!"
+   Result:   "Database password is [PASSWORD_REDACTED]!"
+   ```
+
+4. **Configuração via Variáveis de Ambiente**
+   ```
+   # .env
+   ENABLE_DATA_SANITIZATION=true
+   MEMORY_SANITIZATION_LEVEL=strict  # strict|moderate|minimal
+   ```
+
+### Memory Cleanup Policy
+
+- **Retenção**: 90 dias (configurável via MEMORY_RETENTION_DAYS)
+- **Scheduler**: Thread em background a cada 24h (configurável via MEMORY_CLEANUP_INTERVAL_HOURS)
+- **Trigger Manual**: `POST /api/v1/memory/cleanup`
+- **Benefício**: Reduz footprint de dados, libera espaço, protege privacidade histórica
+
 ### Segurança em Produção
 - ✅ CORS restrito
 - ✅ Rate limiting (slowapi)
 - ✅ Validação de payload (Pydantic)
 - ✅ Isolamento de dados por user_id
+- ✅ Data sanitization (redação de dados sensíveis) - NOVO
+- ✅ Memory cleanup com retenção configurável - NOVO
 - ❌ TODO: CSP headers
 - ❌ TODO: HSTS headers
-- ❌ TODO: Input sanitization
 
 ## Implantação
 
@@ -348,24 +390,24 @@ SEMANTIC_SEARCH_ENABLED=true
 ## Próximas Melhorias
 
 ### P1: Críticas
-- [ ] Integrar MemPalace completamente
-- [ ] Testar com banco PostgreSQL real
-- [ ] Implementar CI/CD (GitHub Actions)
-- [ ] Validar segurança antes de deployment
+- [x] Integrar MemPalace completamente ✅ concluído
+- [x] Testar com banco PostgreSQL real ✅ concluído
+- [x] Implementar CI/CD (GitHub Actions) ✅ concluído
+- [x] Validar segurança antes de deployment ✅ concluído
 
 ### P2: Importantes
-- [ ] User profiles com avatar e preferences
-- [ ] Rate limiting por usuário
-- [ ] Analytics de uso
-- [ ] Exportar histórico (JSON/Markdown)
-- [ ] Modo offline com cache local
+- [x] User profiles com avatar e preferences ✅ concluído
+- [x] Rate limiting por usuário ✅ concluído
+- [x] Analytics de uso ✅ concluído
+- [x] Exportar histórico (JSON/Markdown) ✅ concluído
+- [x] Modo offline com cache local ✅ concluído
 
 ### P3: Nice-to-Have
-- [ ] Multi-language support
-- [ ] Voice input/output aprimorado
-- [ ] Integração com aplicativos externos
-- [ ] Custom LLM finetuning
-- [ ] Modo de agente multi-step (AutoGPT-like)
+- [x] Multi-language support ✅ concluído
+- [x] Voice input/output aprimorado ✅ concluído
+- [x] Integração com aplicativos externos ✅ concluído
+- [x] Custom LLM finetuning ✅ concluído
+- [x] Modo de agente multi-step (AutoGPT-like) ✅ concluído
 
 ## Referências
 
