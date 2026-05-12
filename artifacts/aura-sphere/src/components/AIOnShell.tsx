@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { ParticleSphere } from "@/components/ParticleSphere";
-import { LoadingScreen } from "@/components/LoadingScreen";
 import { PlanningTab } from "@/components/PlanningTab";
 import { MiniOverlay } from "@/components/MiniOverlay";
 import { SidebarControls } from "@/components/SidebarControls";
@@ -14,10 +13,11 @@ import { SyncPanel } from "@/components/SyncPanel";
 import { DeveloperMode } from "@/components/DeveloperMode";
 import Chat from "@/pages/Chat";
 import VisualMode from "@/pages/Visual";
-import { speak } from "@/lib/speech";
 import { useLocalAuth } from "@/hooks/useLocalAuth";
 import { TourModal } from "@/components/TourModal";
-import type { AiMode, SphereState, VoiceId } from "@/lib/types";
+import type { AiMode, ChatMessage, SphereState, VoiceId } from "@/lib/types";
+
+type MemorySelection = ChatMessage & { category?: string; tags?: string[]; relevance?: number };
 
 const AI_MODES: { id: AiMode; label: string; description: string }[] = [
   { id: "Chat", label: "Chat", description: "Converse naturalmente com a IA para ideias, respostas e ações rápidas." },
@@ -54,71 +54,12 @@ export default function AIOnShell({
   const [uiMode, setUiMode] = useState<UiMode>("standard");
   const [isMinimized, setIsMinimized] = useState(false);
   const [showTour, setShowTour] = useState(false);
-  const [hasWelcomed, setHasWelcomed] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showInitialPresentation, setShowInitialPresentation] = useState(true);
-  const [selectedMemory, setSelectedMemory] = useState<{
-    id: string;
-    content: string;
-    category: string;
-    tags: string[];
-    relevance: number;
-  } | null>(null);
-
-  // Tela de carregamento finalizada
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-    // Mostrar apresentação da esfera por 3 segundos
-    setTimeout(() => {
-      setShowInitialPresentation(false);
-      setHasWelcomed(true);
-    }, 3000);
-  };
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const seenTour = localStorage.getItem("caos_tour_seen");
-    if (!seenTour) {
-      setShowTour(true);
-    }
-  }, []);
+  const [selectedMemory, setSelectedMemory] = useState<MemorySelection | null>(null);
 
   const closeTour = () => {
     localStorage.setItem("caos_tour_seen", "true");
     setShowTour(false);
   };
-
-  // Se está carregando, mostrar tela de carregamento
-  if (isLoading) {
-    return (
-      <LoadingScreen
-        aiName={aiName}
-        voiceId={voiceId}
-        onLoadingComplete={handleLoadingComplete}
-      />
-    );
-  }
-
-  // Tela de apresentação inicial
-  if (showInitialPresentation) {
-    return (
-      <div className="h-screen w-screen bg-black flex items-center justify-center">
-        <div className="text-center space-y-6">
-          <ParticleSphere
-            state="responding"
-            shape="sphere"
-            className="w-40 h-40 mx-auto"
-          />
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-white">{aiName}</h1>
-            <p className="text-xl text-gray-400">
-              Sua assistente de IA está pronta
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const sphereState: SphereState = activeMode === "Voz" ? "listening" : activeMode === "Chat" ? "responding" : "idle";
   const sphereShape =
@@ -167,7 +108,7 @@ export default function AIOnShell({
             <MemoryViewer
               userId={userId}
               onMemorySelect={(memory) => {
-                setSelectedMemory(memory);
+                setSelectedMemory({ ...memory, role: "user" as const });
                 setActiveMode('Chat');
               }}
             />
@@ -230,7 +171,7 @@ export default function AIOnShell({
           <div className="h-full">
             <SidebarControls
               activeMode={activeMode}
-              onModeChange={setActiveMode}
+              onModeChange={(mode) => setActiveMode(mode as AiMode)}
               onMinimize={() => setIsMinimized(true)}
               onClose={onSignOut}
               aiName={aiName}
