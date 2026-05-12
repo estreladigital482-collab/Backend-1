@@ -1,36 +1,49 @@
-# [Project name]
+# Aura Sphere
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A personal AI assistant web app with local-first data, voice interaction, and a 3D particle sphere UI.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
+- `pnpm --filter @workspace/aura-sphere run dev` — run the frontend (port assigned by workflow)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
+- Frontend: React + Vite + Tailwind CSS v3 + shadcn/ui
+- API: Express 5 (artifacts/api-server)
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Build: esbuild (server), Vite (frontend)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/aura-sphere/` — frontend React app
+- `artifacts/api-server/` — Express API backend
+- `lib/db/src/schema/aura-sphere.ts` — DB schema (profiles + chat_messages tables)
+- `artifacts/aura-sphere/src/integrations/supabase/client.ts` — Supabase stub (no-op)
+- `artifacts/aura-sphere/src/lib/api.ts` — API base URL helper (points to /api)
+- `artifacts/aura-sphere/src/index.css` — theme CSS variables (monochrome dark theme)
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Supabase replaced with Replit PostgreSQL + Express API backend.
+- Auth: local-only mode (localStorage). Google OAuth from original app removed (Supabase-dependent).
+- Supabase stub (`client.ts`) keeps all import sites working without rewriting every call site.
+- App is primarily local-first: data stored in localStorage, sync to backend is optional.
+- Chat.tsx and useSyncService use `/api/chat-messages` and `/api/profiles` endpoints.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Personal AI assistant with a 3D animated particle sphere
+- Multiple AI modes (Chat, Código, Projetos, Memória, Imagem, Voz, Automação, Dev Mode)
+- Voice input/output support (Web Speech API)
+- Local-first: works offline, syncs when online
+- Portuguese (Brazilian) UI
 
 ## User preferences
 
@@ -38,7 +51,11 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Tailwind v3 (not v4) — uses `@tailwind base/components/utilities` in index.css and postcss.config.js
+- App uses react-router-dom (not wouter) for routing
+- Vite config drops `@tailwindcss/vite` plugin — uses postcss instead for Tailwind v3 compatibility
+- `@capacitor/core` removed — stubbed out in platform.ts for web-only build
+- `@supabase/supabase-js` and `@lovable.dev/cloud-auth-js` not installed — stubbed
 
 ## Pointers
 
