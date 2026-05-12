@@ -33,7 +33,7 @@ export function LoadingScreen({ onLoadingComplete, aiName, voiceId }: LoadingScr
     // Fase 4: Apresentação
     const timer4 = setTimeout(() => {
       setShowPresentation(true);
-      const presentationMessage = `Olá! Sou ${aiName}, sua assistente de IA. Bem-vindo ao Aura Sphere! Estou aqui para ajudar você com planejamento, tarefas, conversas e muito mais. Vamos começar?`;
+      const presentationMessage = `Olá! Sou ${aiName}, sua assistente de IA pessoal. Estou aqui para ajudar você com planejamento, tarefas, conversas e muito mais. Vamos começar?`;
       speak(presentationMessage, voiceId, () => {
         // Após falar, aguarda 1 segundo e fecha o carregamento
         setTimeout(() => {
@@ -91,7 +91,7 @@ export function LoadingScreen({ onLoadingComplete, aiName, voiceId }: LoadingScr
                 Sua assistente de IA está pronta para ajudar
               </p>
               <p className="text-sm text-gray-400 max-w-md mx-auto">
-                Bem-vindo ao Aura Sphere. Estou aqui para apoiá-lo em planejamento, tarefas, conversas e muito mais.
+                Estou aqui para apoiá-lo em planejamento, tarefas, conversas e muito mais.
               </p>
             </div>
           </>

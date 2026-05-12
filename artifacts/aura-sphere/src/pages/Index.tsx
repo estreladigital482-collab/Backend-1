@@ -53,7 +53,7 @@ const Index = () => {
     return (
       <div className="min-h-[100dvh] flex flex-col">
         <div className="flex justify-between items-center p-4 border-b bg-black/80 backdrop-blur-sm">
-          <h1 className="text-lg font-semibold">Aura Sphere - Modo Demo</h1>
+          <h1 className="text-lg font-semibold">Caos - Modo Demo</h1>
           <SyncStatus />
         </div>
         <div className="flex-1">
@@ -86,7 +86,7 @@ const Index = () => {
       <div className="min-h-[100dvh] flex flex-col">
         <div className="flex justify-between items-center p-4 border-b bg-black/80 backdrop-blur-sm">
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-semibold">Aura Sphere</h1>
+            <h1 className="text-lg font-semibold">Caos</h1>
             <span className="text-sm text-muted-foreground">- {localUser.name}</span>
           </div>
           <SyncStatus />

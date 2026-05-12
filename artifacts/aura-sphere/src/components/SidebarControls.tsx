@@ -118,7 +118,7 @@ export function SidebarControls({
             <p className="text-sm text-slate-400">Assistente IA</p>
           </div>
           <div className="rounded-3xl bg-slate-800/80 px-3 py-1 text-xs uppercase tracking-[0.25em] text-violet-300 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
-            Aura Sphere
+            Caos
           </div>
         </div>
         <div className="mt-4 flex items-center justify-between gap-3 rounded-3xl bg-slate-900/70 px-3 py-2 text-xs text-slate-300">

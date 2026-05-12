@@ -83,7 +83,7 @@ export function useSyncService({
     if (!isOnline || !userId) return { success: false, syncedCount: 0 };
 
     try {
-      const localMemories = JSON.parse(localStorage.getItem('aura_sphere_memories') || '[]');
+      const localMemories = JSON.parse(localStorage.getItem('caos_memories') || '[]');
       if (localMemories.length === 0) return { success: true, syncedCount: 0 };
 
       const syncPromises = localMemories.map(async (memory: Record<string, unknown>) => {
@@ -102,7 +102,7 @@ export function useSyncService({
       const results = await Promise.all(syncPromises);
       const successfulSyncs = results.filter(Boolean).length;
       if (successfulSyncs === localMemories.length) {
-        localStorage.removeItem('aura_sphere_memories');
+        localStorage.removeItem('caos_memories');
       }
       return { success: successfulSyncs > 0, syncedCount: successfulSyncs };
     } catch {

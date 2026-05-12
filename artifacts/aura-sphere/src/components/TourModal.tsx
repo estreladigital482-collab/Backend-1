@@ -18,7 +18,7 @@ export function TourModal({ isOpen, onClose }: TourModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl glass-panel border border-white/10 shadow-2xl shadow-black/50">
         <DialogHeader>
-          <DialogTitle>Tour rápido do Aura Sphere</DialogTitle>
+          <DialogTitle>Tour rápido do Caos</DialogTitle>
           <DialogDescription>
             Veja os principais recursos e comece a usar sua assistente com mais rapidez.
           </DialogDescription>

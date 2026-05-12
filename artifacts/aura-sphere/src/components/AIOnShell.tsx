@@ -11,7 +11,9 @@ import { VoiceMode } from "@/components/VoiceMode";
 import { VersionDashboard } from "@/components/VersionDashboard";
 import { MemoryViewer } from "@/components/MemoryViewer";
 import { SyncPanel } from "@/components/SyncPanel";
+import { DeveloperMode } from "@/components/DeveloperMode";
 import Chat from "@/pages/Chat";
+import VisualMode from "@/pages/Visual";
 import { speak } from "@/lib/speech";
 import { useLocalAuth } from "@/hooks/useLocalAuth";
 import { TourModal } from "@/components/TourModal";
@@ -74,14 +76,14 @@ export default function AIOnShell({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const seenTour = localStorage.getItem("aura_sphere_tour_seen");
+    const seenTour = localStorage.getItem("caos_tour_seen");
     if (!seenTour) {
       setShowTour(true);
     }
   }, []);
 
   const closeTour = () => {
-    localStorage.setItem("aura_sphere_tour_seen", "true");
+    localStorage.setItem("caos_tour_seen", "true");
     setShowTour(false);
   };
 
@@ -171,7 +173,7 @@ export default function AIOnShell({
           </div>
         );
       case "Planejamento":
-        return <VisualMode />;
+        return <VisualMode userId={userId} aiName={aiName} voiceId={voiceId} />;
       case "Dev Mode":
         return (
           <div className="h-full p-6 overflow-auto">

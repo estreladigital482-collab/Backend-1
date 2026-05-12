@@ -53,9 +53,8 @@ type PromptPreset = {
 type MemorySearchResult = ChatMessage & { category?: string };
 
 const AI_PROVIDER_OPTIONS: { id: AiProvider; label: string }[] = [
-  { id: "lovable", label: "Lovable" },
-  { id: "anthropic", label: "Anthropic / Claude" },
   { id: "openai", label: "OpenAI" },
+  { id: "anthropic", label: "Anthropic / Claude" },
 ];
 
 const PROMPT_PRESETS: PromptPreset[] = [
@@ -103,8 +102,8 @@ const PROMPT_PRESETS: PromptPreset[] = [
   },
 ];
 
-const PROMPT_PRESET_STORAGE_KEY = "aura_sphere_prompt_presets";
-const SELECTED_PROMPT_PRESET_KEY = "aura_sphere_selected_prompt_preset";
+const PROMPT_PRESET_STORAGE_KEY = "caos_prompt_presets";
+const SELECTED_PROMPT_PRESET_KEY = "caos_selected_prompt_preset";
 
 const API_BASE = getApiBase();
 const AUTH_HEADERS = getAuthHeaders();
@@ -130,7 +129,7 @@ export default function Chat({
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const [provider, setProvider] = useState<AiProvider>("lovable");
+  const [provider, setProvider] = useState<AiProvider>("openai");
   const [presetId, setPresetId] = useState<string>(PROMPT_PRESETS[0].id);
   const [state, setState] = useState<SphereState>("idle");
   const [shape, setShape] = useState<ParticleShape>("sphere");
@@ -354,35 +353,33 @@ export default function Chat({
 
   // Load history
   const loadHistory = async (page = 0) => {
+    if (isLocalMode) { setHistoryLoading(false); return; }
     setHistoryLoading(true);
-    const from = page * historyLimit;
-    const to = from + historyLimit - 1;
-
-    const { data, error } = await supabase
-      .from("chat_messages")
-      .select("id, role, content")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .range(from, to);
-
-    setHistoryLoading(false);
-    if (error) {
-      console.error("Erro ao carregar histórico de chat:", error);
-      return;
+    const offset = page * historyLimit;
+    try {
+      const res = await fetch(
+        `${API_BASE}/chat-messages?user_id=${encodeURIComponent(userId)}&offset=${offset}&limit=${historyLimit}`,
+        { headers: AUTH_HEADERS },
+      );
+      setHistoryLoading(false);
+      if (!res.ok) return;
+      const data: { id: string; role: string; content: string }[] = await res.json();
+      const pageMessages = data.map((m) => ({
+        id: m.id,
+        role: m.role as 'user' | 'assistant',
+        content: m.content,
+      }));
+      if (page === 0) {
+        setMessages(pageMessages);
+      } else {
+        setMessages((prev) => [...pageMessages, ...prev]);
+      }
+      setHasMoreHistory(data.length === historyLimit);
+      setHistoryPage(page);
+    } catch (e) {
+      console.error("Erro ao carregar histórico:", e);
+      setHistoryLoading(false);
     }
-
-    const pageMessages = (data ?? [])
-      .map((m) => ({ id: m.id, role: (m.role as 'user' | 'assistant'), content: m.content }))
-      .reverse();
-
-    if (page === 0) {
-      setMessages(pageMessages);
-    } else {
-      setMessages((prev) => [...pageMessages, ...prev]);
-    }
-
-    setHasMoreHistory((data?.length ?? 0) === historyLimit);
-    setHistoryPage(page);
   };
 
   useEffect(() => {
@@ -414,18 +411,19 @@ export default function Chat({
       addMessage({ role: msg.role, content: msg.content });
       return;
     }
-
-    const { error } = await supabase
-      .from("chat_messages")
-      .insert({ user_id: userId, role: msg.role, content: msg.content });
-    if (error) {
-      console.error("Persist error", error);
-      toast.error("Não foi possível salvar a mensagem.");
+    try {
+      await fetch(`${API_BASE}/chat-messages`, {
+        method: "POST",
+        headers: AUTH_HEADERS,
+        body: JSON.stringify({ user_id: userId, role: msg.role, content: msg.content }),
+      });
+    } catch (e) {
+      console.error("Persist error", e);
     }
   };
 
   const saveLocalMemory = async (msg: ChatMessage, category: string = "chat") => {
-    const stored = JSON.parse(localStorage.getItem('aura_sphere_memories') || '[]');
+    const stored = JSON.parse(localStorage.getItem('caos_memories') || '[]');
     const newMemory = {
       id: `memory_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       user_id: userId,
@@ -436,7 +434,7 @@ export default function Chat({
       timestamp: new Date().toISOString(),
       relevance: 0.75,
     };
-    localStorage.setItem('aura_sphere_memories', JSON.stringify([newMemory, ...stored]));
+    localStorage.setItem('caos_memories', JSON.stringify([newMemory, ...stored]));
   };
 
   const saveMemory = async (msg: ChatMessage, category: string = "chat") => {
@@ -485,7 +483,7 @@ export default function Chat({
     if (!trimmed) return [];
 
     if (!networkOnline || isLocalMode) {
-      const localItems = JSON.parse(localStorage.getItem('aura_sphere_memories') || '[]') as Array<Record<string, unknown>>;
+      const localItems = JSON.parse(localStorage.getItem('caos_memories') || '[]') as Array<Record<string, unknown>>;
       return localItems
         .filter((item) =>
           (item.content as string).toLowerCase().includes(trimmed.toLowerCase()) ||
@@ -646,13 +644,9 @@ export default function Chat({
       const messagesForApi = [systemMessage, selectedMemoryMessage, memoryMessage].filter(Boolean) as ChatMessage[];
       const payloadMessages = messagesForApi.length > 0 ? [...messagesForApi, ...next] : next;
 
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
-      const resp = await fetch(url, {
+      const resp = await fetch(`${API_BASE}/chat`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
+        headers: AUTH_HEADERS,
         body: JSON.stringify({
           aiName,
           provider,
@@ -706,7 +700,8 @@ export default function Chat({
           }
           try {
             const parsed = JSON.parse(json);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (parsed.done) { done = true; break; }
+            const content = (parsed.content ?? parsed.choices?.[0]?.delta?.content) as string | undefined;
             if (content) upsert(content);
           } catch {
             buf = line + "\n" + buf;

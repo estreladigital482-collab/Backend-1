@@ -5,7 +5,7 @@ export function DeveloperMode() {
   const [metrics, setMetrics] = useState({ requests: 0, errors: 0, uptime: '0h 0m' });
 
   useEffect(() => {
-    const storedLogs = window.localStorage.getItem('aura_sphere_dev_logs');
+    const storedLogs = window.localStorage.getItem('caos_dev_logs');
     if (storedLogs) {
       setLogs(JSON.parse(storedLogs));
     }

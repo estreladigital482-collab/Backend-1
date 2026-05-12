@@ -95,7 +95,7 @@ export const DEFAULT_THEMES: Record<string, VisualTheme> = {
   default: {
     id: 'default',
     name: 'Padrão',
-    description: 'Tema padrão do Aura Sphere',
+    description: 'Tema padrão do Caos',
     primary: 'hsl(262 83% 58%)',
     secondary: 'hsl(210 40% 96%)',
     accent: 'hsl(262 83% 58%)',
@@ -222,7 +222,7 @@ export const DEFAULT_LAYOUTS: Record<string, LayoutConfig> = {
   default: {
     id: 'default',
     name: 'Padrão',
-    description: 'Layout padrão do Aura Sphere',
+    description: 'Layout padrão do Caos',
     sidebarPosition: 'left',
     sidebarWidth: 288, // 18rem
     sidebarCollapsed: false,

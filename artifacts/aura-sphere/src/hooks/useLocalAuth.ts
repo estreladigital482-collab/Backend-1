@@ -21,8 +21,22 @@ interface LocalAuthState {
   isOnline: boolean;
 }
 
-const LOCAL_USER_KEY = 'aura_sphere_local_user';
-const LOCAL_MESSAGES_KEY = 'aura_sphere_local_messages';
+const LOCAL_USER_KEY = 'caos_local_user';
+const LOCAL_MESSAGES_KEY = 'caos_local_messages';
+
+// Migrar chaves antigas se existirem
+if (typeof window !== 'undefined') {
+  const old = localStorage.getItem('aura_sphere_local_user');
+  if (old && !localStorage.getItem(LOCAL_USER_KEY)) {
+    localStorage.setItem(LOCAL_USER_KEY, old);
+    localStorage.removeItem('aura_sphere_local_user');
+  }
+  const oldMsgs = localStorage.getItem('aura_sphere_local_messages');
+  if (oldMsgs && !localStorage.getItem(LOCAL_MESSAGES_KEY)) {
+    localStorage.setItem(LOCAL_MESSAGES_KEY, oldMsgs);
+    localStorage.removeItem('aura_sphere_local_messages');
+  }
+}
 
 export function useLocalAuth() {
   const [state, setState] = useState<LocalAuthState>({

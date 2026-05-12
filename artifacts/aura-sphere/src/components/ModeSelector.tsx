@@ -12,7 +12,7 @@ export function ModeSelector({ value, onChange }: ModeSelectorProps) {
   const [selectedMode, setSelectedMode] = useState<ModeType>(value);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem('aura_sphere_mode') as ModeType | null;
+    const stored = window.localStorage.getItem('caos_mode') as ModeType | null;
     if (stored && MODES.includes(stored)) {
       setSelectedMode(stored);
       onChange(stored);
@@ -20,7 +20,7 @@ export function ModeSelector({ value, onChange }: ModeSelectorProps) {
   }, [onChange]);
 
   useEffect(() => {
-    window.localStorage.setItem('aura_sphere_mode', selectedMode);
+    window.localStorage.setItem('caos_mode', selectedMode);
   }, [selectedMode]);
 
   return (

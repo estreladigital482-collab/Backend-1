@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, uuid, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -19,6 +19,21 @@ export const chatMessagesTable = pgTable("chat_messages", {
   content: text("content").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const memoriesTable = pgTable("memories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull(),
+  role: text("role").notNull().default("user"),
+  content: text("content").notNull(),
+  category: text("category").notNull().default("chat"),
+  tags: text("tags").array().default([]),
+  relevance: real("relevance").notNull().default(0.75),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertMemorySchema = createInsertSchema(memoriesTable).omit({ id: true });
+export type Memory = typeof memoriesTable.$inferSelect;
+export type InsertMemory = z.infer<typeof insertMemorySchema>;
 
 export const insertProfileSchema = createInsertSchema(profilesTable);
 export const insertChatMessageSchema = createInsertSchema(chatMessagesTable).omit({ id: true });

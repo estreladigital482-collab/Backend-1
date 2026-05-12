@@ -44,7 +44,7 @@ export function AIOnShellTabs() {
             </div>
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Sala de Comando</p>
-              <h1 className="text-2xl font-bold">Aura Sphere Control Panel</h1>
+              <h1 className="text-2xl font-bold">Caos — Painel de Controle</h1>
             </div>
           </div>
           <p className="max-w-2xl text-sm text-slate-300">Gerencie missões, habilidades e recursos do mundo real em uma interface de aventura estilo RPG.</p>

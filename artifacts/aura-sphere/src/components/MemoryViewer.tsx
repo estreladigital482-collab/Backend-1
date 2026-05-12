@@ -31,8 +31,8 @@ export function MemoryViewer({ userId, onMemorySelect }: MemoryViewerProps) {
     const loadMemories = async () => {
       setIsLoading(true);
       
-      const cacheKey = `aura_sphere_memories_cache_${userId}`;
-      const cacheTimestampKey = `aura_sphere_memories_timestamp_${userId}`;
+      const cacheKey = `caos_memories_cache_${userId}`;
+      const cacheTimestampKey = `caos_memories_timestamp_${userId}`;
       const getCachedMemories = () => {
         const cached = localStorage.getItem(cacheKey);
         return (JSON.parse(cached || '[]') as MemoryItem[])
@@ -70,8 +70,8 @@ export function MemoryViewer({ userId, onMemorySelect }: MemoryViewerProps) {
         const merged = [...storedMemories, ...remoteMemories];
         
         // Cache results with timestamp
-        const cacheKey = `aura_sphere_memories_cache_${userId}`;
-        const cacheTimestampKey = `aura_sphere_memories_timestamp_${userId}`;
+        const cacheKey = `caos_memories_cache_${userId}`;
+        const cacheTimestampKey = `caos_memories_timestamp_${userId}`;
         localStorage.setItem(cacheKey, JSON.stringify(merged));
         localStorage.setItem(cacheTimestampKey, new Date().toISOString());
 
@@ -84,7 +84,7 @@ export function MemoryViewer({ userId, onMemorySelect }: MemoryViewerProps) {
     };
 
     loadMemories();
-    const storedPinnedIds = JSON.parse(localStorage.getItem('aura_sphere_memory_pinned') || '[]') as string[];
+    const storedPinnedIds = JSON.parse(localStorage.getItem('caos_memory_pinned') || '[]') as string[];
     if (Array.isArray(storedPinnedIds)) {
       setPinnedIds(storedPinnedIds);
     }
@@ -95,7 +95,7 @@ export function MemoryViewer({ userId, onMemorySelect }: MemoryViewerProps) {
       ? pinnedIds.filter((p) => p !== id)
       : [...pinnedIds, id];
     setPinnedIds(nextPinned);
-    localStorage.setItem('aura_sphere_memory_pinned', JSON.stringify(nextPinned));
+    localStorage.setItem('caos_memory_pinned', JSON.stringify(nextPinned));
   };
 
   const handleUseMemory = (memory: MemoryItem) => {

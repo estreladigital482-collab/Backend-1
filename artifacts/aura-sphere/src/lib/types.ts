@@ -37,7 +37,7 @@ export type Project = {
   createdAt: string;
 };
 
-export type AiMode = "Chat" | "Código" | "Projetos" | "Memória" | "Imagem" | "Voz" | "Automação" | "Visual" | "Dev Mode";
+export type AiMode = "Chat" | "Código" | "Projetos" | "Memória" | "Imagem" | "Voz" | "Automação" | "Visual" | "Dev Mode" | "Planejamento";
 
 export const VOICE_OPTIONS = [
   { id: "pt-female", label: "Aurora (PT-BR feminina)", lang: "pt-BR", gender: "female" },
@@ -47,9 +47,8 @@ export const VOICE_OPTIONS = [
 ] as const;
 
 export const AI_PROVIDER_OPTIONS = [
-  { id: "lovable", label: "Lovable" },
-  { id: "anthropic", label: "Anthropic / Claude" },
   { id: "openai", label: "OpenAI" },
+  { id: "anthropic", label: "Anthropic / Claude" },
 ] as const;
 
 export type VoiceId = (typeof VOICE_OPTIONS)[number]["id"];

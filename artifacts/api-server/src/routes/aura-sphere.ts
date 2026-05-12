@@ -50,16 +50,20 @@ router.post("/profiles", async (req, res) => {
 // Chat Messages
 router.get("/chat-messages", async (req, res) => {
   try {
-    const { user_id } = req.query;
+    const { user_id, offset, limit } = req.query;
     if (!user_id || typeof user_id !== "string") {
       res.status(400).json({ error: "user_id required" });
       return;
     }
+    const off = offset ? parseInt(String(offset), 10) : 0;
+    const lim = limit ? Math.min(parseInt(String(limit), 10), 100) : 50;
     const messages = await db
       .select()
       .from(chatMessagesTable)
       .where(eq(chatMessagesTable.userId, user_id))
-      .orderBy(chatMessagesTable.createdAt);
+      .orderBy(chatMessagesTable.createdAt)
+      .offset(off)
+      .limit(lim);
     res.json(messages);
   } catch (err) {
     req.log.error({ err }, "Error fetching chat messages");
