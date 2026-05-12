@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Instagram, AlertTriangle, Check, X, Loader } from 'lucide-react';
+import { useLocalAuth } from '@/hooks/useLocalAuth';
 
 interface AccountData {
   id: string;
@@ -15,6 +16,7 @@ interface LoginInstagramModalProps {
 }
 
 export function LoginInstagramModal({ isOpen, onClose, onLoginSuccess }: LoginInstagramModalProps) {
+  const { user } = useLocalAuth();
   const [step, setStep] = useState<'credentials' | '2fa' | 'success' | 'error'>('credentials');
   const [formData, setFormData] = useState({
     username: '',
@@ -46,7 +48,7 @@ export function LoginInstagramModal({ isOpen, onClose, onLoginSuccess }: LoginIn
         body: JSON.stringify({
           username: formData.username,
           password: formData.password,
-          user_id: 'current_user' // TODO: Obter do contexto de autenticação
+          user_id: user?.id || 'anonymous'
         })
       });
 
@@ -91,7 +93,7 @@ export function LoginInstagramModal({ isOpen, onClose, onLoginSuccess }: LoginIn
           username: formData.username,
           password: formData.password,
           verification_code: formData.verificationCode,
-          user_id: 'current_user'
+          user_id: user?.id || 'anonymous'
         })
       });
 

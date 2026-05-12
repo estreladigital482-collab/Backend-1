@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Heart, Share2, ExternalLink, Loader } from 'lucide-react';
+import { useLocalAuth } from '@/hooks/useLocalAuth';
+import { useToast } from '@/hooks/use-toast';
 
 interface CollectionItem {
   id: string;
@@ -24,9 +26,12 @@ interface CollectionViewerProps {
 }
 
 export function CollectionViewer({ collectionId, userId }: CollectionViewerProps) {
+  const { user } = useLocalAuth();
+  const { toast } = useToast();
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState('anime');
+  const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadRecommendations();
@@ -47,14 +52,78 @@ export function CollectionViewer({ collectionId, userId }: CollectionViewerProps
     }
   };
 
-  const handleLike = (itemId: string) => {
-    // TODO: Implementar like
-    console.log('Like item:', itemId);
+  const handleLike = async (itemId: string) => {
+    if (!user?.id) {
+      toast({
+        title: "Erro",
+        description: "Você precisa estar autenticado",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Toggle like state
+      const newLikedItems = new Set(likedItems);
+      if (newLikedItems.has(itemId)) {
+        newLikedItems.delete(itemId);
+      } else {
+        newLikedItems.add(itemId);
+      }
+      setLikedItems(newLikedItems);
+
+      // Aqui você poderia fazer chamada à API para persistir o like
+      // await fetch(`/api/v1/social/instagram/like`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ user_id: user.id, item_id: itemId })
+      // });
+
+      toast({
+        title: "Sucesso",
+        description: newLikedItems.has(itemId) ? "Adicionado aos favoritos!" : "Removido dos favoritos",
+      });
+    } catch (error) {
+      console.error('Erro ao curtir:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível processar a ação",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleShare = (itemId: string) => {
-    // TODO: Implementar share
-    console.log('Share item:', itemId);
+  const handleShare = async (itemId: string) => {
+    try {
+      const item = recommendations
+        .flatMap(r => r.items)
+        .find(i => i.id === itemId);
+
+      if (!item) return;
+
+      // Usar Web Share API se disponível
+      if (navigator.share) {
+        await navigator.share({
+          title: item.title,
+          text: item.title,
+          url: item.url
+        });
+      } else {
+        // Fallback: copiar para clipboard
+        await navigator.clipboard.writeText(item.url);
+        toast({
+          title: "Sucesso",
+          description: "Link copiado para a área de transferência",
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao compartilhar:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível compartilhar",
+        variant: "destructive"
+      });
+    }
   };
 
   if (loading) {
@@ -126,10 +195,14 @@ export function CollectionViewer({ collectionId, userId }: CollectionViewerProps
                     <div className="flex gap-2 mt-3">
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant={likedItems.has(item.id) ? "default" : "outline"}
                         onClick={() => handleLike(item.id)}
+                        className={likedItems.has(item.id) ? "bg-red-600 hover:bg-red-700" : ""}
                       >
-                        <Heart size={14} />
+                        <Heart 
+                          size={14} 
+                          className={likedItems.has(item.id) ? "fill-current" : ""}
+                        />
                       </Button>
                       <Button
                         size="sm"

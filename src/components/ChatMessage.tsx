@@ -24,10 +24,10 @@ export function ChatMessage({
       className={`flex ${isUser ? "justify-end" : "justify-start"} animate-fade-in`}
     >
       <div
-        className={`group relative max-w-[85%] rounded-3xl border p-4 text-sm leading-relaxed shadow-sm transition-all duration-200 ${
+        className={`group relative max-w-[85%] rounded-3xl border p-4 text-sm leading-relaxed shadow-[0_20px_80px_-36px_rgba(15,23,42,0.75)] transition-all duration-200 ${
           isUser
-            ? "bg-primary text-primary-foreground border-primary/20 rounded-br-sm"
-            : "bg-secondary text-secondary-foreground border-secondary/20 rounded-bl-sm"
+            ? "bg-gradient-to-br from-slate-900 to-slate-950 border-blue-500/20 text-white rounded-br-sm"
+            : "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-600/20 text-slate-100 rounded-bl-sm"
         }`}
       >
         <div className="mb-2 flex items-center justify-between gap-2">

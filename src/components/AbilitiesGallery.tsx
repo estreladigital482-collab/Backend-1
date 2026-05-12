@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Star, Download, Info, ChevronRight } from 'lucide-react';
+import { Plus, Shield, Sparkles, BookOpen, Compass, Clock3 } from 'lucide-react';
 import { AddAbilityModal } from './AddAbilityModal';
 import { AbilityCard } from './AbilityCard';
 
 export function AbilitiesGallery() {
-  const [abilities, setAbilities] = useState([]);
+  const [abilities, setAbilities] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredAbilities, setFilteredAbilities] = useState([]);
+  const [filteredAbilities, setFilteredAbilities] = useState<any[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     minRating: 0,
     category: 'all',
-    sortBy: 'name'
+    sortBy: 'rating'
   });
 
   useEffect(() => {
@@ -19,22 +19,27 @@ export function AbilitiesGallery() {
   }, []);
 
   useEffect(() => {
-    const filtered = abilities.filter(a => 
-      a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      a.description.toLowerCase().includes(searchTerm.toLowerCase())
-    ).filter(a => 
-      a.rating >= filters.minRating &&
-      (filters.category === 'all' || a.category === filters.category)
-    ).sort((a, b) => {
-      switch (filters.sortBy) {
-        case 'rating':
-          return b.rating - a.rating;
-        case 'name':
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
-      }
-    });
+    const filtered = abilities
+      .filter((a) =>
+        a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        a.description.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .filter(
+        (a) =>
+          a.rating >= filters.minRating &&
+          (filters.category === 'all' || a.category === filters.category)
+      )
+      .sort((a, b) => {
+        switch (filters.sortBy) {
+          case 'rating':
+            return b.rating - a.rating;
+          case 'name':
+            return a.name.localeCompare(b.name);
+          default:
+            return 0;
+        }
+      });
+
     setFilteredAbilities(filtered);
   }, [searchTerm, abilities, filters]);
 
@@ -45,17 +50,56 @@ export function AbilitiesGallery() {
       setAbilities(data.abilities || []);
     } catch (error) {
       console.error('Erro ao buscar abilities:', error);
-      // Demo abilities
       setAbilities([
-        { id: '1', name: 'Data Analysis', description: 'Análise avançada de dados', source: 'pandas-community', rating: 4.8, category: 'data' },
-        { id: '2', name: 'Web Scraping', description: 'Extrair dados de websites', source: 'beautiful-soup', rating: 4.5, category: 'web' },
-        { id: '3', name: 'Image Processing', description: 'Processar e manipular imagens', source: 'pillow', rating: 4.7, category: 'ai' },
-        { id: '4', name: 'Task Automation', description: 'Automatizar tarefas repetitivas', source: 'selenium-tools', rating: 4.2, category: 'automation' }
+        {
+          id: '1',
+          name: 'Sentinela Analítica',
+          description: 'Analisa dados e apresenta insights como se fosse um oráculo do código.',
+          source: 'pandas-community',
+          rating: 4.9,
+          category: 'data',
+          functions: 12,
+          version: '2.1.0',
+          lastUpdated: '3 dias atrás'
+        },
+        {
+          id: '2',
+          name: 'Explorador Web',
+          description: 'Rastreia sites, extrai informação e monta relatórios estruturados.',
+          source: 'beautiful-soup',
+          rating: 4.7,
+          category: 'web',
+          functions: 8,
+          version: '1.8.4',
+          lastUpdated: '1 semana atrás'
+        },
+        {
+          id: '3',
+          name: 'Forjador de Imagens',
+          description: 'Gera imagens e processa visuais com precisão de artista digital.',
+          source: 'pillow',
+          rating: 4.8,
+          category: 'ai',
+          functions: 10,
+          version: '1.3.2',
+          lastUpdated: '2 dias atrás'
+        },
+        {
+          id: '4',
+          name: 'Mestre Automático',
+          description: 'Automatiza rotinas manuais e transforma tarefas repetitivas em ações poderosas.',
+          source: 'selenium-tools',
+          rating: 4.6,
+          category: 'automation',
+          functions: 7,
+          version: '1.2.0',
+          lastUpdated: '5 dias atrás'
+        }
       ]);
     }
   };
 
-  const handleAddAbility = async (abilityId) => {
+  const handleAddAbility = async (abilityId: string) => {
     try {
       await fetch('/api/v1/abilities/add', {
         method: 'POST',
@@ -68,90 +112,118 @@ export function AbilitiesGallery() {
     }
   };
 
-  const handleAddNewAbility = (newAbility) => {
-    // Refresh the abilities list
+  const handleAddNewAbility = () => {
     fetchAbilities();
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">Galeria de Habilidades</h2>
-        <button 
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          <Plus size={20} /> Pesquisar Nova
-        </button>
-      </div>
+    <div className="p-6 space-y-8">
+      <div className="grid gap-4 xl:grid-cols-[2fr_1fr]">
+        <div className="glass-panel border border-white/10 p-6 shadow-[0_32px_90px_-40px_rgba(0,0,0,0.85)]">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <div className="inline-flex items-center gap-2 rounded-full bg-violet-600/15 px-3 py-1 text-xs uppercase tracking-[0.25em] text-violet-200">
+                <Sparkles size={14} /> Forja de Habilidades
+              </div>
+              <h2 className="text-3xl font-bold text-white">Crie e equilibre suas habilidades</h2>
+              <p className="max-w-2xl text-slate-300">
+                Encontre habilidades reais, clone repositórios estudados e implemente diretamente no seu código como se estivesse montando um personagem poderoso.
+              </p>
+            </div>
 
-      <div className="relative">
-        <input
-          type="text"
-          placeholder="Pesquisar habilidades..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-slate-600"
-        />
-      </div>
-
-      <div className="flex flex-wrap gap-4 items-center">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-300">Rating mínimo:</label>
-          <select
-            value={filters.minRating}
-            onChange={(e) => setFilters({...filters, minRating: Number(e.target.value)})}
-            className="px-2 py-1 bg-slate-700 text-white border border-slate-600 rounded text-sm"
-          >
-            <option value={0}>Todos</option>
-            <option value={3}>3+</option>
-            <option value={4}>4+</option>
-            <option value={4.5}>4.5+</option>
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-300">Categoria:</label>
-          <select
-            value={filters.category}
-            onChange={(e) => setFilters({...filters, category: e.target.value})}
-            className="px-2 py-1 bg-slate-700 text-white border border-slate-600 rounded text-sm"
-          >
-            <option value="all">Todas</option>
-            <option value="data">Data Science</option>
-            <option value="web">Web</option>
-            <option value="ai">AI/ML</option>
-            <option value="automation">Automação</option>
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-300">Ordenar por:</label>
-          <select
-            value={filters.sortBy}
-            onChange={(e) => setFilters({...filters, sortBy: e.target.value})}
-            className="px-2 py-1 bg-slate-700 text-white border border-slate-600 rounded text-sm"
-          >
-            <option value="name">Nome</option>
-            <option value="rating">Rating</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredAbilities.length === 0 ? (
-          <div className="col-span-full text-center text-slate-400 py-12">
-            Nenhuma habilidade encontrada
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-4 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)]">
+                <div className="flex items-center gap-3 text-slate-200 mb-3">
+                  <Shield size={18} />
+                  <span className="text-xs uppercase tracking-[0.2em]">Armamento</span>
+                </div>
+                <p className="text-sm text-slate-400">Habilidades defensivas para proteger e melhorar seu fluxo de desenvolvimento.</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-4 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)]">
+                <div className="flex items-center gap-3 text-slate-200 mb-3">
+                  <Compass size={18} />
+                  <span className="text-xs uppercase tracking-[0.2em]">Exploração</span>
+                </div>
+                <p className="text-sm text-slate-400">Clonar repositórios, estudar código e descobrir novos recursos para implementar.</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-4 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)]">
+                <div className="flex items-center gap-3 text-slate-200 mb-3">
+                  <BookOpen size={18} />
+                  <span className="text-xs uppercase tracking-[0.2em]">Estudos</span>
+                </div>
+                <p className="text-sm text-slate-400">Transforme aprendizagem em tarefas práticas e suba de nível em seu projeto.</p>
+              </div>
+            </div>
           </div>
-        ) : (
-          filteredAbilities.map((ability) => (
-            <AbilityCard
-              key={ability.id}
-              ability={ability}
-              onAdd={() => handleAddAbility(ability.id)}
-            />
-          ))
-        )}
+        </div>
+
+        <div className="glass-panel border border-white/10 p-6 shadow-[0_32px_90px_-40px_rgba(0,0,0,0.85)]">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <p className="text-sm uppercase tracking-[0.25em] text-slate-400">Missão ativa</p>
+              <h3 className="text-2xl font-semibold text-white">Aventurar-se pelo repositório</h3>
+            </div>
+            <Clock3 size={28} className="text-violet-400" />
+          </div>
+          <div className="space-y-4">
+            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-4">
+              <p className="font-semibold text-white">Desafio Diário</p>
+              <p className="text-sm text-slate-400 mt-2">
+                Escolha um repositório para clonar, analise as funções mais importantes e converta em habilidade customizada.
+              </p>
+            </div>
+            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-4 space-y-3">
+              <div className="flex items-center justify-between text-sm text-slate-300">
+                <span>Repositórios rastreados</span>
+                <span className="font-semibold text-white">8</span>
+              </div>
+              <div className="flex items-center justify-between text-sm text-slate-300">
+                <span>Habilidades forjadas</span>
+                <span className="font-semibold text-white">12</span>
+              </div>
+              <div className="flex items-center justify-between text-sm text-slate-300">
+                <span>Estudos concluídos</span>
+                <span className="font-semibold text-white">5</span>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="w-full rounded-3xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white hover:bg-violet-500 transition"
+            >
+              Forjar Nova Habilidade
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div>
+            <p className="text-sm uppercase tracking-[0.25em] text-slate-400">Tabela de habilidade</p>
+            <h3 className="text-2xl font-semibold text-white">Seu arsenal</h3>
+          </div>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-400 transition"
+          >
+            Criar habilidade
+          </button>
+        </div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+          {filteredAbilities.length === 0 ? (
+            <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-10 text-center text-slate-400">
+              Nenhuma habilidade encontrada. Use a forja para buscar um repositório ou criar uma habilidade nova.
+            </div>
+          ) : (
+            filteredAbilities.map((ability) => (
+              <AbilityCard
+                key={ability.id}
+                ability={ability}
+                onAdd={() => handleAddAbility(ability.id)}
+              />
+            ))
+          )}
+        </div>
       </div>
 
       <AddAbilityModal

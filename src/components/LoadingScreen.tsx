@@ -54,9 +54,10 @@ export function LoadingScreen({ onLoadingComplete, aiName, voiceId }: LoadingScr
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50">
-      {/* Esfera animada */}
-      <div className="mb-12">
+    <div className="fixed inset-0 bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center z-50">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(99,102,241,0.18),transparent_30%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-16 h-40 bg-gradient-to-b from-violet-700/20 to-transparent blur-3xl" />
+      <div className="relative z-10 mb-12 rounded-full bg-slate-900/90 p-6 shadow-[0_32px_120px_-40px_rgba(0,0,0,0.8)]">
         <ParticleSphere
           state="idle"
           shape="sphere"
@@ -65,7 +66,7 @@ export function LoadingScreen({ onLoadingComplete, aiName, voiceId }: LoadingScr
       </div>
 
       {/* Conteúdo */}
-      <div className="text-center space-y-6">
+      <div className="relative z-10 text-center space-y-6">
         {!showPresentation ? (
           <>
             {/* Texto de carregamento */}
@@ -76,9 +77,9 @@ export function LoadingScreen({ onLoadingComplete, aiName, voiceId }: LoadingScr
 
             {/* Indicador de progresso */}
             <div className="flex justify-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse delay-100"></div>
-              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse delay-200"></div>
+              <div className="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-violet-400 animate-pulse delay-100"></div>
+              <div className="w-2 h-2 rounded-full bg-violet-400 animate-pulse delay-200"></div>
             </div>
           </>
         ) : (

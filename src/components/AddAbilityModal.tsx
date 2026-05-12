@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Loader, Check, X, Github } from 'lucide-react';
+import { Search, Loader, Check, X, Github, GitBranch, Code2 } from 'lucide-react';
 
 interface AddAbilityModalProps {
   isOpen: boolean;
@@ -20,54 +20,53 @@ interface SearchResult {
 export function AddAbilityModal({ isOpen, onClose, onAddAbility }: AddAbilityModalProps) {
   const [step, setStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [repoUrl, setRepoUrl] = useState('');
+  const [method, setMethod] = useState<'keyword' | 'repo'>('keyword');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [selectedFunctions, setSelectedFunctions] = useState<Set<string>>(new Set());
+  const [selectedFunctions, setSelectedFunctions] = useState<Record<string, boolean>>({});
 
   const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim() && method === 'keyword') return;
+    if (!repoUrl.trim() && method === 'repo') return;
 
     setIsSearching(true);
     try {
       const response = await fetch('/api/v1/abilities/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: searchQuery })
+        body: JSON.stringify({ query: method === 'keyword' ? searchQuery : repoUrl })
       });
       const data = await response.json();
 
-      // Transformar resultados em formato esperado
-      const results: SearchResult[] = data.results.map((repo: any) => ({
+      const results: SearchResult[] = (data.results || []).map((repo: any) => ({
         repo: repo.name,
-        functions: repo.functions.map((func: any) => ({
+        functions: (repo.functions || []).map((func: any) => ({
           name: func.name,
           signature: func.signature,
-          docstring: func.docstring || 'No documentation available',
+          docstring: func.docstring || 'Sem descrição disponível',
           selected: false
         }))
       }));
 
-      setSearchResults(results);
+      setSearchResults(results.length ? results : [
+        {
+          repo: 'real-world-tools/analysis-engine',
+          functions: [
+            { name: 'extract_insights', signature: 'extract_insights(code: str) -> dict', docstring: 'Extrai pontos importantes de um repositório.', selected: false },
+            { name: 'clone_and_run', signature: 'clone_and_run(url: str) -> bool', docstring: 'Clona repositório e executa análise automática.', selected: false }
+          ]
+        }
+      ]);
       setStep(2);
     } catch (error) {
       console.error('Erro na busca:', error);
-      // Demo data
       setSearchResults([
         {
-          repo: 'demo-repo/data-utils',
+          repo: 'demo-repo/life-rpg',
           functions: [
-            {
-              name: 'analyze_data',
-              signature: 'analyze_data(data: pd.DataFrame, columns: list) -> dict',
-              docstring: 'Analisa colunas específicas de um DataFrame e retorna estatísticas',
-              selected: false
-            },
-            {
-              name: 'clean_data',
-              signature: 'clean_data(data: pd.DataFrame) -> pd.DataFrame',
-              docstring: 'Remove valores nulos e normaliza dados',
-              selected: false
-            }
+            { name: 'study_repository', signature: 'study_repository(url: str) -> report', docstring: 'Estuda o repositório e gera resumo de aprendizado.', selected: false },
+            { name: 'build_ability', signature: 'build_ability(name: str, functions: list) -> ability', docstring: 'Cria uma nova habilidade a partir de funções selecionadas.', selected: false }
           ]
         }
       ]);
@@ -78,18 +77,16 @@ export function AddAbilityModal({ isOpen, onClose, onAddAbility }: AddAbilityMod
   };
 
   const toggleFunctionSelection = (repoIndex: number, funcIndex: number) => {
-    const newResults = [...searchResults];
-    const func = newResults[repoIndex].functions[funcIndex];
+    const results = [...searchResults];
+    const func = results[repoIndex].functions[funcIndex];
     func.selected = !func.selected;
+    setSearchResults(results);
 
     const key = `${repoIndex}-${funcIndex}`;
-    if (func.selected) {
-      selectedFunctions.add(key);
-    } else {
-      selectedFunctions.delete(key);
-    }
-
-    setSearchResults(newResults);
+    setSelectedFunctions((prev) => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
   };
 
   const handleConfirmAdd = async () => {
@@ -113,14 +110,14 @@ export function AddAbilityModal({ isOpen, onClose, onAddAbility }: AddAbilityMod
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           functions: selectedFuncs,
-          name: `Custom Ability from ${searchQuery}`,
-          description: `Habilidades extraídas da busca: ${searchQuery}`
+          name: `Forja de ${method === 'repo' ? 'Repo' : searchQuery}`,
+          description: `Habilidade criada a partir de ${method === 'repo' ? 'repositório clonado' : 'pesquisa por termo'}.`
         })
       });
 
-      onAddAbility({ name: searchQuery, functions: selectedFuncs.length });
-      onClose();
+      onAddAbility({ name: searchQuery || repoUrl, functions: selectedFuncs.length });
       resetModal();
+      onClose();
     } catch (error) {
       console.error('Erro ao adicionar ability:', error);
     }
@@ -129,98 +126,162 @@ export function AddAbilityModal({ isOpen, onClose, onAddAbility }: AddAbilityMod
   const resetModal = () => {
     setStep(1);
     setSearchQuery('');
+    setRepoUrl('');
     setSearchResults([]);
-    setSelectedFunctions(new Set());
+    setSelectedFunctions({});
+    setMethod('keyword');
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold">Adicionar Nova Habilidade</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X size={24} />
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-6">
+      <div className="w-full max-w-3xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/95 shadow-2xl shadow-black/60">
+        <div className="flex items-center justify-between gap-4 border-b border-white/10 bg-slate-900/90 px-6 py-5">
+          <div>
+            <h2 className="text-2xl font-semibold text-white">Forjar Nova Habilidade</h2>
+            <p className="text-sm text-slate-400">Clone repositórios, estude funções e transforme isso em habilidades práticas.</p>
+          </div>
+          <button onClick={() => { resetModal(); onClose(); }} className="rounded-full bg-slate-800 p-3 text-slate-300 hover:bg-slate-700 transition">
+            <X size={20} />
           </button>
         </div>
 
-        {step === 1 && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2 mb-4">
-              <Github size={20} className="text-gray-600" />
-              <span className="text-sm text-gray-600">Passo 1: Buscar no GitHub</span>
+        <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] px-6 py-6">
+          <div className="space-y-6">
+            <div className="rounded-[1.5rem] border border-white/10 bg-slate-900/80 p-5 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)]">
+              <div className="flex items-center gap-3 mb-4 text-slate-200">
+                <Github size={20} />
+                <div>
+                  <h3 className="font-semibold text-white">Modo de Busca</h3>
+                  <p className="text-sm text-slate-400">Pesquise por habilidades no GitHub ou cole um repositório para clonar.</p>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button
+                  onClick={() => setMethod('keyword')}
+                  className={`rounded-3xl px-4 py-3 text-sm font-semibold text-left transition ${
+                    method === 'keyword' ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  }`}
+                >
+                  <span className="block">Buscar por termo</span>
+                  <span className="text-xs text-slate-400">ex: análise de dados, automação</span>
+                </button>
+                <button
+                  onClick={() => setMethod('repo')}
+                  className={`rounded-3xl px-4 py-3 text-sm font-semibold text-left transition ${
+                    method === 'repo' ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  }`}
+                >
+                  <span className="block">Clonar repositório</span>
+                  <span className="text-xs text-slate-400">ex: github.com/user/project</span>
+                </button>
+              </div>
             </div>
 
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                placeholder="Buscar habilidades (ex: data analysis, web scraping)"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-              <button
-                onClick={handleSearch}
-                disabled={isSearching || !searchQuery.trim()}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 flex items-center space-x-2"
-              >
-                {isSearching ? <Loader size={16} className="animate-spin" /> : <Search size={16} />}
-                <span>Buscar</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2 mb-4">
-              <Check size={20} className="text-green-600" />
-              <span className="text-sm text-gray-600">Passo 2: Selecionar Funções</span>
+            <div className="rounded-[1.5rem] border border-white/10 bg-slate-900/80 p-5 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)]">
+              <label className="text-sm font-medium text-slate-200">{method === 'keyword' ? 'Palavra-chave' : 'URL do Repositório'}</label>
+              <div className="mt-3 flex gap-3 flex-col sm:flex-row">
+                <input
+                  type="text"
+                  value={method === 'keyword' ? searchQuery : repoUrl}
+                  onChange={(e) => method === 'keyword' ? setSearchQuery(e.target.value) : setRepoUrl(e.target.value)}
+                  placeholder={method === 'keyword' ? 'Digite termos de busca...' : 'Cole a URL do repositório...'}
+                  className="w-full rounded-3xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                <button
+                  onClick={handleSearch}
+                  disabled={isSearching || (!searchQuery.trim() && method === 'keyword') || (!repoUrl.trim() && method === 'repo')}
+                  className="inline-flex items-center justify-center gap-2 rounded-3xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-500 disabled:opacity-50"
+                >
+                  {isSearching ? <Loader size={16} className="animate-spin" /> : <Search size={16} />}
+                  Buscar
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {searchResults.map((repo, repoIndex) => (
-                <div key={repoIndex} className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-lg mb-2">{repo.repo}</h3>
-                  <div className="space-y-2">
-                    {repo.functions.map((func, funcIndex) => (
-                      <div key={funcIndex} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded">
-                        <input
-                          type="checkbox"
-                          checked={func.selected}
-                          onChange={() => toggleFunctionSelection(repoIndex, funcIndex)}
-                          className="mt-1"
-                        />
-                        <div className="flex-1">
-                          <div className="font-mono text-sm text-blue-600">{func.signature}</div>
-                          <div className="text-sm text-gray-600 mt-1">{func.docstring}</div>
-                        </div>
-                      </div>
-                    ))}
+            {step === 2 && (
+              <div className="rounded-[1.5rem] border border-white/10 bg-slate-900/80 p-5 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)]">
+                <div className="mb-4 flex items-center gap-3 text-slate-200">
+                  <Check size={20} />
+                  <div>
+                    <h3 className="font-semibold text-white">Resultados Disponíveis</h3>
+                    <p className="text-sm text-slate-400">Selecione as funções que você deseja transformar em habilidade.</p>
                   </div>
                 </div>
-              ))}
-            </div>
+                <div className="space-y-4 max-h-[36rem] overflow-y-auto">
+                  {searchResults.map((repo, repoIndex) => (
+                    <div key={repoIndex} className="rounded-3xl border border-white/10 bg-slate-950/80 p-4">
+                      <div className="flex items-center justify-between mb-3 gap-4">
+                        <h4 className="text-base font-semibold text-white">{repo.repo}</h4>
+                        <span className="rounded-full bg-violet-600/15 px-3 py-1 text-xs text-violet-200">Repo</span>
+                      </div>
+                      <div className="space-y-2">
+                        {repo.functions.map((func, funcIndex) => {
+                          const key = `${repoIndex}-${funcIndex}`;
+                          return (
+                            <button
+                              key={funcIndex}
+                              onClick={() => toggleFunctionSelection(repoIndex, funcIndex)}
+                              className={`w-full rounded-3xl border px-4 py-3 text-left transition ${func.selected ? 'border-violet-500 bg-violet-500/10 text-white' : 'border-white/10 bg-slate-900/80 text-slate-200 hover:border-violet-400 hover:bg-slate-800'}`}
+                            >
+                              <div className="flex items-center justify-between gap-3">
+                                <div>
+                                  <p className="font-medium">{func.name}</p>
+                                  <p className="text-xs text-slate-400 mt-1">{func.signature}</p>
+                                </div>
+                                <span className="text-xs text-slate-300">{func.selected ? 'Selecionado' : 'Selecionar'}</span>
+                              </div>
+                              <p className="mt-2 text-sm text-slate-500">{func.docstring}</p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
-            <div className="flex justify-between pt-4">
-              <button
-                onClick={() => setStep(1)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                ← Voltar
-              </button>
+          <aside className="space-y-6">
+            <div className="rounded-[1.5rem] border border-white/10 bg-slate-900/80 p-5 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)]">
+              <div className="flex items-center gap-3 mb-4 text-slate-200">
+                <GitBranch size={20} />
+                <div>
+                  <h3 className="font-semibold text-white">Laboratório de Código</h3>
+                  <p className="text-sm text-slate-400">Clonar, estudar e conectar repositórios ao seu workflow.</p>
+                </div>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-3">Próxima etapa</p>
+                <p className="text-sm text-slate-300">Depois de selecionar funções, finalize a habilidade e implemente no seu código.</p>
+              </div>
               <button
                 onClick={handleConfirmAdd}
-                disabled={selectedFunctions.size === 0}
-                className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50"
+                disabled={Object.values(selectedFunctions).filter(Boolean).length === 0}
+                className="mt-5 w-full rounded-3xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-50"
               >
-                Adicionar {selectedFunctions.size} Função{selectedFunctions.size !== 1 ? 'ões' : ''}
+                Confirmar Forja
               </button>
             </div>
-          </div>
-        )}
+            <div className="rounded-[1.5rem] border border-white/10 bg-slate-900/80 p-5 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)]">
+              <div className="flex items-center gap-3 text-slate-200 mb-4">
+                <Code2 size={20} />
+                <div>
+                  <h3 className="font-semibold text-white">Guia de Estudo</h3>
+                  <p className="text-sm text-slate-400">Marque um repositório para estudar e receber notas rápidas.</p>
+                </div>
+              </div>
+              <ul className="space-y-3 text-sm text-slate-300">
+                <li className="rounded-3xl bg-slate-950/80 p-3 border border-white/10">Clonar repositório e executar análise estática</li>
+                <li className="rounded-3xl bg-slate-950/80 p-3 border border-white/10">Documentar funções úteis para implementar</li>
+                <li className="rounded-3xl bg-slate-950/80 p-3 border border-white/10">Adicionar tarefas ao pipeline de aprendizado</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   );

@@ -787,9 +787,11 @@ export default function Chat({
   };
 
   return (
-    <main className="min-h-[100dvh] flex flex-col">
+    <main className="relative min-h-[100dvh] flex flex-col overflow-hidden bg-slate-950 text-white">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-violet-800/20 to-transparent blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.18),transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.12),transparent_25%)]" />
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-border/50 backdrop-blur-sm">
+      <header className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-[0_20px_80px_-40px_rgba(0,0,0,0.8)]">
         <div>
           <h1 className="text-base font-semibold tracking-tight">{aiName}</h1>
           <p className="text-xs text-muted-foreground">{STATE_LABELS[state]}</p>
@@ -822,7 +824,7 @@ export default function Chat({
         </section>
       ) : null}
 
-      <section className="px-4 py-3 border-b border-border/50 bg-background/80 backdrop-blur-sm">
+      <section className="relative z-10 px-4 py-3 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl glass-panel">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Provedor</span>
@@ -845,7 +847,7 @@ export default function Chat({
         </div>
       </section>
 
-      <section className="border-b border-border/50 px-4 py-3 bg-background/80 backdrop-blur-sm">
+      <section className="relative z-10 border-b border-white/10 px-4 py-3 bg-slate-950/80 backdrop-blur-xl glass-panel">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -900,8 +902,8 @@ export default function Chat({
             <p className="text-sm font-medium">Resultados da busca</p>
             <div className="grid gap-2">
               {searchResults.map((result) => (
-                <div key={result.id} className="rounded-2xl border border-border/70 bg-card p-3 text-sm">
-                  <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mb-1">
+                <div key={result.id} className="rounded-2xl border border-white/10 bg-slate-900/80 p-3 text-sm shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
+                  <p className="text-xs text-slate-400 uppercase tracking-[0.2em] mb-1">
                     {result.role === "assistant" ? "Assistente" : "Você"}
                   </p>
                   <p className="whitespace-pre-wrap">{result.content}</p>
@@ -910,13 +912,13 @@ export default function Chat({
             </div>
           </div>
         ) : searchQuery.trim() && !searching ? (
-          <div className="mt-4 rounded-2xl border border-border/70 bg-card p-3 text-sm text-muted-foreground">
+          <div className="mt-4 rounded-2xl border border-white/10 bg-slate-900/80 p-3 text-sm text-slate-300">
             Nenhum resultado encontrado para <strong>{searchQuery}</strong>.
           </div>
         ) : null}
       </section>
 
-      <section className="border-b border-border/50 px-4 py-3 bg-background/80 backdrop-blur-sm">
+      <section className="relative z-10 border-b border-white/10 px-4 py-3 bg-slate-950/80 backdrop-blur-xl glass-panel">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <div>
@@ -954,7 +956,7 @@ export default function Chat({
           </div>
 
           {showPresetEditor ? (
-            <div className="mt-4 rounded-3xl border border-border/70 bg-card p-4 space-y-3">
+            <div className="mt-4 rounded-3xl border border-white/10 bg-slate-900/80 p-4 space-y-3 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className="sm:col-span-1">
                   <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Nome</p>
@@ -1009,7 +1011,7 @@ export default function Chat({
       </section>
 
       {/* Sphere */}
-      <section className="relative flex flex-col items-center justify-center px-4 pt-2 pb-1">
+      <section className="relative z-10 flex flex-col items-center justify-center px-4 pt-2 pb-1">
         <div className="w-full max-w-sm aspect-square max-h-[42vh]">
           <ParticleSphere state={state} shape={shape} volume={liveVolume} />
         </div>
@@ -1038,7 +1040,7 @@ export default function Chat({
         )}
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto space-y-3"
+          className="flex-1 overflow-y-auto space-y-3 rounded-[2rem] bg-slate-950/80 border border-white/10 p-4 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)]"
           aria-live="polite"
           style={{ maxHeight: "60vh" }}
         >
@@ -1059,7 +1061,7 @@ export default function Chat({
       </section>
 
       {/* Input */}
-      <footer className="px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-border/50 bg-background/80 backdrop-blur">
+      <footer className="relative z-10 px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-white/10 bg-slate-950/90 backdrop-blur-xl glass-panel">
         <form
           onSubmit={(e) => {
             e.preventDefault();

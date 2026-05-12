@@ -24,7 +24,7 @@ export function ModeSelector({ value, onChange }: ModeSelectorProps) {
   }, [selectedMode]);
 
   return (
-    <div className="bg-slate-800/70 border border-slate-700 rounded-xl p-4">
+    <div className="glass-panel border border-white/10 p-4 shadow-[0_24px_80px_-44px_rgba(0,0,0,0.75)]">
       <h3 className="text-sm text-slate-300 uppercase tracking-[0.2em] mb-3">Modo de Interface</h3>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {MODES.map((mode) => (
@@ -34,10 +34,10 @@ export function ModeSelector({ value, onChange }: ModeSelectorProps) {
               setSelectedMode(mode);
               onChange(mode);
             }}
-            className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+            className={`rounded-2xl px-3 py-3 text-sm font-semibold transition-all duration-200 ${
               selectedMode === mode
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/30 scale-[1.02]'
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
             }`}
           >
             {mode === 'standard' ? 'Padrão' : mode === 'tv' ? 'TV' : mode === 'voice' ? 'Voz' : 'Dev'}

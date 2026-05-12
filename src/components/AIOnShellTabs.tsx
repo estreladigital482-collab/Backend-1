@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, CheckCircle2, Zap, Settings, Package, Layers, Smartphone, Shield, DollarSign, Palette } from 'lucide-react';
+import { BarChart3, CheckCircle2, Zap, Settings, Package, Layers, Smartphone, Shield, DollarSign, Palette, Sparkles, GitBranch } from 'lucide-react';
 import { Dashboard } from './Dashboard';
 import { PlanningTab } from './PlanningTab';
 import { ActionQueue } from './ActionQueue';
@@ -9,6 +9,7 @@ import { SecurityDashboard } from './SecurityDashboard';
 import { CostTracker } from './CostTracker';
 import { ThemeBuilder } from './ThemeBuilder';
 import { ThemeGallery } from './ThemeGallery';
+import { RepositoryStudy } from './RepositoryStudy';
 import { getApiBase, getAuthHeaders } from '@/lib/api';
 
 export function AIOnShellTabs() {
@@ -18,6 +19,7 @@ export function AIOnShellTabs() {
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3, component: Dashboard },
     { id: 'planning', label: 'Planning', icon: CheckCircle2, component: PlanningTab },
     { id: 'actions', label: 'Ações', icon: Zap, component: ActionQueueTab },
+    { id: 'forge', label: 'Forge', icon: Sparkles, component: ForgeTab },
     { id: 'abilities', label: 'Abilities', icon: Package, component: AbilitiesGallery },
     { id: 'memory', label: 'Memória', icon: Layers, component: MemoryVisualizer },
     { id: 'security', label: 'Segurança', icon: Shield, component: SecurityDashboard },
@@ -26,32 +28,41 @@ export function AIOnShellTabs() {
     { id: 'device', label: 'Device', icon: Smartphone, component: DeviceTab }
   ];
 
-  const activeTabConfig = tabs.find(t => t.id === activeTab);
+  const activeTabConfig = tabs.find((t) => t.id === activeTab);
   const ActiveComponent = activeTabConfig?.component;
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 to-slate-800">
-      {/* Header */}
-      <div className="bg-black/50 border-b border-slate-700 px-6 py-4">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg"></div>
-          Aura-sphere Control Panel
-        </h1>
+    <div className="h-screen relative flex flex-col overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.18),transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,0.14),transparent_22%),linear-gradient(180deg,#020617_0%,#111827_100%)] text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(96,165,250,0.14),transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(168,85,247,0.12),transparent_22%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-slate-950/90 to-transparent" />
+
+      <div className="relative z-10 bg-slate-950/90 border-b border-white/10 px-6 py-5 glass-panel shadow-[0_25px_80px_-50px_rgba(0,0,0,0.75)]">
+        <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-glow-primary text-white">
+              <Sparkles size={20} />
+            </div>
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Sala de Comando</p>
+              <h1 className="text-2xl font-bold">Aura Sphere Control Panel</h1>
+            </div>
+          </div>
+          <p className="max-w-2xl text-sm text-slate-300">Gerencie missões, habilidades e recursos do mundo real em uma interface de aventura estilo RPG.</p>
+        </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex gap-2 px-4 py-3 bg-slate-800/50 border-b border-slate-700 overflow-x-auto">
-        {tabs.map(tab => {
+      <div className="relative z-10 flex gap-2 px-4 py-3 bg-slate-900/80 border-b border-white/10 overflow-x-auto glass-panel">
+        {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-3xl whitespace-nowrap transition-all ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
-                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                  ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/30 scale-[1.02]'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
               }`}
             >
               <Icon size={18} />
@@ -61,10 +72,9 @@ export function AIOnShellTabs() {
         })}
       </div>
 
-      {/* Content Area */}
-      <div className="flex-1 overflow-auto bg-gradient-to-b from-slate-800 to-slate-900">
-        <div className="max-w-7xl mx-auto">
-          {ActiveComponent ? <ActiveComponent /> : <div className="p-6">Componente não encontrado</div>}
+      <div className="flex-1 overflow-auto bg-gradient-to-b from-slate-900 to-slate-950">
+        <div className="max-w-7xl mx-auto p-6">
+          {ActiveComponent ? <ActiveComponent /> : <div className="p-6 text-white">Componente não encontrado</div>}
         </div>
       </div>
     </div>
@@ -80,18 +90,61 @@ function ActionQueueTab() {
   );
 }
 
+function ForgeTab() {
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 xl:grid-cols-[1.8fr_1fr]">
+        <div className="glass-panel border border-white/10 p-6 shadow-[0_32px_90px_-40px_rgba(0,0,0,0.85)]">
+          <div className="mb-6">
+            <p className="text-sm uppercase tracking-[0.25em] text-slate-400">Forja</p>
+            <h2 className="text-3xl font-bold text-white">Alquimia de Habilidades</h2>
+            <p className="mt-3 text-slate-300">Clonar repositórios, estudar código e transformar conhecimento em funcionalidades reais para o seu projeto.</p>
+          </div>
+          <AbilitiesGallery />
+        </div>
+        <div className="space-y-4">
+          <RepositoryStudy />
+          <div className="glass-panel border border-white/10 p-6 shadow-[0_32px_90px_-40px_rgba(0,0,0,0.85)]">
+            <div className="flex items-center gap-3 mb-4 text-slate-200">
+              <GitBranch size={20} />
+              <div>
+                <h3 className="text-lg font-semibold text-white">Painel de Missões</h3>
+                <p className="text-sm text-slate-400">Veja o que você pode clonar e estudar hoje.</p>
+              </div>
+            </div>
+            <div className="space-y-3 text-sm text-slate-300">
+              <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-4">
+                <p className="font-semibold text-white">Missão Atual</p>
+                <p className="mt-2 text-slate-400">Clonar um repositório de ferramentas de automação e extrair 3 funções para adicionar ao seu código.</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-4">
+                <p className="font-semibold text-white">Meta de Estudo</p>
+                <p className="mt-2 text-slate-400">Ler README, mapear a estrutura do projeto e encontrar pontos para implementação em 20 minutos.</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-4">
+                <p className="font-semibold text-white">Recompensa</p>
+                <p className="mt-2 text-slate-400">Novo módulo de habilidade ativado + documentação prática adicionada ao seu projeto.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ThemesTab() {
   const [activeTab, setActiveTab] = useState<'builder' | 'gallery'>('builder');
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="flex gap-2 px-6 py-4 bg-slate-800/50 border-b border-slate-700">
+      <div className="flex gap-2 px-6 py-4 bg-slate-900/80 border-b border-white/10">
         <button
           onClick={() => setActiveTab('builder')}
           className={`px-4 py-2 rounded-lg font-semibold transition ${
             activeTab === 'builder'
               ? 'bg-purple-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
           }`}
         >
           Construtor de Temas
@@ -101,7 +154,7 @@ function ThemesTab() {
           className={`px-4 py-2 rounded-lg font-semibold transition ${
             activeTab === 'gallery'
               ? 'bg-purple-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
           }`}
         >
           Galeria de Referências
@@ -110,31 +163,6 @@ function ThemesTab() {
       <div className="flex-1 overflow-auto">
         {activeTab === 'builder' ? <ThemeBuilder /> : <ThemeGallery />}
       </div>
-    </div>
-  );
-}
-
-function ToolsTab() {
-  return (
-    <div className="p-6 space-y-4">
-      <h2 className="text-2xl font-bold text-white">Ferramentas</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <ToolCard title="AST Parser" description="Analisar estrutura de código" />
-        <ToolCard title="Code Generator" description="Gerar código automaticamente" />
-        <ToolCard title="Sandbox Executor" description="Executar código em sandbox" />
-        <ToolCard title="Security Auditor" description="Auditar segurança" />
-        <ToolCard title="Performance Analyzer" description="Analisar performance" />
-        <ToolCard title="Documentation Generator" description="Gerar documentação" />
-      </div>
-    </div>
-  );
-}
-
-function ToolCard({ title, description }) {
-  return (
-    <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-4 hover:border-blue-500 transition cursor-pointer">
-      <h3 className="font-semibold text-white">{title}</h3>
-      <p className="text-sm text-slate-300 mt-2">{description}</p>
     </div>
   );
 }
@@ -208,7 +236,7 @@ function DeviceTab() {
 
     try {
       const response = await fetch(`${API_BASE}/api/v1/device/optimize`, {
-        method: "POST",
+        method: 'POST',
         headers: AUTH_HEADERS,
         body: JSON.stringify({}),
       });
@@ -226,7 +254,7 @@ function DeviceTab() {
   };
 
   const getStorageText = () => {
-    if (!deviceProfile) return "-";
+    if (!deviceProfile) return '-';
     return `${Math.round(deviceProfile.storage_free_mb / 1024)} GB / ${Math.round(deviceProfile.storage_total_mb / 1024)} GB`;
   };
 
@@ -241,12 +269,12 @@ function DeviceTab() {
         <>
           <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InfoItem label="Tipo de Dispositivo" value={deviceProfile?.device_type ?? "Desktop"} />
-              <InfoItem label="Sistema Operacional" value={`${deviceProfile?.os ?? "Linux"} ${deviceProfile?.os_version ?? ""}`} />
-              <InfoItem label="Arquitetura" value={deviceProfile?.architecture ?? "x86_64"} />
+              <InfoItem label="Tipo de Dispositivo" value={deviceProfile?.device_type ?? 'Desktop'} />
+              <InfoItem label="Sistema Operacional" value={`${deviceProfile?.os ?? 'Linux'} ${deviceProfile?.os_version ?? ''}`} />
+              <InfoItem label="Arquitetura" value={deviceProfile?.architecture ?? 'x86_64'} />
               <InfoItem label="Armazenamento" value={getStorageText()} />
               <InfoItem label="Memória RAM" value={`${Math.round((deviceProfile?.ram_available_mb ?? 0) / 1024)} GB / ${Math.round((deviceProfile?.ram_total_mb ?? 0) / 1024)} GB`} />
-              <InfoItem label="Cores de CPU" value={deviceProfile?.cpu_cores?.toString() ?? "N/A"} />
+              <InfoItem label="Cores de CPU" value={deviceProfile?.cpu_cores?.toString() ?? 'N/A'} />
               <InfoItem label="Frequência CPU" value={`${deviceProfile?.cpu_freq_mhz?.toFixed(0) ?? 0} MHz`} />
               <InfoItem label="Status de Saúde" value={`${deviceProfile?.health_score ?? 0}/100`} />
             </div>
@@ -292,7 +320,7 @@ function DeviceTab() {
                 onClick={optimizeDevice}
                 disabled={optimizeLoading}
               >
-                {optimizeLoading ? "Otimização em progresso…" : "Otimizar Dispositivo"}
+                {optimizeLoading ? 'Otimização em progresso…' : 'Otimizar Dispositivo'}
               </button>
             </div>
           </div>
@@ -302,7 +330,7 @@ function DeviceTab() {
   );
 }
 
-function InfoItem({ label, value }) {
+function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="border-b border-slate-600 pb-3">
       <label className="text-sm text-slate-400">{label}</label>

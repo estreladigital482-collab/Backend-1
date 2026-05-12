@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 export function PlanningTab() {
-  const [plans, setPlans] = useState([]);
+  const [plans, setPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [newPlanTitle, setNewPlanTitle] = useState('');
 
-  // Buscar planos
   useEffect(() => {
     fetchPlans();
   }, []);
@@ -35,7 +34,7 @@ export function PlanningTab() {
 
       if (response.ok) {
         setNewPlanTitle('');
-        fetchPlans(); // Recarregar
+        fetchPlans();
       }
     } catch (error) {
       console.error('Erro ao criar plano:', error);
@@ -43,59 +42,74 @@ export function PlanningTab() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Planejamento</h2>
-
-      {/* Novo Plano */}
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Nome do plano (ex: Aprender React)"
-          value={newPlanTitle}
-          onChange={(e) => setNewPlanTitle(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleCreatePlan()}
-          className="flex-1 px-4 py-2 border rounded-lg"
-        />
-        <button
-          onClick={handleCreatePlan}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-        >
-          <Plus size={20} /> Novo Plano
-        </button>
+    <div className="p-6 space-y-8">
+      <div className="glass-panel border border-white/10 p-6 shadow-[0_32px_90px_-40px_rgba(0,0,0,0.85)]">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Mapa de Missões</p>
+            <h2 className="text-3xl font-bold text-white">Planejamento Estratégico</h2>
+            <p className="mt-3 text-slate-300 max-w-2xl">Crie planos reais para sua jornada e acompanhe o progresso como um herói que evolui em cada missão.</p>
+          </div>
+          <div className="rounded-3xl bg-slate-900/80 border border-white/10 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Missões ativas</p>
+            <p className="text-3xl font-semibold text-white mt-2">{plans.length}</p>
+          </div>
+        </div>
       </div>
 
-      {/* Lista de Planos */}
+      <div className="glass-panel border border-white/10 p-6 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.75)]">
+        <div className="grid gap-4 lg:grid-cols-[1fr_0.6fr]">
+          <div className="space-y-3">
+            <label className="text-sm text-slate-300">Novo Plano</label>
+            <input
+              type="text"
+              placeholder="Nome do plano (ex: Aprender React)"
+              value={newPlanTitle}
+              onChange={(e) => setNewPlanTitle(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleCreatePlan()}
+              className="w-full rounded-3xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+            />
+          </div>
+          <button
+            onClick={handleCreatePlan}
+            className="inline-flex items-center justify-center gap-2 rounded-3xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-500"
+          >
+            <Plus size={20} /> Criar Plano
+          </button>
+        </div>
+      </div>
+
       {loading ? (
-        <div>Carregando...</div>
+        <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-8 text-center text-slate-300 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.8)]">Carregando planos...</div>
       ) : (
         <div className="space-y-4">
           {plans.map((plan) => (
-            <div key={plan.id} className="border rounded-lg p-4">
-              <div className="flex justify-between items-start mb-3">
+            <div key={plan.id} className="glass-panel border border-white/10 rounded-[2rem] p-6 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.8)]">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <h3 className="font-semibold text-lg">{plan.title}</h3>
-                  <p className="text-sm text-gray-600">
-                    {plan.completed_tasks} / {plan.task_count} tarefas
-                  </p>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="rounded-full bg-violet-600/15 px-3 py-1 text-xs uppercase tracking-[0.25em] text-violet-200">{plan.status}</span>
+                    <span className="text-xs text-slate-400">Criado em {plan.created_at ? new Date(plan.created_at).toLocaleDateString() : '-'}</span>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white">{plan.title}</h3>
+                  <p className="text-sm text-slate-400 mt-2">{plan.completed_tasks} de {plan.task_count} tarefas completas</p>
                 </div>
-                <span className={`px-3 py-1 rounded text-sm ${
-                  plan.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100'
-                }`}>
-                  {plan.status}
-                </span>
+                <div className="text-right">
+                  <p className="text-sm text-slate-400 uppercase tracking-[0.2em]">Progresso</p>
+                  <p className="text-3xl font-semibold text-white mt-2">{plan.progress?.toFixed(0) || 0}%</p>
+                </div>
               </div>
 
-              {/* Barra de Progresso */}
-              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+              <div className="mt-6 rounded-full bg-slate-900/90 h-4 overflow-hidden border border-white/10">
                 <div
-                  className="bg-blue-600 h-full transition-all duration-500"
-                  style={{ width: `${plan.progress}%` }}
+                  className="h-full rounded-full bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 transition-all duration-500"
+                  style={{ width: `${plan.progress || 0}%` }}
                 />
               </div>
 
-              <div className="flex justify-between text-sm text-gray-600 mt-2">
-                <span>{plan.progress.toFixed(0)}% completo</span>
-                <span>{plan.created_at ? new Date(plan.created_at).toLocaleDateString() : '-'}</span>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-400">
+                <span>{plan.progress?.toFixed(0) || 0}% completo</span>
+                <span>{plan.task_count || 0} tarefas no plano</span>
               </div>
             </div>
           ))}

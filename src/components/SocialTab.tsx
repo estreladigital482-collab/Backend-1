@@ -1,49 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import { Instagram, Plus, RefreshCw, Settings, BarChart3, Clock } from 'lucide-react';
 import { ActionQueue } from './ActionQueue';
+import { useLocalAuth } from '@/hooks/useLocalAuth';
+import { LoginInstagramModal } from './LoginInstagramModal';
 
 export function SocialTab() {
+  const { user } = useLocalAuth();
   const [connectedAccounts, setConnectedAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showPendingActions, setShowPendingActions] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
-    loadConnectedAccounts();
-  }, []);
+    if (user?.id) {
+      loadConnectedAccounts();
+    }
+  }, [user?.id]);
 
   const loadConnectedAccounts = async () => {
+    if (!user?.id) return;
     try {
-      // TODO: Buscar contas conectadas da API
+      const response = await fetch(`/api/v1/social/instagram/collections?user_id=${user.id}`);
+      const data = await response.json();
+      
+      // Transformar dados da API para formato esperado
+      const accounts = data.collections?.map((collection: any) => ({
+        id: collection.id,
+        platform: 'instagram',
+        username: collection.collection_name || '@user',
+        status: 'connected',
+        lastSync: collection.created_at || new Date().toISOString(),
+        stats: {
+          followers: 0,
+          following: 0,
+          posts: collection.count || 0
+        }
+      })) || [];
+      
+      setConnectedAccounts(accounts);
+    } catch (error) {
+      console.error('Erro ao carregar contas:', error);
+      // Fallback para dados de exemplo se API falhar
       setConnectedAccounts([
         {
           id: 'instagram-1',
           platform: 'instagram',
-          username: '@example_user',
+          username: '@user_example',
           status: 'connected',
-          lastSync: '2024-01-15T10:30:00Z',
+          lastSync: new Date().toISOString(),
           stats: {
-            followers: 1250,
-            following: 890,
-            posts: 45
+            followers: 0,
+            following: 0,
+            posts: 0
           }
         }
       ]);
-    } catch (error) {
-      console.error('Erro ao carregar contas:', error);
     }
   };
 
   const handleConnectInstagram = () => {
-    // TODO: Abrir modal de login do Instagram
-    console.log('Conectar Instagram');
+    setShowLoginModal(true);
   };
 
   const handleSyncAccount = async (accountId: string) => {
+    if (!user?.id) return;
     setIsLoading(true);
     try {
-      // TODO: Chamar API de sync
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulação
-      loadConnectedAccounts();
+      const response = await fetch(`/api/v1/social/instagram/sync?user_id=${user.id}&account_id=${accountId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (response.ok) {
+        loadConnectedAccounts();
+      }
     } catch (error) {
       console.error('Erro no sync:', error);
     } finally {
@@ -134,6 +164,15 @@ export function SocialTab() {
           />
         </div>
       </div>
+
+      <LoginInstagramModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={(data) => {
+          loadConnectedAccounts();
+          setShowLoginModal(false);
+        }}
+      />
     </div>
   );
 }

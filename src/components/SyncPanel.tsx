@@ -49,7 +49,7 @@ export function SyncPanel({ userId, isOnline }: SyncPanelProps) {
       : 'Offline';
 
   return (
-    <Card className={`border-2 transition-colors ${syncStatusColor}`}>
+    <Card className={`border-2 transition-colors bg-slate-950/90 shadow-[0_25px_70px_-32px_rgba(0,0,0,0.75)] ${syncStatusColor}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

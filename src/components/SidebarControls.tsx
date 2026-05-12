@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { useLocalAuth } from '@/hooks/useLocalAuth';
+import { useToast } from '@/hooks/use-toast';
 import {
   MessageCircle,
   Code,
@@ -53,44 +55,77 @@ export function SidebarControls({
   onEditProfile,
   onSignOut
 }: SidebarControlsProps) {
+  const { user } = useLocalAuth();
+  const { toast } = useToast();
   const [projectName, setProjectName] = useState("");
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [memoryQuery, setMemoryQuery] = useState("");
   const [imagePrompt, setImagePrompt] = useState("");
   const [voiceText, setVoiceText] = useState("Olá, estou testando a voz da assistente.");
 
-  const addProject = () => {
+  const addProject = async () => {
     if (!projectName.trim()) return;
-    // TODO: Implementar adição de projeto
-    setProjectName("");
+    if (!user?.id) {
+      toast({
+        title: "Erro",
+        description: "Você precisa estar autenticado para criar um projeto",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsCreatingProject(true);
+    try {
+      const response = await fetch('/api/v1/planning/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user.id,
+          title: projectName,
+          description: "",
+          status: "planning"
+        })
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Sucesso",
+          description: "Projeto criado com sucesso!",
+        });
+        setProjectName("");
+      } else {
+        throw new Error('Erro ao criar projeto');
+      }
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível criar o projeto",
+        variant: "destructive"
+      });
+      console.error('Erro ao criar projeto:', error);
+    } finally {
+      setIsCreatingProject(false);
+    }
   };
 
   return (
-    <div className="w-80 h-full bg-gray-900/95 backdrop-blur-md border-r border-white/10 flex flex-col">
+    <div className="w-80 h-full bg-slate-950/95 backdrop-blur-2xl border-r border-white/10 shadow-2xl shadow-black/30 flex flex-col animate-fade-in">
       {/* Header */}
-      <div className="p-4 border-b border-white/10">
-        <div className="flex items-center justify-between">
+      <div className="p-5 border-b border-white/10">
+        <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-white">{aiName}</h2>
-            <p className="text-sm text-gray-400">Assistente IA</p>
+            <p className="text-sm text-slate-400">Assistente IA</p>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onMinimize}
-              className="text-gray-400 hover:text-white hover:bg-white/10"
-            >
-              <Minimize2 size={16} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-gray-400 hover:text-white hover:bg-white/10"
-            >
-              <X size={16} />
-            </Button>
+          <div className="rounded-3xl bg-slate-800/80 px-3 py-1 text-xs uppercase tracking-[0.25em] text-violet-300 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+            Aura Sphere
           </div>
+        </div>
+        <div className="mt-4 flex items-center justify-between gap-3 rounded-3xl bg-slate-900/70 px-3 py-2 text-xs text-slate-300">
+          <span className="inline-flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-glow-primary" /> Online
+          </span>
+          <span>{voiceId}</span>
         </div>
       </div>
 
@@ -134,8 +169,13 @@ export function SidebarControls({
                 onChange={(e) => setProjectName(e.target.value)}
                 className="bg-white/5 border-white/20 text-white placeholder:text-gray-500"
               />
-              <Button onClick={addProject} className="w-full" size="sm">
-                Criar Projeto
+              <Button 
+                onClick={addProject} 
+                className="w-full" 
+                size="sm"
+                disabled={isCreatingProject || !projectName.trim()}
+              >
+                {isCreatingProject ? "Criando..." : "Criar Projeto"}
               </Button>
             </div>
           </div>
@@ -194,11 +234,11 @@ export function SidebarControls({
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-white/10 space-y-2">
+      <div className="p-5 border-t border-white/10 space-y-3">
         <Button
           variant="ghost"
           onClick={onEditProfile}
-          className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
+          className="w-full justify-start rounded-3xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200"
         >
           <Settings size={16} className="mr-2" />
           Configurações
@@ -206,7 +246,7 @@ export function SidebarControls({
         <Button
           variant="ghost"
           onClick={onSignOut}
-          className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
+          className="w-full justify-start rounded-3xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200"
         >
           Sair
         </Button>

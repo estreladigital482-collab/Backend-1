@@ -42,9 +42,17 @@ export function Dashboard() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
-      
+    <div className="p-6 space-y-8">
+      <div className="rounded-[2rem] border border-white/10 bg-slate-950/85 p-6 shadow-[0_32px_120px_-50px_rgba(0,0,0,0.8)] glass-panel">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.25em] text-violet-400">Centro de Comando</p>
+            <h1 className="text-3xl font-bold text-white">Dashboard de Aventura</h1>
+          </div>
+          <p className="max-w-2xl text-sm text-slate-300">Monitore seu progresso, conquistas e as próximas missões em um painel estilizado como um grimório moderno.</p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatCard icon={<Activity />} label="Planos Ativos" value={stats.totalPlans} />
         <StatCard icon={<Clock />} label="Tarefas Ativas" value={stats.activeTasks} />
@@ -52,21 +60,25 @@ export function Dashboard() {
         <StatCard icon={<TrendingUp />} label="Taxa de Conclusão" value={stats.completionRate + '%'} />
       </div>
 
-      <RecentActivity />
-      <UrgentTasks />
+      <div className="grid gap-4 xl:grid-cols-[1.5fr_1fr]">
+        <RecentActivity />
+        <UrgentTasks />
+      </div>
     </div>
   );
 }
 
 function StatCard({ icon, label, value }) {
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-600">{label}</p>
-          <p className="text-2xl font-bold mt-2">{value}</p>
+    <div className="rounded-[1.75rem] border border-white/10 bg-slate-950/80 p-5 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
+      <div className="flex items-center gap-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600/15 text-violet-300 shadow-[0_8px_30px_-24px_rgba(124,58,237,0.65)]">
+          {icon}
         </div>
-        <div className="text-blue-600 opacity-50">{icon}</div>
+        <div>
+          <p className="text-sm uppercase tracking-[0.2em] text-slate-400">{label}</p>
+          <p className="text-3xl font-semibold text-white mt-2">{value}</p>
+        </div>
       </div>
     </div>
   );
@@ -74,9 +86,15 @@ function StatCard({ icon, label, value }) {
 
 function RecentActivity() {
   return (
-    <div className="bg-white rounded-lg border p-4">
-      <h3 className="font-semibold mb-4">Atividades Recentes</h3>
-      <div className="space-y-3">
+    <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-6 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.8)]">
+      <div className="flex items-center justify-between gap-4 mb-5">
+        <div>
+          <p className="text-sm uppercase tracking-[0.25em] text-slate-400">Registro de Jornadas</p>
+          <h3 className="text-xl font-semibold text-white">Atividades Recentes</h3>
+        </div>
+        <div className="rounded-full bg-violet-600/15 px-3 py-1 text-xs uppercase tracking-[0.25em] text-violet-200">Histórico</div>
+      </div>
+      <div className="space-y-4">
         <ActivityItem timestamp="Há 2 horas" text="Tarefa 'Estudar React' marcada como 50% concluída" />
         <ActivityItem timestamp="Há 5 horas" text="Novo plano 'Projeto de IA' criado" />
         <ActivityItem timestamp="Há 1 dia" text="Ação 'Deploy' aprovada e executada" />
@@ -87,20 +105,26 @@ function RecentActivity() {
 
 function ActivityItem({ timestamp, text }) {
   return (
-    <div className="flex gap-4 py-2 border-b last:border-b-0">
-      <span className="text-xs text-gray-500 min-w-20">{timestamp}</span>
-      <p className="text-sm">{text}</p>
+    <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.7)]">
+      <div className="flex items-start justify-between gap-4">
+        <p className="text-sm text-slate-300">{text}</p>
+        <span className="text-xs uppercase tracking-[0.25em] text-slate-500">{timestamp}</span>
+      </div>
     </div>
   );
 }
 
 function UrgentTasks() {
   return (
-    <div className="bg-white rounded-lg border p-4">
-      <h3 className="font-semibold mb-4 flex items-center gap-2">
-        <AlertCircle size={18} className="text-orange-600" /> Tarefas Urgentes
-      </h3>
-      <div className="space-y-2">
+    <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-6 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.8)]">
+      <div className="flex items-center gap-3 mb-5 text-slate-200">
+        <AlertCircle size={22} className="text-orange-400" />
+        <div>
+          <p className="text-sm uppercase tracking-[0.25em] text-slate-400">Quest Board</p>
+          <h3 className="text-xl font-semibold text-white">Tarefas Urgentes</h3>
+        </div>
+      </div>
+      <div className="space-y-3">
         <TaskUrgent priority="Alta" task="Revisar proposta de ação #3" />
         <TaskUrgent priority="Média" task="Atualizar documentação de API" />
       </div>
