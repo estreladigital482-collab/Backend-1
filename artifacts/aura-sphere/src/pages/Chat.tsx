@@ -7,7 +7,7 @@ import { ParticleSphere } from "@/components/ParticleSphere";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChatMessage as ChatMessageCard } from "@/components/ChatMessage";
 import { ConflictResolutionModal } from "@/components/ConflictResolutionModal";
-import { getApiBase, getAuthHeaders } from "@/lib/api";
+import { getApiBase, getAuthHeadersAsync } from "@/lib/api";
 import type { AiMode, AiProvider, ChatMessage, ParticleShape, SphereState, VoiceId } from "@/lib/types";
 import { createRecognition, getVoiceConfig, speak, stopSpeaking } from "@/lib/speech";
 import { inferShape } from "@/lib/shapes";
@@ -106,7 +106,6 @@ const PROMPT_PRESET_STORAGE_KEY = "caos_prompt_presets";
 const SELECTED_PROMPT_PRESET_KEY = "caos_selected_prompt_preset";
 
 const API_BASE = getApiBase();
-const AUTH_HEADERS = getAuthHeaders();
 
 export default function Chat({
   userId,
@@ -359,7 +358,7 @@ export default function Chat({
     try {
       const res = await fetch(
         `${API_BASE}/chat-messages?user_id=${encodeURIComponent(userId)}&offset=${offset}&limit=${historyLimit}`,
-        { headers: AUTH_HEADERS },
+        { headers: await getAuthHeadersAsync() },
       );
       setHistoryLoading(false);
       if (!res.ok) return;
@@ -414,7 +413,7 @@ export default function Chat({
     try {
       await fetch(`${API_BASE}/chat-messages`, {
         method: "POST",
-        headers: AUTH_HEADERS,
+        headers: await getAuthHeadersAsync(),
         body: JSON.stringify({ user_id: userId, role: msg.role, content: msg.content }),
       });
     } catch (e) {
@@ -444,9 +443,9 @@ export default function Chat({
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/v1/memory`, {
+      const response = await fetch(`${API_BASE}/v1/memory`, {
         method: "POST",
-        headers: AUTH_HEADERS,
+        headers: await getAuthHeadersAsync(),
         body: JSON.stringify({
           user_id: userId,
           role: msg.role,
@@ -498,10 +497,8 @@ export default function Chat({
     }
 
     const response = await fetch(
-      `${API_BASE}/api/v1/search?user_id=${encodeURIComponent(userId)}&q=${encodeURIComponent(trimmed)}`,
-      {
-        headers: AUTH_HEADERS,
-      },
+      `${API_BASE}/v1/search?user_id=${encodeURIComponent(userId)}&q=${encodeURIComponent(trimmed)}`,
+      { headers: await getAuthHeadersAsync() },
     );
 
     if (!response.ok) {
@@ -547,7 +544,7 @@ export default function Chat({
     try {
       const response = await fetch(`${getApiBase()}/chat-messages?user_id=${encodeURIComponent(userId)}`, {
         method: "DELETE",
-        headers: getAuthHeaders(),
+        headers: await getAuthHeadersAsync(),
       });
       if (!response.ok) {
         toast.error("Não foi possível limpar a conversa.");
@@ -604,12 +601,6 @@ export default function Chat({
     persist(userMsg);
     saveMemory(userMsg, "user");
 
-    if (isLocalMode || !networkOnline) {
-      setState("idle");
-      onMemoryUse?.();
-      return;
-    }
-
     setState("thinking");
 
     try {
@@ -646,7 +637,7 @@ export default function Chat({
 
       const resp = await fetch(`${API_BASE}/chat`, {
         method: "POST",
-        headers: AUTH_HEADERS,
+        headers: await getAuthHeadersAsync(),
         body: JSON.stringify({
           aiName,
           provider,

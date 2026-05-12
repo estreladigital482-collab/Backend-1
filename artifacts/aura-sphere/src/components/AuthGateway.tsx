@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLocalAuth } from '@/hooks/useLocalAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthGatewayProps {
   onAuthenticated: (user: any) => void;
@@ -13,6 +14,7 @@ export function AuthGateway({ onAuthenticated }: AuthGatewayProps) {
   const [mode, setMode] = useState<'choice' | 'local'>('choice');
   const [localName, setLocalName] = useState('');
   const { createLocalUser } = useLocalAuth();
+  const navigate = useNavigate();
 
   const handleLocalStart = () => {
     const user = createLocalUser(localName.trim() || 'Caos');
@@ -22,7 +24,7 @@ export function AuthGateway({ onAuthenticated }: AuthGatewayProps) {
   if (mode === 'choice') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md border-white/10 bg-[hsl(224_71%_6%)]">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">
               Bem-vindo ao Caos
@@ -31,12 +33,19 @@ export function AuthGateway({ onAuthenticated }: AuthGatewayProps) {
               Escolha como deseja acessar sua IA pessoal
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
+            <Button
+              onClick={() => navigate('/sign-in')}
+              className="w-full h-12 text-base bg-violet-600 hover:bg-violet-700"
+            >
+              Entrar / Criar conta
+            </Button>
             <Button
               onClick={() => setMode('local')}
-              className="w-full h-12 text-lg"
+              className="w-full h-12 text-base"
+              variant="outline"
             >
-              🚀 Começar Agora
+              🚀 Usar sem conta
             </Button>
           </CardContent>
         </Card>
@@ -46,7 +55,7 @@ export function AuthGateway({ onAuthenticated }: AuthGatewayProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md border-white/10 bg-[hsl(224_71%_6%)]">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">
             Modo Local
@@ -64,9 +73,10 @@ export function AuthGateway({ onAuthenticated }: AuthGatewayProps) {
               onChange={(e) => setLocalName(e.target.value)}
               placeholder="Caos"
               onKeyDown={(e) => e.key === 'Enter' && handleLocalStart()}
+              className="bg-white/5 border-white/10 text-white"
             />
           </div>
-          <Button onClick={handleLocalStart} className="w-full h-12 text-lg">
+          <Button onClick={handleLocalStart} className="w-full h-12 text-base bg-violet-600 hover:bg-violet-700">
             🚀 Iniciar
           </Button>
           <Button

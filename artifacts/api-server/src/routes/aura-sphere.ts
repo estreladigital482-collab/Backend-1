@@ -1,12 +1,38 @@
 import { Router, type IRouter } from "express";
 import { db, profilesTable, chatMessagesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { getAuth } from "@clerk/express";
 
 const router: IRouter = Router();
+
+function resolveUserId(req: any, res: any): string | null {
+  const auth = getAuth(req);
+  if (auth?.userId) return auth.userId;
+  const fromQuery = req.query?.user_id as string | undefined;
+  const fromBody = req.body?.id as string | undefined;
+  const candidate = fromQuery || fromBody;
+  if (candidate?.startsWith("local_") || candidate?.startsWith("demo_")) return candidate;
+  return null;
+}
+
+function assertOwnership(req: any, res: any, requestedUserId: string): boolean {
+  const auth = getAuth(req);
+  if (auth?.userId) {
+    if (auth.userId !== requestedUserId) {
+      res.status(403).json({ error: "Forbidden" });
+      return false;
+    }
+    return true;
+  }
+  if (requestedUserId.startsWith("local_") || requestedUserId.startsWith("demo_")) return true;
+  res.status(401).json({ error: "Unauthorized" });
+  return false;
+}
 
 // Profiles
 router.get("/profiles/:id", async (req, res) => {
   try {
+    if (!assertOwnership(req, res, req.params.id)) return;
     const [profile] = await db
       .select()
       .from(profilesTable)
@@ -26,6 +52,8 @@ router.get("/profiles/:id", async (req, res) => {
 router.post("/profiles", async (req, res) => {
   try {
     const { id, ai_name, voice_id, onboarded, display_name } = req.body;
+    if (!id) { res.status(400).json({ error: "id required" }); return; }
+    if (!assertOwnership(req, res, id)) return;
     const [profile] = await db
       .insert(profilesTable)
       .values({ id, aiName: ai_name, voiceId: voice_id, onboarded: onboarded ?? false, displayName: display_name })
@@ -55,6 +83,7 @@ router.get("/chat-messages", async (req, res) => {
       res.status(400).json({ error: "user_id required" });
       return;
     }
+    if (!assertOwnership(req, res, user_id)) return;
     const off = offset ? parseInt(String(offset), 10) : 0;
     const lim = limit ? Math.min(parseInt(String(limit), 10), 100) : 50;
     const messages = await db
@@ -78,6 +107,7 @@ router.post("/chat-messages", async (req, res) => {
       res.status(400).json({ error: "user_id, role, and content are required" });
       return;
     }
+    if (!assertOwnership(req, res, user_id)) return;
     const [message] = await db
       .insert(chatMessagesTable)
       .values({
@@ -101,6 +131,7 @@ router.delete("/chat-messages", async (req, res) => {
       res.status(400).json({ error: "user_id required" });
       return;
     }
+    if (!assertOwnership(req, res, user_id)) return;
     await db.delete(chatMessagesTable).where(eq(chatMessagesTable.userId, user_id));
     res.json({ success: true });
   } catch (err) {

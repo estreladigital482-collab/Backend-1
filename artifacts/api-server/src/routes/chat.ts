@@ -1,9 +1,11 @@
 import { Router, type IRouter } from "express";
 import { openai } from "@workspace/integrations-openai-ai-server";
+import { getAuth } from "@clerk/express";
 
 const router: IRouter = Router();
 
 router.post("/chat", async (req, res) => {
+  const auth = getAuth(req);
   const { messages, aiName, provider } = req.body as {
     messages: { role: string; content: string }[];
     aiName?: string;
@@ -15,6 +17,8 @@ router.post("/chat", async (req, res) => {
     return;
   }
 
+  const isLocal = !auth?.userId;
+
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
@@ -22,7 +26,7 @@ router.post("/chat", async (req, res) => {
 
   try {
     const stream = await openai.chat.completions.create({
-      model: "gpt-5.4",
+      model: "gpt-4o",
       max_completion_tokens: 8192,
       messages: messages as { role: "user" | "assistant" | "system"; content: string }[],
       stream: true,

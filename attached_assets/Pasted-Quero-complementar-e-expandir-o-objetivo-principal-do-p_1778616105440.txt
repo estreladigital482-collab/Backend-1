@@ -1,0 +1,89 @@
+Quero complementar e expandir o objetivo principal do projeto “Caos”.
+
+O Caos deve ser desenvolvido como uma Inteligência Artificial Assistente pessoal avançada, evolutiva, modular e capaz de executar tarefas reais de forma controlada e segura sob autorização do usuário.
+
+Além das funções anteriores, a arquitetura do Caos deve ser preparada para permitir futuramente:
+
+- modificação controlada do próprio código
+- leitura e análise da própria arquitetura
+- geração de melhorias internas
+- atualização modular do sistema
+- gerenciamento de arquivos e pastas
+- criação de ferramentas próprias
+- expansão automática de funcionalidades
+- adaptação da interface
+- personalização profunda baseada no comportamento e preferências do usuário
+
+O sistema deve ser capaz de:
+
+- carregar arquivos
+- organizar diretórios
+- mover, criar e modificar arquivos autorizados
+- criar módulos e ferramentas internas
+- sugerir melhorias arquiteturais
+- construir novas automações
+- criar integrações dinamicamente
+- adaptar funcionalidades conforme necessidades do usuário
+
+IMPORTANTE:
+O Caos NÃO deve alterar diretamente o núcleo principal do sistema de forma irreversível.
+
+A lógica correta deve ser:
+
+1. O Caos analisa possibilidades de melhoria
+2. Cria uma versão alternativa/modular da funcionalidade
+3. Mantém a versão original preservada
+4. Mostra comparação, impacto e vantagens
+5. O usuário aprova ou rejeita
+6. Somente após aprovação a atualização substitui oficialmente a versão antiga
+
+Isso deve funcionar para:
+
+- interface
+- sistemas internos
+- ferramentas
+- automações
+- fluxos
+- módulos
+- arquitetura secundária
+
+O sistema deve possuir:
+
+- versionamento interno
+- rollback
+- histórico de alterações
+- isolamento de módulos experimentais
+- proteção do núcleo principal
+- validação antes de aplicar mudanças
+
+O objetivo NÃO é criar uma IA caótica ou descontrolada.
+
+O objetivo é criar um sistema:
+
+- evolutivo
+- adaptável
+- inteligente
+- modular
+- seguro
+- supervisionado pelo usuário
+
+O usuário deve permanecer como autoridade máxima sobre:
+
+- alterações
+- permissões
+- ações críticas
+- automações
+- atualizações internas
+
+A arquitetura deve ser pensada para crescimento contínuo e longo prazo.
+
+Quero que todas as futuras decisões técnicas considerem:
+
+- autoexpansão controlada
+- modularidade extrema
+- separação segura de responsabilidades
+- proteção do núcleo
+- evolução progressiva
+- compatibilidade futura com novos modelos e sistemas
+
+O Caos deve evoluir como um verdadeiro ecossistema pessoal de inteligência artificial adaptativa e expansível.
