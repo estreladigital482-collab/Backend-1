@@ -4,6 +4,7 @@ import caosShellRouter from "./caos-shell";
 import chatRouter from "./chat";
 import stubV1Router from "./stub-v1";
 import caosNexusRouter from "./caos-nexus";
+import shellSkillsRouter from "./skills";
 import hubItemsRouter from "./creator-hub/items";
 import hubThemesRouter from "./creator-hub/themes";
 import hubAgentsRouter from "./creator-hub/agents";
@@ -12,6 +13,7 @@ import hubProjectsRouter from "./creator-hub/projects";
 import securityRouter from "./security";
 import memoryRouter from "./caos-memory";
 import costsRouter from "./caos-costs";
+import caosUnifiedRouter from "./caos-unified";
 import { lobosApi, getRateLimitStatus } from "../security/lobos";
 import { formigasMiddleware } from "../security/formigas";
 
@@ -52,13 +54,17 @@ router.use(chatRouter);
 // ── Stubs V1 (compatibilidade — apenas endpoints ainda sem implementação) ──
 router.use(stubV1Router);
 
+// ── CAOS Shell — Habilidades do usuário (caos_shell_skills) ──────────────
+router.use("/shell-skills", shellSkillsRouter);
+
 // ── CAOS Studio — Creator Hub RPG ────────────────────────────────────────
 router.use("/items", hubItemsRouter);
 router.use("/themes", hubThemesRouter);
 router.use("/agents", hubAgentsRouter);
-// Hub skills em /hub-skills para não conflitar com rota /skills do nexus
 router.use("/hub-skills", hubSkillsRouter);
-router.use("/skills", hubSkillsRouter);
 router.use("/projects", hubProjectsRouter);
+
+// ── CAOS Unified — Status e Capacidades ──────────────────────────────────
+router.use(caosUnifiedRouter);
 
 export default router;

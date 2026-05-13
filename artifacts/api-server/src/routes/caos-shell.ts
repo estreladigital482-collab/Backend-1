@@ -1,6 +1,6 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import { db, profilesTable, chatMessagesTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { db, profilesTable, chatMessagesTable, memoriesTable } from "@workspace/db";
+import { eq, desc } from "drizzle-orm";
 import { getAuth } from "@clerk/express";
 
 const router: IRouter = Router();
@@ -16,13 +16,17 @@ function resolveUserId(req: Request): string | null {
 }
 
 function assertOwnership(req: Request, res: Response, requestedUserId: string): boolean {
-  const auth = getAuth(req);
-  if (auth?.userId) {
-    if (auth.userId !== requestedUserId) {
-      res.status(403).json({ error: "Forbidden" });
-      return false;
+  try {
+    const auth = getAuth(req);
+    if (auth?.userId) {
+      if (auth.userId !== requestedUserId) {
+        res.status(403).json({ error: "Forbidden" });
+        return false;
+      }
+      return true;
     }
-    return true;
+  } catch {
+    // Clerk middleware não configurado — permite IDs locais/demo
   }
   if (requestedUserId.startsWith("local_") || requestedUserId.startsWith("demo_")) return true;
   res.status(401).json({ error: "Unauthorized" });
@@ -153,16 +157,60 @@ router.delete("/chat-messages", async (req, res) => {
   }
 });
 
-// Memories — stub endpoint aligned with frontend sync service
-router.post("/memories", (req, res) => {
-  const body = req.body as { userId?: string };
-  const userId = body?.userId;
-  if (!userId) {
-    res.status(400).json({ error: "userId required" });
-    return;
+// Memories — GET lista + POST salva no banco
+router.get("/memories", async (req, res) => {
+  try {
+    const { user_id, limit: limitParam, category } = req.query;
+    if (!user_id || typeof user_id !== "string") {
+      res.status(400).json({ error: "user_id required" });
+      return;
+    }
+    if (!assertOwnership(req, res, user_id)) return;
+    const lim = limitParam ? Math.min(parseInt(String(limitParam), 10), 200) : 50;
+    let query = db
+      .select()
+      .from(memoriesTable)
+      .where(eq(memoriesTable.userId, user_id))
+      .orderBy(desc(memoriesTable.createdAt))
+      .limit(lim);
+    const memories = await query;
+    const filtered = category ? memories.filter((m) => m.category === category) : memories;
+    res.json({ memories: filtered, total: filtered.length });
+  } catch (err) {
+    req.log.error({ err }, "Error fetching memories");
+    res.status(500).json({ error: "Internal error" });
   }
-  if (!assertOwnership(req, res, userId)) return;
-  res.status(201).json({ success: true, id: null });
+});
+
+router.post("/memories", async (req, res) => {
+  try {
+    const body = req.body as {
+      userId?: string;
+      role?: string;
+      content?: string;
+      category?: string;
+      tags?: string[];
+      relevance?: number;
+    };
+    const { userId, role = "user", content, category = "chat", tags = [], relevance = 0.75 } = body;
+    if (!userId) {
+      res.status(400).json({ error: "userId required" });
+      return;
+    }
+    if (!content) {
+      res.status(400).json({ error: "content required" });
+      return;
+    }
+    if (!assertOwnership(req, res, userId)) return;
+    const [memory] = await db
+      .insert(memoriesTable)
+      .values({ userId, role, content, category, tags, relevance })
+      .returning();
+    res.status(201).json({ success: true, memory });
+  } catch (err) {
+    req.log.error({ err }, "Error saving memory");
+    res.status(500).json({ error: "Internal error" });
+  }
 });
 
 export default router;

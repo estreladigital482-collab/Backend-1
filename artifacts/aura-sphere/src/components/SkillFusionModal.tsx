@@ -61,7 +61,7 @@ export function SkillFusionModal({ isOpen, onClose, userId, skills, onSkillAcqui
     setFusedSkill(null);
 
     try {
-      const res = await fetch("/api/skills/fuse", {
+      const res = await fetch("/api/shell-skills/fuse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, skillIds: selected }),
@@ -108,7 +108,7 @@ export function SkillFusionModal({ isOpen, onClose, userId, skills, onSkillAcqui
     if (!fusedSkill) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/skills/confirm", {
+      const res = await fetch("/api/shell-skills/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, ...fusedSkill }),

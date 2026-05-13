@@ -106,7 +106,7 @@ export function AbilitiesGallery({ userId }: AbilitiesGalleryProps) {
 
   const fetchSkills = useCallback(async () => {
     try {
-      const res = await fetch(`/api/skills?user_id=${encodeURIComponent(userId)}`);
+      const res = await fetch(`/api/shell-skills?user_id=${encodeURIComponent(userId)}`);
       const data = await res.json() as { skills?: Skill[] };
       setSkills(data.skills ?? []);
     } catch {
@@ -122,7 +122,7 @@ export function AbilitiesGallery({ userId }: AbilitiesGalleryProps) {
     const newEquip = !skill.isEquipped;
     setSkills((prev) => prev.map((s) => s.id === skill.id ? { ...s, isEquipped: newEquip, status: newEquip ? "equipped" : "ready" } : s));
     try {
-      await fetch(`/api/skills/${skill.id}/equip`, {
+      await fetch(`/api/shell-skills/${skill.id}/equip`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, equip: newEquip }),
@@ -135,7 +135,7 @@ export function AbilitiesGallery({ userId }: AbilitiesGalleryProps) {
   const deleteSkill = async (id: string) => {
     setSkills((prev) => prev.filter((s) => s.id !== id));
     try {
-      await fetch(`/api/skills/${id}?user_id=${encodeURIComponent(userId)}`, { method: "DELETE" });
+      await fetch(`/api/shell-skills/${id}?user_id=${encodeURIComponent(userId)}`, { method: "DELETE" });
     } catch {
       fetchSkills();
     }

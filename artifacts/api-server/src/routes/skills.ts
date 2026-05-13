@@ -23,7 +23,7 @@ function resolveUserId(req: Request): string | null {
 }
 
 // List skills for a user
-router.get("/skills", async (req, res) => {
+router.get("/", async (req, res) => {
   const userId = resolveUserId(req);
   if (!userId) { res.status(400).json({ error: "user_id required" }); return; }
   try {
@@ -40,7 +40,7 @@ router.get("/skills", async (req, res) => {
 });
 
 // AI studies a topic and streams the result
-router.post("/skills/study", async (req, res) => {
+router.post("/study", async (req, res) => {
   const body = req.body as { userId?: string; topic?: string; type?: "topic" | "repo" };
   const { userId, topic, type = "topic" } = body;
   if (!userId || !topic) { res.status(400).json({ error: "userId and topic required" }); return; }
@@ -142,7 +142,7 @@ Retorne um JSON com exatamente este formato:
 });
 
 // Save a confirmed skill to DB
-router.post("/skills/confirm", async (req, res) => {
+router.post("/confirm", async (req, res) => {
   const body = req.body as {
     userId?: string;
     name?: string;
@@ -171,7 +171,7 @@ router.post("/skills/confirm", async (req, res) => {
 });
 
 // Equip / unequip a skill
-router.patch("/skills/:id/equip", async (req, res) => {
+router.patch("/:id/equip", async (req, res) => {
   const { id } = req.params;
   const body = req.body as { userId?: string; equip?: boolean };
   const { userId, equip } = body;
@@ -191,7 +191,7 @@ router.patch("/skills/:id/equip", async (req, res) => {
 });
 
 // Delete a skill
-router.delete("/skills/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   const { user_id } = req.query;
   if (!user_id || typeof user_id !== "string") {
@@ -208,7 +208,7 @@ router.delete("/skills/:id", async (req, res) => {
 });
 
 // Fuse two or more skills into a new one
-router.post("/skills/fuse", async (req, res) => {
+router.post("/fuse", async (req, res) => {
   const body = req.body as { userId?: string; skillIds?: string[] };
   const { userId, skillIds } = body;
   if (!userId || !skillIds || skillIds.length < 2) {

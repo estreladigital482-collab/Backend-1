@@ -45,7 +45,7 @@ export function SkillStudyModal({ isOpen, onClose, userId, onSkillAcquired }: Sk
     setErrorMsg("");
 
     try {
-      const res = await fetch("/api/skills/study", {
+      const res = await fetch("/api/shell-skills/study", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, topic: topic.trim(), type: studyType }),
@@ -93,7 +93,7 @@ export function SkillStudyModal({ isOpen, onClose, userId, onSkillAcquired }: Sk
     if (!studiedSkill) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/skills/confirm", {
+      const res = await fetch("/api/shell-skills/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, ...studiedSkill }),
