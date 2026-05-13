@@ -1,0 +1,49 @@
+Fale em português.
+Tudo e todo o sistema tem que ser intuitivo e explicativo pro usuário. Facilidade de entender oque é cada coisa. E como funciona. Deixa o designs com mais animações, carrosséis, cards. Imagens pixels. Cria opção de temas clicaveis.
+
+integrar as funcionalidades únicas do Aura Sphere que ainda não estão no CAOS Hub — como o estudo de repositórios GitHub e o painel de segurança de código.
+
+implementar as Formigas (detecção de padrões suspeitos e audit log) ligando ao SecurityDashboard que já existe na interface, tornando o monitoramento de segurança funcional de verdade.
+
+
+Criar uma área de construtor igual ao replit, igual ao lovable onde a pessoa fala e a ia cria, por tempo indeterminado até terminar aquelas tarefas com o conhecimento que tem salvo. Opção de carregar projeto, trazer do github, trazer do lovable ou de qualquer outra plataforma.
+
+
+Vão ser um chat de construção programação e um chat de conversas e tira dúvidas, conversar gerar imagens , gerar vídeos clonar voz. Baixar arquivos, pesquisar na internet quando perguntado. Clonar repositorios. Estudar eles. Anexo de fotos, anexos de gifs, videos. Anexo de .txt ,Leitura de .txt, criação de .txt, criação de planilha, criação de design. Online ou offline, se offline, fazer tudo oque ela consegue fazer com as limitações que tem e perguntar pro usuário se ele quer continuar quando voltar a internet. Se o usuário apertar em sim, salva como uma missão de continuidade. 
+
+
+Pode criar um sistema inteligente de organização. Criar um local só de chat e as informações irem sumindo da tela. Mas são criados tópicos chaves e wikis para o usuário ler depois as explicações ou mencionar elas no chat. Com @ ou algum caractere especial.
+
+Existem algumas coisas também que ele pode fazer como mudar a sua própria interface
+
+Ter um modo de professor que a pessoa escolhe um determinado assunto e a ia vira um professor para a pessoa. 
+
+Falta criar:
+
+Integração no Pinterest. 
+Automações (Facebook, Instagram...)
+Quero poder conectar meu Instagram a minha ia e eu selecionar nela dos meus salvos no Instagram as pastas dos salvos que quero que ela leia.
+Ou selecionar pra ler tudo.
+Ficar organizado como um notion. Galeria de gostos e funções do usuário. 
+O intuito da minha ia é fazer dela um aplicativo com um próprio sistema operacional, que atue como despertar, lembrete de compromissos, continuação de projetos, investimentos, criação de aplicativos,  tudo em um só lugar.
+
+Quero que ela tenha uma sobreposição de tela quando eu sair do aplicativo mas deixar a aba aberta. Ficar em forma de esfera como aquela bolinha do iphone na tela. Quero que a função dessa bolinha seja ficar escutando a voz do usuário e responder ele. 
+
+Existem muitas funções e implementações ja no próprio código que estão sendo utilizadas e que não estão. Algumas podem ser aproveitadas para criar as coisas que estou querendo,outras já estão até prontas mas não ativas. Tem que deixar tudo ativo, e organizado no sistema do caos. 
+
+
+
+Na navbar você pode ter lá, configurações, chat, chat de construção de aplicativos/sites.
+Modo de aprendizado (o modo que o próprio usuário vai aprender, e a ia atuar um plano de ensino pra ele)
+Modo de investimentos, a ia cria planos e metodos de negócios para ganho de dinheiro, mas não executa, somente com a autorização do usuário (nessa opção a ia pode usar dinheiro real.)
+Compras(a ia pode comprar pra você as coisas que precisa ou solicitar pra você as coisas que ela precisa e ai você pode ou não autorizar a compra )
+Modo de desenvolvimento (ela pode alterar o próprio tema, botões, tudo dela mesma mas claro, sempre perguntando pro usuário e com a autorização dele)
+
+
+O sistema tem que reconhecer
+Mobile, pc , web e tv
+
+(Mobile, pc e tv (Ios, Android e Microsoft)).
+
+
+Tem isso e muito mais pra se fazer e que estão na lista de tarefas.
