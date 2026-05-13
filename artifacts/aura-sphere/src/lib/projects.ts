@@ -1,6 +1,6 @@
 import type { Project } from "@/lib/types";
 
-const STORAGE_KEY_PREFIX = "aura-sphere-projects";
+const STORAGE_KEY_PREFIX = "caos-projects";
 
 function getProjectsStorageKey(userId: string) {
   return `${STORAGE_KEY_PREFIX}:${userId}`;

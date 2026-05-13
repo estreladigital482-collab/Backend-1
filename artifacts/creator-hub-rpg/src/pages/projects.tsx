@@ -97,7 +97,7 @@ export default function Projects() {
                     <FormItem>
                       <FormLabel className="font-mono text-xs uppercase text-muted-foreground">Nome da Missão</FormLabel>
                       <FormControl>
-                        <Input placeholder="ex: Operação Nexus V2" className="bg-background" {...field} />
+                        <Input placeholder="ex: Operação CAOS V2" className="bg-background" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

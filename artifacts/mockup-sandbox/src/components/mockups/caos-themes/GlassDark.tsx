@@ -1,4 +1,4 @@
-import "@/components/mockups/nexus-themes/_group.css";
+import "@/components/mockups/caos-themes/_group.css";
 
 const skills = [
   { name: "Lógica Computacional", cat: "Programação", xp: 50, color: "#34d399" },

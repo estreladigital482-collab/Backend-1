@@ -355,7 +355,7 @@ export const useVisualStore = create<VisualState>()(
       })
     }),
     {
-      name: 'aura-sphere-visual-state',
+      name: 'caos-visual-state',
       partialize: (state) => ({
         currentTheme: state.currentTheme,
         currentLayout: state.currentLayout,

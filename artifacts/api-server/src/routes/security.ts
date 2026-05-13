@@ -64,7 +64,7 @@ router.post("/v1/security/audit", async (req: Request, res: Response) => {
 // ── PATCH /v1/security/issues/:id/status ───────────────────────────────────
 router.patch("/v1/security/issues/:id/status", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(String(req.params.id));
     const { resolved } = req.body;
     const [issue] = await db
       .update(caosSecurityIssues)
@@ -161,4 +161,45 @@ router.get("/api/caos/status", async (_req: Request, res: Response) => {
   }
 });
 
+// ── POST /api/caos/security/whitelist ───────────────────────────────────────
+const whitelist = new Set<string>();
+const blacklist = new Set<string>();
+
+router.post("/api/caos/security/whitelist", (req: Request, res: Response) => {
+  const { ip } = req.body;
+  if (!ip) { res.status(400).json({ error: "ip é obrigatório" }); return; }
+  whitelist.add(ip);
+  blacklist.delete(ip);
+  res.json({ success: true, message: `IP ${ip} adicionado à whitelist`, whitelistSize: whitelist.size });
+});
+
+router.post("/api/caos/security/blacklist", (req: Request, res: Response) => {
+  const { ip } = req.body;
+  if (!ip) { res.status(400).json({ error: "ip é obrigatório" }); return; }
+  blacklist.add(ip);
+  whitelist.delete(ip);
+  res.json({ success: true, message: `IP ${ip} adicionado à blacklist`, blacklistSize: blacklist.size });
+});
+
+router.get("/api/caos/security/lists", (_req: Request, res: Response) => {
+  res.json({
+    whitelist: Array.from(whitelist),
+    blacklist: Array.from(blacklist),
+  });
+});
+
+router.delete("/api/caos/security/whitelist/:ip", (req: Request, res: Response) => {
+  const ip = decodeURIComponent(String(req.params.ip));
+  whitelist.delete(ip);
+  res.json({ success: true });
+});
+
+router.delete("/api/caos/security/blacklist/:ip", (req: Request, res: Response) => {
+  const ip = decodeURIComponent(String(req.params.ip));
+  blacklist.delete(ip);
+  res.json({ success: true });
+});
+
+export { whitelist as securityWhitelist, blacklist as securityBlacklist };
 export default router;
+

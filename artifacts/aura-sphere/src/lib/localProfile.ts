@@ -1,6 +1,6 @@
 import type { LocalProfile } from "@/lib/types";
 
-const STORAGE_KEY_PREFIX = "aura-sphere-profile";
+const STORAGE_KEY_PREFIX = "caos-profile";
 
 export function getProfileStorageKey(userId: string) {
   return `${STORAGE_KEY_PREFIX}:${userId}`;

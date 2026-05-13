@@ -1,4 +1,4 @@
-import "@/components/mockups/nexus-themes/_group.css";
+import "@/components/mockups/caos-themes/_group.css";
 import { useState } from "react";
 
 const skills = [

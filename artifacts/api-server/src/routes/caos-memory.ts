@@ -5,7 +5,7 @@
 
 import { Router, type IRouter, type Request, type Response } from "express";
 import { db, caosMemory } from "@workspace/db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, ilike, or } from "drizzle-orm";
 import { getAuth } from "@clerk/express";
 
 const router: IRouter = Router();
@@ -42,6 +42,35 @@ router.post("/v1/memory", async (req: Request, res: Response) => {
     res.status(201).json({ success: true, id: mem.id, memory: mem });
   } catch {
     res.status(500).json({ error: "Falha ao salvar memória" });
+  }
+});
+
+// ── GET /v1/memory/busca ────────────────────────────────────────────────────
+router.get("/v1/memory/busca", async (req: Request, res: Response) => {
+  try {
+    const { userId } = getAuth(req);
+    const q = (String(req.query.q ?? "")).trim();
+    if (!q) {
+      res.status(400).json({ error: "Parâmetro 'q' é obrigatório" });
+      return;
+    }
+    const results = await db
+      .select()
+      .from(caosMemory)
+      .where(
+        and(
+          userId ? eq(caosMemory.userId, userId) : undefined,
+          or(
+            ilike(caosMemory.key, `%${q}%`),
+            ilike(caosMemory.content, `%${q}%`)
+          )
+        )
+      )
+      .orderBy(desc(caosMemory.importance), desc(caosMemory.createdAt))
+      .limit(20);
+    res.json({ results, query: q, total: results.length });
+  } catch {
+    res.status(500).json({ results: [], query: "", total: 0 });
   }
 });
 

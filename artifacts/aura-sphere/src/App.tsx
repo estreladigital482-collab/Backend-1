@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import { AIOnShellTabs } from "./components/AIOnShellTabs.tsx";
+import { AIOnShellTabs as CaosShellTabs } from "./components/AIOnShellTabs.tsx";
 import { useDynamicStyles } from "@/hooks/useVisualCustomization";
 
 class AppErrorBoundary extends Component<
@@ -54,8 +54,8 @@ function AppRoutes() {
         <Sonner />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/shell" element={<AIOnShellTabs />} />
-          <Route path="/control-panel" element={<AIOnShellTabs />} />
+          <Route path="/shell" element={<CaosShellTabs />} />
+          <Route path="/control-panel" element={<CaosShellTabs />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </DynamicStylesProvider>

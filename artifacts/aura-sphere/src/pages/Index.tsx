@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLocalAuth } from "@/hooks/useLocalAuth";
-import AIOnShell from "@/components/AIOnShell";
+import CaosShell from "@/components/AIOnShell";
 
 const Index = () => {
   const { user, createLocalUser } = useLocalAuth();
@@ -33,7 +33,7 @@ const Index = () => {
   }
 
   return (
-    <AIOnShell
+    <CaosShell
       userId={user.id}
       aiName="Caos"
       voiceId="pt-female"

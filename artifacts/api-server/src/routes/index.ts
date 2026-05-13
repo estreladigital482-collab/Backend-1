@@ -3,7 +3,7 @@ import healthRouter from "./health";
 import auraSphereRouter from "./aura-sphere";
 import chatRouter from "./chat";
 import stubV1Router from "./stub-v1";
-import nexusAiRouter from "./nexus-ai";
+import caosNexusRouter from "./nexus-ai";
 import hubItemsRouter from "./creator-hub/items";
 import hubThemesRouter from "./creator-hub/themes";
 import hubAgentsRouter from "./creator-hub/agents";
@@ -41,7 +41,7 @@ router.use(memoryRouter);
 router.use(costsRouter);
 
 // ── Nexus AI (CAOS Nexus) ─────────────────────────────────────────────────
-router.use(nexusAiRouter);
+router.use(caosNexusRouter);
 
 // ── Aura Sphere (CAOS Shell) ──────────────────────────────────────────────
 router.use(auraSphereRouter);
