@@ -32,27 +32,27 @@ O projeto **CAOS** é um ecossistema de IA criativa composto por múltiplos subs
 ## 🔴 BLOCO 1 — RENOMEAÇÃO DE IDENTIDADE (Alta Prioridade)
 
 ### REN-001 · Renomear `aura-sphere` → CAOS Shell
-- [ ] `artifacts/aura-sphere/public/manifest.json` — Alterar `name: "Aura Sphere"` → `"CAOS"` e `short_name: "AuraSphere"` → `"CAOS"`
-- [ ] `artifacts/aura-sphere/public/sw.js` — Renomear `CACHE_NAME = 'aura-sphere-cache-v1'` → `'caos-cache-v1'`
-- [ ] `artifacts/aura-sphere/src/lib/localProfile.ts` — `STORAGE_KEY_PREFIX = "aura-sphere-profile"` → `"caos-profile"`
-- [ ] `artifacts/aura-sphere/src/lib/projects.ts` — `STORAGE_KEY_PREFIX = "aura-sphere-projects"` → `"caos-projects"`
-- [ ] `artifacts/aura-sphere/src/hooks/useVisualCustomization.ts` — `'aura-sphere-visual-state'` → `'caos-visual-state'`
-- [ ] `replit.md` — Atualizar referências de "Aura Sphere" → "CAOS"
+- [x] `artifacts/aura-sphere/public/manifest.json` — Alterar `name: "Aura Sphere"` → `"CAOS"` e `short_name: "AuraSphere"` → `"CAOS"`
+- [x] `artifacts/aura-sphere/public/sw.js` — Renomear `CACHE_NAME = 'aura-sphere-cache-v1'` → `'caos-cache-v1'`
+- [x] `artifacts/aura-sphere/src/lib/localProfile.ts` — `STORAGE_KEY_PREFIX = "aura-sphere-profile"` → `"caos-profile"`
+- [x] `artifacts/aura-sphere/src/lib/projects.ts` — `STORAGE_KEY_PREFIX = "aura-sphere-projects"` → `"caos-projects"`
+- [x] `artifacts/aura-sphere/src/hooks/useVisualCustomization.ts` — `'aura-sphere-visual-state'` → `'caos-visual-state'`
+- [x] `replit.md` — Atualizar referências de "Aura Sphere" → "CAOS"
 - [ ] `lib/db/src/schema/aura-sphere.ts` — Renomear tabelas para `caos_profiles`, `caos_messages` (requer migration)
 
 ### REN-002 · Renomear `nexus-ai` → CAOS Nexus
-- [ ] `artifacts/nexus-ai/` — Renomear pacote `@workspace/nexus-ai` → `@workspace/caos-nexus`
+- [x] `artifacts/nexus-ai/` — Pacote já renomeado para `@workspace/caos-nexus`
 - [ ] `lib/db/src/schema/nexus.ts` — Renomear tabelas `nexus_skills` → `caos_nexus_skills`, `nexus_conversations` → `caos_nexus_conversations`, etc. (requer migration)
-- [ ] `artifacts/api-server/src/routes/nexus-ai.ts` — Renomear arquivo e variável `nexusAiRouter` → `caosNexusRouter`
-- [ ] `artifacts/api-server/src/routes/index.ts` — Atualizar import e registro do router
-- [ ] `artifacts/creator-hub-rpg/src/pages/projects.tsx` linha 100 — Alterar placeholder `"ex: Operação Nexus V2"` → `"ex: Operação CAOS V2"`
-- [ ] `artifacts/mockup-sandbox/src/components/mockups/nexus-themes/` — Renomear pasta para `caos-themes/`
+- [x] `artifacts/api-server/src/routes/nexus-ai.ts` — Renomear arquivo e variável `nexusAiRouter` → `caosNexusRouter`
+- [x] `artifacts/api-server/src/routes/index.ts` — Atualizar import e registro do router
+- [x] `artifacts/creator-hub-rpg/src/pages/projects.tsx` linha 100 — Alterar placeholder `"ex: Operação Nexus V2"` → `"ex: Operação CAOS V2"`
+- [x] `artifacts/mockup-sandbox/src/components/mockups/nexus-themes/` — Renomear pasta para `caos-themes/`
 
 ### REN-003 · Renomear `AIOn` → CAOS Interface
-- [ ] `artifacts/aura-sphere/src/components/AIOnShell.tsx` → `CaosShell.tsx` (renomear arquivo e componente)
-- [ ] `artifacts/aura-sphere/src/components/AIOnShellTabs.tsx` → `CaosShellTabs.tsx`
-- [ ] `artifacts/aura-sphere/src/pages/Index.tsx` — Atualizar import de `<AIOnShell>` → `<CaosShell>`
-- [ ] `artifacts/aura-sphere/src/App.tsx` — Atualizar rotas que usam `AIOnShellTabs`
+- [x] `artifacts/aura-sphere/src/components/AIOnShell.tsx` → `CaosShell.tsx` (renomear arquivo e componente)
+- [x] `artifacts/aura-sphere/src/components/AIOnShellTabs.tsx` → `CaosShellTabs.tsx`
+- [x] `artifacts/aura-sphere/src/pages/Index.tsx` — Atualizar import de `<AIOnShell>` → `<CaosShell>`
+- [x] `artifacts/aura-sphere/src/App.tsx` — Atualizar rotas que usam `AIOnShellTabs`
 
 ---
 
