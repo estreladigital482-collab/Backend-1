@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, boolean, uuid, real, integer } from "drizzle-
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
-export const profilesTable = pgTable("profiles", {
+export const profilesTable = pgTable("caos_profiles", {
   id: text("id").primaryKey(),
   aiName: text("ai_name"),
   voiceId: text("voice_id"),
@@ -12,7 +12,7 @@ export const profilesTable = pgTable("profiles", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const chatMessagesTable = pgTable("chat_messages", {
+export const chatMessagesTable = pgTable("caos_chat_messages", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id").notNull(),
   role: text("role").notNull(),
@@ -20,7 +20,7 @@ export const chatMessagesTable = pgTable("chat_messages", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const memoriesTable = pgTable("memories", {
+export const memoriesTable = pgTable("caos_shell_memories", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id").notNull(),
   role: text("role").notNull().default("user"),
@@ -35,7 +35,7 @@ export const insertMemorySchema = createInsertSchema(memoriesTable).omit({ id: t
 export type Memory = typeof memoriesTable.$inferSelect;
 export type InsertMemory = z.infer<typeof insertMemorySchema>;
 
-export const skillsTable = pgTable("skills", {
+export const skillsTable = pgTable("caos_shell_skills", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id").notNull(),
   name: text("name").notNull(),

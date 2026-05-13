@@ -3,7 +3,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 // ─── ITEMS ────────────────────────────────────────────────────────
-export const hubItems = pgTable("hub_items", {
+export const hubItems = pgTable("caos_hub_items", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   type: text("type").notNull(), // design | theme | agent | skill | project | component
@@ -20,7 +20,7 @@ export type InsertHubItem = z.infer<typeof insertHubItemSchema>;
 export type HubItem = typeof hubItems.$inferSelect;
 
 // ─── THEMES ───────────────────────────────────────────────────────
-export const hubThemes = pgTable("hub_themes", {
+export const hubThemes = pgTable("caos_hub_themes", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   rarity: text("rarity").notNull().default("Common"),
@@ -40,7 +40,7 @@ export type InsertHubTheme = z.infer<typeof insertHubThemeSchema>;
 export type HubTheme = typeof hubThemes.$inferSelect;
 
 // ─── AGENTS ───────────────────────────────────────────────────────
-export const hubAgents = pgTable("hub_agents", {
+export const hubAgents = pgTable("caos_hub_agents", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   behavior: text("behavior").notNull(),
@@ -58,7 +58,7 @@ export type InsertHubAgent = z.infer<typeof insertHubAgentSchema>;
 export type HubAgent = typeof hubAgents.$inferSelect;
 
 // ─── SKILLS ───────────────────────────────────────────────────────
-export const hubSkills = pgTable("hub_skills", {
+export const hubSkills = pgTable("caos_hub_skills", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   category: text("category").notNull(),
@@ -75,7 +75,7 @@ export type InsertHubSkill = z.infer<typeof insertHubSkillSchema>;
 export type HubSkill = typeof hubSkills.$inferSelect;
 
 // ─── PROJECTS ─────────────────────────────────────────────────────
-export const hubProjects = pgTable("hub_projects", {
+export const hubProjects = pgTable("caos_hub_projects", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),

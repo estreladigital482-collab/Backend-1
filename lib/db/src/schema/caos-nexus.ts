@@ -2,7 +2,7 @@ import { pgTable, text, serial, integer, timestamp, json } from "drizzle-orm/pg-
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
-export const aiProfiles = pgTable("ai_profiles", {
+export const aiProfiles = pgTable("caos_ai_profiles", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().default("NEXUS"),
   level: integer("level").notNull().default(1),
@@ -18,7 +18,7 @@ export const insertAiProfileSchema = createInsertSchema(aiProfiles).omit({ id: t
 export type InsertAiProfile = z.infer<typeof insertAiProfileSchema>;
 export type AiProfile = typeof aiProfiles.$inferSelect;
 
-export const nexusSkills = pgTable("nexus_skills", {
+export const nexusSkills = pgTable("caos_nexus_skills", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   category: text("category").notNull(),
@@ -38,7 +38,7 @@ export const insertNexusSkillSchema = createInsertSchema(nexusSkills).omit({ id:
 export type InsertNexusSkill = z.infer<typeof insertNexusSkillSchema>;
 export type NexusSkill = typeof nexusSkills.$inferSelect;
 
-export const nexusConversations = pgTable("nexus_conversations", {
+export const nexusConversations = pgTable("caos_nexus_conversations", {
   id: serial("id").primaryKey(),
   title: text("title").notNull().default("Nova Conversa"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -49,7 +49,7 @@ export const insertNexusConversationSchema = createInsertSchema(nexusConversatio
 export type InsertNexusConversation = z.infer<typeof insertNexusConversationSchema>;
 export type NexusConversation = typeof nexusConversations.$inferSelect;
 
-export const nexusMessages = pgTable("nexus_messages", {
+export const nexusMessages = pgTable("caos_nexus_messages", {
   id: serial("id").primaryKey(),
   conversationId: integer("conversation_id").notNull().references(() => nexusConversations.id),
   role: text("role").notNull(),
@@ -61,7 +61,7 @@ export const insertNexusMessageSchema = createInsertSchema(nexusMessages).omit({
 export type InsertNexusMessage = z.infer<typeof insertNexusMessageSchema>;
 export type NexusMessage = typeof nexusMessages.$inferSelect;
 
-export const nexusActivityLog = pgTable("nexus_activity_log", {
+export const nexusActivityLog = pgTable("caos_nexus_activity_log", {
   id: serial("id").primaryKey(),
   action: text("action").notNull(),
   details: text("details"),
