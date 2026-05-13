@@ -4,10 +4,12 @@ import auraSphereRouter from "./aura-sphere";
 import chatRouter from "./chat";
 import stubV1Router from "./stub-v1";
 import skillsRouter from "./skills";
+import nexusAiRouter from "./nexus-ai";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
+router.use(nexusAiRouter);
 router.use(auraSphereRouter);
 router.use(chatRouter);
 router.use(stubV1Router);

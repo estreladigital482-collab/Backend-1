@@ -2,14 +2,11 @@ import { Router, type IRouter, type Request, type Response } from "express";
 import { db, skillsTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 import { openai } from "@workspace/integrations-openai-ai-server";
-import { getAuth } from "@clerk/express";
 
 const router: IRouter = Router();
 
-/** Returns the authenticated userId (Clerk) or a validated local/demo ID. Returns null if neither. */
+/** Returns the authenticated userId or a validated local/demo ID. Returns null if neither. */
 function resolveUserId(req: Request): string | null {
-  const auth = getAuth(req);
-  if (auth?.userId) return auth.userId;
   const fromQuery = req.query?.user_id as string | undefined;
   const fromBody = (req.body as Record<string, unknown>)?.userId as string | undefined;
   const candidate = (fromQuery || fromBody || "").trim();

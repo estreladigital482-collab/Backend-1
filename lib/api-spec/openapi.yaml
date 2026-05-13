@@ -1,15 +1,19 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: NEXUS AI - RPG-style AI skill system API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: ai
+    description: AI profile and chat operations
+  - name: skills
+    description: Skill management operations
+
 paths:
   /healthz:
     get:
@@ -24,6 +28,300 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /ai/profile:
+    get:
+      operationId: getAiProfile
+      tags: [ai]
+      summary: Get AI profile
+      description: Returns AI name, level, XP, class, and personality
+      responses:
+        "200":
+          description: AI profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProfile"
+    patch:
+      operationId: updateAiProfile
+      tags: [ai]
+      summary: Update AI profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiProfileUpdate"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProfile"
+
+  /ai/stats:
+    get:
+      operationId: getAiStats
+      tags: [ai]
+      summary: Get AI stats summary
+      description: Returns skill counts, XP breakdown, and evolution data
+      responses:
+        "200":
+          description: AI stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiStats"
+
+  /ai/conversations:
+    get:
+      operationId: listConversations
+      tags: [ai]
+      summary: List conversations
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+    post:
+      operationId: createConversation
+      tags: [ai]
+      summary: Create a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConversationInput"
+      responses:
+        "201":
+          description: Created conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+
+  /ai/conversations/{id}/messages:
+    get:
+      operationId: getConversationMessages
+      tags: [ai]
+      summary: Get messages in a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+    post:
+      operationId: sendMessage
+      tags: [ai]
+      summary: Send a message (streams SSE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageInput"
+      responses:
+        "200":
+          description: SSE stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+  /skills:
+    get:
+      operationId: listSkills
+      tags: [skills]
+      summary: List all acquired skills
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of skills
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Skill"
+    post:
+      operationId: createSkill
+      tags: [skills]
+      summary: Manually create a skill
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SkillInput"
+      responses:
+        "201":
+          description: Created skill
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Skill"
+
+  /skills/{id}:
+    get:
+      operationId: getSkill
+      tags: [skills]
+      summary: Get skill detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Skill detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Skill"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateSkill
+      tags: [skills]
+      summary: Update a skill
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SkillUpdate"
+      responses:
+        "200":
+          description: Updated skill
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Skill"
+    delete:
+      operationId: deleteSkill
+      tags: [skills]
+      summary: Delete a skill
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /skills/study:
+    post:
+      operationId: studyTopic
+      tags: [skills]
+      summary: Ask AI to study a topic or repository and propose skills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudyRequest"
+      responses:
+        "200":
+          description: Proposed skills from study
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudyResult"
+
+  /skills/{id}/acquire:
+    post:
+      operationId: acquireSkill
+      tags: [skills]
+      summary: User authorizes AI to acquire a proposed skill
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Skill acquired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Skill"
+
+  /skills/fuse:
+    post:
+      operationId: fuseSkills
+      tags: [skills]
+      summary: Fuse two or more skills into a new combined skill
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FuseRequest"
+      responses:
+        "200":
+          description: Fused skill result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FuseResult"
+
+  /skills/categories:
+    get:
+      operationId: listSkillCategories
+      tags: [skills]
+      summary: List all skill categories with counts
+      responses:
+        "200":
+          description: Categories with counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SkillCategory"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +332,218 @@ components:
       required:
         - status
 
+    AiProfile:
+      type: object
+      required: [id, name, level, xp, xpToNext, aiClass, description, personality, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        level:
+          type: integer
+        xp:
+          type: integer
+        xpToNext:
+          type: integer
+        aiClass:
+          type: string
+        description:
+          type: string
+        personality:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    AiProfileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        personality:
+          type: string
+
+    AiStats:
+      type: object
+      required: [totalSkills, acquiredSkills, pendingSkills, fusedSkills, totalXp, level, recentActivity]
+      properties:
+        totalSkills:
+          type: integer
+        acquiredSkills:
+          type: integer
+        pendingSkills:
+          type: integer
+        fusedSkills:
+          type: integer
+        totalXp:
+          type: integer
+        level:
+          type: integer
+        recentActivity:
+          type: array
+          items:
+            type: string
+
+    Conversation:
+      type: object
+      required: [id, title, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ConversationInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+
+    Message:
+      type: object
+      required: [id, conversationId, role, content, createdAt]
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        role:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    MessageInput:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+
+    Skill:
+      type: object
+      required: [id, name, category, description, level, status, xpValue, icon, color, principles, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        level:
+          type: integer
+        status:
+          type: string
+          description: "acquired | pending | fused"
+        xpValue:
+          type: integer
+        icon:
+          type: string
+        color:
+          type: string
+        principles:
+          type: array
+          items:
+            type: string
+        parentSkillIds:
+          type: ["array", "null"]
+          items:
+            type: integer
+        studySource:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    SkillInput:
+      type: object
+      required: [name, category, description]
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
+        color:
+          type: string
+
+    SkillUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+
+    StudyRequest:
+      type: object
+      required: [topic]
+      properties:
+        topic:
+          type: string
+          description: Topic, URL, or repository to study
+        filter:
+          type: ["string", "null"]
+          description: What to include/exclude from study
+
+    StudyResult:
+      type: object
+      required: [summary, proposedSkills]
+      properties:
+        summary:
+          type: string
+        proposedSkills:
+          type: array
+          items:
+            $ref: "#/components/schemas/Skill"
+
+    FuseRequest:
+      type: object
+      required: [skillIds]
+      properties:
+        skillIds:
+          type: array
+          items:
+            type: integer
+          minItems: 2
+        fusionName:
+          type: ["string", "null"]
+
+    FuseResult:
+      type: object
+      required: [fusedSkill, description]
+      properties:
+        fusedSkill:
+          $ref: "#/components/schemas/Skill"
+        description:
+          type: string
+
+    SkillCategory:
+      type: object
+      required: [name, count, icon, color]
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+        icon:
+          type: string
+        color:
+          type: string
