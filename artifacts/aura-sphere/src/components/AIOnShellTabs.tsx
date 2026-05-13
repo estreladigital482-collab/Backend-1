@@ -12,6 +12,18 @@ import { ThemeGallery } from './ThemeGallery';
 import { RepositoryStudy } from './RepositoryStudy';
 import { getApiBase, getAuthHeaders } from '@/lib/api';
 
+function getLocalUserId(): string {
+  try {
+    const stored = localStorage.getItem('caos_user');
+    if (stored) { const u = JSON.parse(stored) as { id?: string }; if (u?.id) return u.id; }
+  } catch {}
+  return 'local_anonymous';
+}
+
+function AbilitiesTab() {
+  return <AbilitiesGallery userId={getLocalUserId()} />;
+}
+
 export function AIOnShellTabs() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -20,7 +32,7 @@ export function AIOnShellTabs() {
     { id: 'planning', label: 'Planning', icon: CheckCircle2, component: PlanningTab },
     { id: 'actions', label: 'Ações', icon: Zap, component: ActionQueueTab },
     { id: 'forge', label: 'Forge', icon: Sparkles, component: ForgeTab },
-    { id: 'abilities', label: 'Abilities', icon: Package, component: AbilitiesGallery },
+    { id: 'abilities', label: 'Abilities', icon: Package, component: AbilitiesTab },
     { id: 'memory', label: 'Memória', icon: Layers, component: MemoryVisualizer },
     { id: 'security', label: 'Segurança', icon: Shield, component: SecurityDashboard },
     { id: 'costs', label: 'Custos', icon: DollarSign, component: CostTracker },
@@ -100,7 +112,7 @@ function ForgeTab() {
             <h2 className="text-3xl font-bold text-white">Alquimia de Habilidades</h2>
             <p className="mt-3 text-slate-300">Clonar repositórios, estudar código e transformar conhecimento em funcionalidades reais para o seu projeto.</p>
           </div>
-          <AbilitiesGallery />
+          <AbilitiesTab />
         </div>
         <div className="space-y-4">
           <RepositoryStudy />

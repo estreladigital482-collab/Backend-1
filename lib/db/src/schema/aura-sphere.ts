@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, uuid, real } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, uuid, real, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -34,6 +34,26 @@ export const memoriesTable = pgTable("memories", {
 export const insertMemorySchema = createInsertSchema(memoriesTable).omit({ id: true });
 export type Memory = typeof memoriesTable.$inferSelect;
 export type InsertMemory = z.infer<typeof insertMemorySchema>;
+
+export const skillsTable = pgTable("skills", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull().default("geral"),
+  icon: text("icon").notNull().default("⚡"),
+  level: integer("level").notNull().default(1),
+  xp: integer("xp").notNull().default(100),
+  knowledge: text("knowledge").notNull().default(""),
+  status: text("status").notNull().default("ready"),
+  isEquipped: boolean("is_equipped").notNull().default(false),
+  fusionParents: text("fusion_parents").array().default([]),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertSkillSchema = createInsertSchema(skillsTable).omit({ id: true, createdAt: true });
+export type Skill = typeof skillsTable.$inferSelect;
+export type InsertSkill = z.infer<typeof insertSkillSchema>;
 
 export const insertProfileSchema = createInsertSchema(profilesTable);
 export const insertChatMessageSchema = createInsertSchema(chatMessagesTable).omit({ id: true });

@@ -18,7 +18,8 @@ import {
   Palette,
   Settings,
   Minimize2,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 
 interface SidebarControlsProps {
@@ -34,6 +35,7 @@ interface SidebarControlsProps {
 
 const MODES = [
   { id: "Chat", label: "Chat", icon: MessageCircle, color: "text-blue-500" },
+  { id: "Habilidades", label: "Habilidades", icon: Sparkles, color: "text-violet-400" },
   { id: "Código", label: "Código", icon: Code, color: "text-green-500" },
   { id: "Planejamento", label: "Planejamento", icon: Calendar, color: "text-purple-500" },
   { id: "Projetos", label: "Projetos", icon: FolderOpen, color: "text-orange-500" },

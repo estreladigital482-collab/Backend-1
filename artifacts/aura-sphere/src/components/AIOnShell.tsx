@@ -11,6 +11,7 @@ import { VersionDashboard } from "@/components/VersionDashboard";
 import { MemoryViewer } from "@/components/MemoryViewer";
 import { SyncPanel } from "@/components/SyncPanel";
 import { DeveloperMode } from "@/components/DeveloperMode";
+import { AbilitiesGallery } from "@/components/AbilitiesGallery";
 import Chat from "@/pages/Chat";
 import VisualMode from "@/pages/Visual";
 import { useLocalAuth } from "@/hooks/useLocalAuth";
@@ -21,6 +22,7 @@ type MemorySelection = ChatMessage & { category?: string; tags?: string[]; relev
 
 const AI_MODES: { id: AiMode; label: string; description: string }[] = [
   { id: "Chat", label: "Chat", description: "Converse naturalmente com a IA para ideias, respostas e ações rápidas." },
+  { id: "Habilidades", label: "Habilidades", description: "Estude tópicos, adquira habilidades, funda-as e evolua sua IA como um RPG." },
   { id: "Código", label: "Código", description: "Gere, revise e aprimore código com assistência contextual." },
   { id: "Planejamento", label: "Planejamento", description: "Crie planos de estudo, gerencie tarefas e acompanhe progresso com barras visuais." },
   { id: "Projetos", label: "Projetos", description: "Organize tarefas, cronogramas e objetivos de desenvolvimento." },
@@ -101,6 +103,12 @@ export default function AIOnShell({
             selectedMemory={selectedMemory}
             onMemoryUse={() => setSelectedMemory(null)}
           />
+        );
+      case "Habilidades":
+        return (
+          <div className="h-full overflow-hidden">
+            <AbilitiesGallery userId={userId} />
+          </div>
         );
       case "Memória":
         return (

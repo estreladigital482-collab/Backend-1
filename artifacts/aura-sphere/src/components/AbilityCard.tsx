@@ -1,116 +1,140 @@
-import React, { useState } from 'react';
-import { Star, Download, Info, Shield, Sparkles, BookOpen, Play, Trash2 } from 'lucide-react';
+import { useState } from "react";
+import { Zap, Trash2, BookOpen, Shield, Flame, ChevronDown, ChevronUp } from "lucide-react";
 
-interface Ability {
+interface Skill {
   id: string;
   name: string;
   description: string;
-  source: string;
-  rating: number;
-  functions?: number;
-  version?: string;
-  lastUpdated?: string;
-  category?: string;
+  category: string;
+  icon: string;
+  level: number;
+  xp: number;
+  knowledge: string;
+  status: string;
+  isEquipped: boolean;
+  fusionParents: string[];
 }
 
 interface AbilityCardProps {
-  ability: Ability;
-  onAdd: () => void;
-  onExecute?: (functionName: string) => void;
-  onRemove?: () => void;
+  skill: Skill;
+  categoryColor: string;
+  onEquip: () => void;
+  onDelete: () => void;
+  onViewKnowledge: () => void;
 }
 
-export function AbilityCard({ ability, onAdd, onExecute, onRemove }: AbilityCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function AbilityCard({ skill, categoryColor, onEquip, onDelete, onViewKnowledge }: AbilityCardProps) {
+  const [expanded, setExpanded] = useState(false);
+  const isFused = skill.fusionParents && skill.fusionParents.length > 0;
+  const xpPercent = Math.min(100, ((skill.xp % 300) / 300) * 100);
 
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-5 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)] transition hover:-translate-y-0.5 hover:border-violet-500/40">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-4">
-        <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full bg-violet-600/15 px-3 py-1 text-xs uppercase tracking-[0.25em] text-violet-200">
-            <Sparkles size={14} /> {ability.category || 'Skill'}
+    <div className={`rounded-[1.75rem] border transition-all duration-200 hover:-translate-y-0.5 ${
+      skill.isEquipped
+        ? "border-emerald-500/40 bg-gradient-to-br from-emerald-950/30 to-slate-950/80 shadow-[0_0_24px_rgba(16,185,129,0.08)]"
+        : isFused
+        ? "border-orange-500/30 bg-gradient-to-br from-orange-950/20 to-slate-950/80 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)]"
+        : "border-white/10 bg-slate-950/80 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)]"
+    }`}>
+      <div className="p-5 space-y-4">
+        {/* Header */}
+        <div className="flex items-start gap-3">
+          <span className="text-3xl shrink-0">{skill.icon}</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <h3 className="font-bold text-white">{skill.name}</h3>
+              {isFused && (
+                <span className="rounded-full bg-orange-600/20 px-2 py-0.5 text-xs text-orange-300 flex items-center gap-1">
+                  <Flame size={10} /> Fusão
+                </span>
+              )}
+              {skill.isEquipped && (
+                <span className="rounded-full bg-emerald-600/20 px-2 py-0.5 text-xs text-emerald-300 flex items-center gap-1">
+                  <Shield size={10} /> Equipada
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-slate-400 line-clamp-2">{skill.description}</p>
           </div>
-          <div>
-            <h3 className="text-xl font-semibold text-white">{ability.name}</h3>
-            <p className="text-sm text-slate-400 mt-1">{ability.description}</p>
-          </div>
+          <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs ${categoryColor}`}>
+            {skill.category}
+          </span>
         </div>
-        <div className="flex flex-col items-end gap-3">
-          <div className="rounded-full bg-slate-900 px-3 py-1 text-xs uppercase tracking-[0.25em] text-slate-300">
-            v{ability.version || '1.0.0'}
-          </div>
-          <div className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-200">
-            <Star size={14} /> {ability.rating.toFixed(1)}
-          </div>
-        </div>
-      </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-4">
-          <div className="flex items-center gap-2 text-slate-300 mb-2">
-            <Shield size={16} /> <span className="text-xs uppercase tracking-[0.2em]">Resistência</span>
+        {/* Level & XP */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-400">Nível {skill.level}</span>
+            <span className="text-amber-300 font-medium">{skill.xp} XP</span>
           </div>
-          <p className="text-sm text-slate-400">{ability.functions || 6} rotas de poder disponíveis para uso imediato.</p>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-4">
-          <div className="flex items-center gap-2 text-slate-300 mb-2">
-            <BookOpen size={16} /> <span className="text-xs uppercase tracking-[0.2em]">Experiência</span>
+          <div className="w-full bg-slate-800 rounded-full h-1.5">
+            <div
+              className={`h-1.5 rounded-full transition-all duration-700 ${isFused ? "bg-gradient-to-r from-orange-500 to-violet-500" : "bg-gradient-to-r from-violet-500 to-blue-500"}`}
+              style={{ width: `${xpPercent}%` }}
+            />
           </div>
-          <p className="text-sm text-slate-400">Último aprimoramento: {ability.lastUpdated || 'Há alguns dias'}</p>
         </div>
-      </div>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="rounded-3xl bg-slate-800 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
-        >
-          <Info size={16} /> Detalhes
-        </button>
-        <button
-          onClick={onAdd}
-          className="rounded-3xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-500"
-        >
-          <Download size={16} /> Equipar
-        </button>
-        {onExecute ? (
+        {/* Actions */}
+        <div className="flex gap-2">
           <button
-            onClick={() => onExecute('default')}
-            className="rounded-3xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500"
+            onClick={onEquip}
+            className={`flex-1 rounded-xl py-2 text-xs font-semibold transition flex items-center justify-center gap-1.5 ${
+              skill.isEquipped
+                ? "bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600/30 border border-emerald-500/30"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+            }`}
           >
-            <Play size={16} /> Usar
+            <Zap size={12} />
+            {skill.isEquipped ? "Desequipar" : "Equipar"}
           </button>
-        ) : null}
-      </div>
-
-      {isExpanded && (
-        <div className="mt-6 rounded-3xl border border-white/10 bg-slate-900/80 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h4 className="text-sm font-semibold text-white">Detalhes da Habilidade</h4>
-              <p className="text-xs text-slate-400">Uma visão rápida dos poderes disponíveis.</p>
-            </div>
-            <span className="inline-flex items-center rounded-full bg-violet-500/15 px-3 py-1 text-xs text-violet-200">Nível {Math.min(5, Math.max(1, Math.round(ability.rating)))} / 5</span>
-          </div>
-          <div className="space-y-3 text-sm text-slate-300">
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-slate-400">Funções</span>
-              <strong>{ability.functions || 5}</strong>
-            </div>
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-slate-400">Último aprimoramento</span>
-              <strong>{ability.lastUpdated || 'Desconhecido'}</strong>
-            </div>
-            <div className="rounded-2xl bg-slate-950/80 p-3 border border-white/10">
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-2">Ações sugeridas</p>
-              <div className="grid gap-2">
-                <button className="w-full text-left rounded-2xl bg-slate-800 px-3 py-2 text-sm text-slate-100 hover:bg-slate-700 transition">Estudar implementação</button>
-                <button className="w-full text-left rounded-2xl bg-slate-800 px-3 py-2 text-sm text-slate-100 hover:bg-slate-700 transition">Adaptar para seu projeto</button>
-              </div>
-            </div>
-          </div>
+          <button
+            onClick={onViewKnowledge}
+            className="flex-1 rounded-xl py-2 text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center justify-center gap-1.5"
+          >
+            <BookOpen size={12} />
+            Ver Conhecimento
+          </button>
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="rounded-xl px-3 py-2 text-xs bg-slate-800 text-slate-400 hover:bg-slate-700 transition"
+          >
+            {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
         </div>
-      )}
+
+        {/* Expanded */}
+        {expanded && (
+          <div className="rounded-xl border border-white/10 bg-slate-900/80 p-4 space-y-3">
+            <div className="text-xs text-slate-400 uppercase tracking-wider mb-2">Detalhes</div>
+            <div className="flex justify-between text-xs">
+              <span className="text-slate-400">Status</span>
+              <span className="text-white capitalize">{skill.status}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-slate-400">Nível de poder</span>
+              <span className="text-violet-300">{"★".repeat(Math.min(5, skill.level))}{"☆".repeat(Math.max(0, 5 - skill.level))}</span>
+            </div>
+            {isFused && (
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-400">Tipo</span>
+                <span className="text-orange-300">Habilidade Fundida</span>
+              </div>
+            )}
+            <div className="text-xs text-slate-400 mt-2">Prévia do conhecimento:</div>
+            <p className="text-xs text-slate-300 line-clamp-3 leading-relaxed">
+              {skill.knowledge.replace(/[#*`]/g, "").substring(0, 200)}...
+            </p>
+            <button
+              onClick={onDelete}
+              className="w-full mt-2 rounded-xl py-2 text-xs font-semibold bg-red-900/30 text-red-400 hover:bg-red-900/50 transition flex items-center justify-center gap-1.5 border border-red-500/20"
+            >
+              <Trash2 size={12} />
+              Remover Habilidade
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
