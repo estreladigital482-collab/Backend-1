@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLocalAuth } from "@/hooks/useLocalAuth";
-import CaosShell from "@/components/AIOnShell";
+import CaosShell from "@/components/CaosShell";
 
 const Index = () => {
   const { user, createLocalUser } = useLocalAuth();
@@ -8,7 +8,7 @@ const Index = () => {
 
   // Create a local session on very first ever visit (localStorage empty).
   // useLocalAuth already reads from localStorage synchronously, so returning
-  // users render AIOnShell on the very first frame — no flash needed.
+  // users render CaosShell on the very first frame — no flash needed.
   useEffect(() => {
     if (!user && !created.current) {
       created.current = true;

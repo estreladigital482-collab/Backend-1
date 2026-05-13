@@ -17,7 +17,7 @@
 //   export type InsertPost = z.infer<typeof insertPostSchema>;
 //   export type Post = typeof postsTable.$inferSelect;
 
-export * from "./aura-sphere";
-export * from "./nexus";
+export * from "./caos-shell";
+export * from "./caos-nexus";
 export * from "./creator-hub";
 export * from "./security";

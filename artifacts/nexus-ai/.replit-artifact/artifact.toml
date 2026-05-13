@@ -15,10 +15,10 @@ paths = [ "/" ]
 localPort = 22706
 
 [services.development]
-run = "pnpm --filter @workspace/nexus-ai run dev"
+run = "pnpm --filter @workspace/caos-nexus run dev"
 
 [services.production]
-build = [ "pnpm", "--filter", "@workspace/nexus-ai", "run", "build" ]
+build = [ "pnpm", "--filter", "@workspace/caos-nexus", "run", "build" ]
 publicDir = "artifacts/nexus-ai/dist/public"
 serve = "static"
 

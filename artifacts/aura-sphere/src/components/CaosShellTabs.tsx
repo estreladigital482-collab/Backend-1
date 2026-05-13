@@ -24,7 +24,7 @@ function AbilitiesTab() {
   return <AbilitiesGallery userId={getLocalUserId()} />;
 }
 
-export function AIOnShellTabs() {
+export function CaosShellTabs() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const tabs = [

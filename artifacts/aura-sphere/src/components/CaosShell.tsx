@@ -36,7 +36,7 @@ const AI_MODES: { id: AiMode; label: string; description: string }[] = [
 
 type UiMode = "standard" | "tv" | "voice" | "developer";
 
-export default function AIOnShell({
+export default function CaosShell({
   userId,
   aiName,
   voiceId,

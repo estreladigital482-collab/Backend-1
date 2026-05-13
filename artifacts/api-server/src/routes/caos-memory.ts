@@ -77,7 +77,7 @@ router.get("/v1/memory/busca", async (req: Request, res: Response) => {
 // ── DELETE /v1/memory/:id ───────────────────────────────────────────────────
 router.delete("/v1/memory/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(String(req.params.id));
     const { userId } = getAuth(req);
     if (userId) {
       await db

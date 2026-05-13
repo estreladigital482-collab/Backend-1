@@ -1,9 +1,9 @@
 import { Router, type IRouter } from "express";
 import healthRouter from "./health";
-import auraSphereRouter from "./aura-sphere";
+import caosShellRouter from "./caos-shell";
 import chatRouter from "./chat";
 import stubV1Router from "./stub-v1";
-import caosNexusRouter from "./nexus-ai";
+import caosNexusRouter from "./caos-nexus";
 import hubItemsRouter from "./creator-hub/items";
 import hubThemesRouter from "./creator-hub/themes";
 import hubAgentsRouter from "./creator-hub/agents";
@@ -43,8 +43,8 @@ router.use(costsRouter);
 // ── Nexus AI (CAOS Nexus) ─────────────────────────────────────────────────
 router.use(caosNexusRouter);
 
-// ── Aura Sphere (CAOS Shell) ──────────────────────────────────────────────
-router.use(auraSphereRouter);
+// ── CAOS Shell (ex-Aura Sphere) ───────────────────────────────────────────
+router.use(caosShellRouter);
 
 // ── Chat com IA (tem rate limiter próprio dos Lobos — lobosChat) ──────────
 router.use(chatRouter);

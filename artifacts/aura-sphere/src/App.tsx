@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import { AIOnShellTabs as CaosShellTabs } from "./components/AIOnShellTabs.tsx";
+import { CaosShellTabs } from "./components/CaosShellTabs.tsx";
 import { useDynamicStyles } from "@/hooks/useVisualCustomization";
 
 class AppErrorBoundary extends Component<
