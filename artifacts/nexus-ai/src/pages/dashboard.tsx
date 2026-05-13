@@ -1,4 +1,4 @@
-import { useGetAiProfile, useGetAiStats, useListSkills } from "@workspace/api-client-react";
+import { useGetAiProfile, useGetAiStats, useListNexusSkills as useListSkills } from "@/lib/nexus-api";
 import { motion } from "framer-motion";
 import { Cpu, Zap, Shield, Star, TrendingUp, Activity, BookOpen, Layers } from "lucide-react";
 import { Link } from "wouter";

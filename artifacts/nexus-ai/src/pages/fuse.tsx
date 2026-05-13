@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useListSkills, useFuseSkills, getListSkillsQueryKey, getGetAiStatsQueryKey, getGetAiProfileQueryKey } from "@workspace/api-client-react";
+import { useListNexusSkills as useListSkills, useFuseSkills, getListSkillsQueryKey, getGetAiStatsQueryKey, getGetAiProfileQueryKey } from "@/lib/nexus-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Plus, X, Sparkles, CheckCircle } from "lucide-react";

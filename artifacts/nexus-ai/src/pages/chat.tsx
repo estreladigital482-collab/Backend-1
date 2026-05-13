@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useListConversations, useCreateConversation, useGetConversationMessages, getListConversationsQueryKey, getGetConversationMessagesQueryKey } from "@workspace/api-client-react";
+import { useListConversations, useCreateConversation, useGetConversationMessages, getListConversationsQueryKey, getGetConversationMessagesQueryKey } from "@/lib/nexus-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, Plus, Send, Cpu, User, ChevronRight } from "lucide-react";

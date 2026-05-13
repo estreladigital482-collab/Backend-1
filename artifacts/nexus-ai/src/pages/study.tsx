@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useStudyTopic, useAcquireSkill, getListSkillsQueryKey, getGetAiStatsQueryKey, getGetAiProfileQueryKey } from "@workspace/api-client-react";
+import { useStudyTopic, useAcquireSkill, getListSkillsQueryKey, getGetAiStatsQueryKey, getGetAiProfileQueryKey } from "@/lib/nexus-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, Send, CheckCircle, ChevronRight, Zap, Brain } from "lucide-react";

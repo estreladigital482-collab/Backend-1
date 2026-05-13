@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useListSkills, useListSkillCategories, useAcquireSkill, useDeleteSkill, getListSkillsQueryKey, getListSkillCategoriesQueryKey, useGetAiProfile, getGetAiProfileQueryKey, useGetAiStats, getGetAiStatsQueryKey } from "@workspace/api-client-react";
+import { useListNexusSkills as useListSkills, useListSkillCategories, useAcquireSkill, useDeleteNexusSkill as useDeleteSkill, getListSkillsQueryKey, getListSkillCategoriesQueryKey, useGetAiProfile, getGetAiProfileQueryKey, useGetAiStats, getGetAiStatsQueryKey } from "@/lib/nexus-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layers, Shield, Zap, CheckCircle, Trash2, X, Star, ChevronRight } from "lucide-react";

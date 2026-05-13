@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGetAiProfile, useUpdateAiProfile, useGetAiStats, getGetAiProfileQueryKey, getGetAiStatsQueryKey } from "@workspace/api-client-react";
+import { useGetAiProfile, useUpdateAiProfile, useGetAiStats, getGetAiProfileQueryKey, getGetAiStatsQueryKey } from "@/lib/nexus-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Cpu, Edit2, Save, X, Star, Shield, Zap, BookOpen } from "lucide-react";
