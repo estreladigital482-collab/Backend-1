@@ -1,0 +1,32 @@
+kind = "web"
+  previewPath = "/caos-nexus-legacy"
+  title = "CAOS Hub Legacy"
+  version = "1.0.0"
+  id = "artifacts/caos-nexus"
+  router = "path"
+
+  [[integratedSkills]]
+  name = "react-vite"
+  version = "1.0.0"
+
+  [[services]]
+  name = "web"
+  paths = [ "/caos-nexus-legacy" ]
+  localPort = 25319
+
+  [services.development]
+  run = "pnpm --filter @workspace/caos-nexus run dev"
+
+  [services.production]
+  build = [ "pnpm", "--filter", "@workspace/caos-nexus", "run", "build" ]
+  publicDir = "artifacts/caos-nexus/dist/public"
+  serve = "static"
+
+  [[services.production.rewrites]]
+  from = "/*"
+  to = "/index.html"
+
+  [services.env]
+  PORT = "25319"
+  BASE_PATH = "/caos-nexus-legacy"
+  

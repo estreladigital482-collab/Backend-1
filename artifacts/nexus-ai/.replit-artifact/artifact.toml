@@ -1,31 +1,33 @@
 kind = "web"
-previewPath = "/"
-title = "CAOS Hub"
-version = "1.0.0"
-id = "artifacts/nexus-ai"
-router = "path"
+  previewPath = "/"
+  title = "CAOS Hub"
+  version = "1.0.0"
+  id = "artifacts/nexus-ai"
+  router = "path"
 
-[[integratedSkills]]
-name = "react-vite"
-version = "1.0.0"
+  [[integratedSkills]]
+  name = "react-vite"
+  version = "1.0.0"
 
-[[services]]
-name = "web"
-paths = [ "/" ]
-localPort = 22706
+  [[services]]
+  name = "web"
+  paths = [ "/" ]
+  localPort = 8080
 
-[services.development]
-run = "pnpm --filter @workspace/caos-nexus run dev"
+  [services.development]
+  run = "pnpm --dir artifacts/nexus-ai run dev"
 
-[services.production]
-build = [ "pnpm", "--filter", "@workspace/caos-nexus", "run", "build" ]
-publicDir = "artifacts/nexus-ai/dist/public"
-serve = "static"
+  [services.production]
+  build = [ "pnpm", "--dir", "artifacts/nexus-ai", "run", "build" ]
+  publicDir = "artifacts/nexus-ai/dist/public"
+  serve = "static"
 
-[[services.production.rewrites]]
-from = "/*"
-to = "/index.html"
+  [[services.production.rewrites]]
+  from = "/*"
+  to = "/index.html"
 
-[services.env]
-PORT = "22706"
-BASE_PATH = "/"
+  [services.env]
+  PORT = "8080"
+  BASE_PATH = "/"
+  API_URL = "http://localhost:8081"
+  
