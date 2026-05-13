@@ -128,12 +128,12 @@ export default function Dashboard() {
             <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
               <Layers className="h-4 w-4" /> Habilidades Recentes
             </h3>
-            <Link href="/skills" className="text-xs text-primary hover:underline">Ver todas</Link>
+            <Link href="/caos/habilidades" className="text-xs text-primary hover:underline">Ver todas</Link>
           </div>
           {recentSkills.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <p className="text-sm">Nenhuma habilidade adquirida.</p>
-              <Link href="/study" className="text-primary text-xs hover:underline mt-2 inline-block">Ir para Estudar</Link>
+              <Link href="/caos/estudar" className="text-primary text-xs hover:underline mt-2 inline-block">Ir para Estudar</Link>
             </div>
           ) : (
             <div className="space-y-3">
@@ -198,9 +198,9 @@ export default function Dashboard() {
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
         {[
-          { href: "/study", label: "Estudar Novo Tópico", desc: "Adicionar conhecimento à IA", icon: BookOpen, color: "text-cyan-400 border-cyan-400/20 hover:border-cyan-400/50" },
-          { href: "/chat", label: "Conversar com a IA", desc: "Terminal de comunicação direta", icon: TrendingUp, color: "text-purple-400 border-purple-400/20 hover:border-purple-400/50" },
-          { href: "/fuse", label: "Fundir Habilidades", desc: "Combinar poderes existentes", icon: Zap, color: "text-pink-400 border-pink-400/20 hover:border-pink-400/50" },
+          { href: "/caos/estudar", label: "Estudar Novo Tópico", desc: "Adicionar conhecimento à IA", icon: BookOpen, color: "text-cyan-400 border-cyan-400/20 hover:border-cyan-400/50" },
+          { href: "/caos/terminal", label: "Terminal IA", desc: "Comunicação direta com a IA", icon: TrendingUp, color: "text-purple-400 border-purple-400/20 hover:border-purple-400/50" },
+          { href: "/caos/fusao", label: "Fundir Habilidades", desc: "Combinar poderes existentes", icon: Zap, color: "text-pink-400 border-pink-400/20 hover:border-pink-400/50" },
         ].map(action => (
           <Link key={action.href} href={action.href}>
             <div className={cn("rounded-sm border bg-card/40 p-4 flex items-center gap-4 cursor-pointer transition-all duration-200 hover:bg-card/80 group", action.color)}>

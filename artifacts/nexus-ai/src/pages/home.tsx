@@ -17,8 +17,8 @@ const modules = [
     tag: "IA Chat",
   },
   {
-    href: "/nexus",
-    title: "NEXUS AI",
+    href: "/caos",
+    title: "CAOS IA",
     description: "Gerencie habilidades, estude e evolua sua IA como RPG",
     icon: Cpu,
     color: "from-primary/20 to-primary/5",
@@ -41,12 +41,12 @@ const modules = [
 ];
 
 const quickLinks = [
-  { href: "/nexus/study", label: "Estudar", icon: BookOpen },
-  { href: "/nexus/fuse", label: "Fusão", icon: Zap },
+  { href: "/caos/estudar", label: "Estudar", icon: BookOpen },
+  { href: "/caos/fusao", label: "Fusão", icon: Zap },
   { href: "/studio/arsenal", label: "Arsenal", icon: Shield },
-  { href: "/studio/missions", label: "Missões", icon: Map },
-  { href: "/nexus/skills", label: "Habilidades", icon: Layers },
-  { href: "/settings", label: "Config.", icon: Settings },
+  { href: "/studio/missoes", label: "Missões", icon: Map },
+  { href: "/caos/habilidades", label: "Habilidades", icon: Layers },
+  { href: "/configuracoes", label: "Config.", icon: Settings },
 ];
 
 function ProfileWidget() {
@@ -90,7 +90,7 @@ function ProfileWidget() {
           <span className="text-xs text-muted-foreground">{stats?.acquiredSkills ?? 0} Habilidades</span>
         </div>
       </div>
-      <Link href="/settings">
+      <Link href="/configuracoes">
         <Settings className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0" />
       </Link>
     </div>
@@ -109,7 +109,6 @@ export default function Home() {
 
   return (
     <div className="min-h-full px-4 py-6 md:px-8 md:py-8 max-w-4xl mx-auto space-y-6">
-      {/* Header */}
       <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/60 mb-1">// Sistema Neural Ativo</p>
         <h1 className="text-2xl md:text-3xl font-black uppercase tracking-widest text-foreground">
@@ -118,12 +117,10 @@ export default function Home() {
         <p className="text-sm text-muted-foreground mt-1">Plataforma unificada — Web · Mobile · Desktop</p>
       </motion.div>
 
-      {/* Profile */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <ProfileWidget />
       </motion.div>
 
-      {/* Main Modules */}
       <motion.div variants={container} initial="hidden" animate="show" className="space-y-3">
         <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/60">Módulos</p>
         {modules.map((mod) => (
@@ -160,7 +157,6 @@ export default function Home() {
         ))}
       </motion.div>
 
-      {/* Quick Links */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
         <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/60 mb-3">Acesso Rápido</p>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
@@ -175,7 +171,6 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* Status bar */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

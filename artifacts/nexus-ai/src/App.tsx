@@ -40,19 +40,19 @@ function AppRouter() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/shell" component={Shell} />
-        <Route path="/nexus" component={Dashboard} />
-        <Route path="/nexus/skills" component={Skills} />
-        <Route path="/nexus/study" component={Study} />
-        <Route path="/nexus/fuse" component={Fuse} />
-        <Route path="/nexus/chat" component={Chat} />
-        <Route path="/nexus/profile" component={Profile} />
+        <Route path="/caos" component={Dashboard} />
+        <Route path="/caos/habilidades" component={Skills} />
+        <Route path="/caos/estudar" component={Study} />
+        <Route path="/caos/fusao" component={Fuse} />
+        <Route path="/caos/terminal" component={Chat} />
+        <Route path="/caos/perfil" component={Profile} />
         <Route path="/studio" component={StudioHome} />
         <Route path="/studio/arsenal" component={Arsenal} />
-        <Route path="/studio/agents" component={Agents} />
-        <Route path="/studio/themes" component={Themes} />
-        <Route path="/studio/missions" component={Missions} />
+        <Route path="/studio/entidades" component={Agents} />
+        <Route path="/studio/fragmentos" component={Themes} />
+        <Route path="/studio/missoes" component={Missions} />
         <Route path="/studio/itens/:id" component={ItemDetail} />
-        <Route path="/settings" component={Settings} />
+        <Route path="/configuracoes" component={Settings} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>

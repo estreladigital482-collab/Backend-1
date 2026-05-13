@@ -15,7 +15,7 @@ const sections = [
     bg: "from-blue-500/10 to-transparent",
   },
   {
-    href: "/studio/agents",
+    href: "/studio/entidades",
     label: "Entidades",
     description: "IAs companheiras configuradas",
     icon: Cpu,
@@ -24,7 +24,7 @@ const sections = [
     bg: "from-primary/10 to-transparent",
   },
   {
-    href: "/studio/themes",
+    href: "/studio/fragmentos",
     label: "Fragmentos",
     description: "Temas visuais e estilos",
     icon: Layers,
@@ -33,7 +33,7 @@ const sections = [
     bg: "from-purple-500/10 to-transparent",
   },
   {
-    href: "/studio/missions",
+    href: "/studio/missoes",
     label: "Missões",
     description: "Projetos e objetivos em andamento",
     icon: Map,

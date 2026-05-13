@@ -13,26 +13,26 @@ interface LayoutProps {
 const mainNav = [
   { href: "/", label: "Início", icon: Home },
   { href: "/shell", label: "CAOS Shell", icon: MessageSquare },
-  { href: "/nexus", label: "NEXUS AI", icon: Cpu },
+  { href: "/caos", label: "CAOS IA", icon: Cpu },
   { href: "/studio", label: "Studio", icon: Package },
-  { href: "/settings", label: "Configurações", icon: Settings },
+  { href: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
-const nexusSubNav = [
-  { href: "/nexus", label: "Dashboard", icon: Cpu },
-  { href: "/nexus/skills", label: "Habilidades", icon: Layers },
-  { href: "/nexus/study", label: "Estudar", icon: BookOpen },
-  { href: "/nexus/fuse", label: "Fusão", icon: Zap },
-  { href: "/nexus/chat", label: "Terminal", icon: MessageSquare },
-  { href: "/nexus/profile", label: "Perfil IA", icon: User },
+const caosSubNav = [
+  { href: "/caos", label: "Dashboard", icon: Cpu },
+  { href: "/caos/habilidades", label: "Habilidades", icon: Layers },
+  { href: "/caos/estudar", label: "Estudar", icon: BookOpen },
+  { href: "/caos/fusao", label: "Fusão", icon: Zap },
+  { href: "/caos/terminal", label: "Terminal", icon: MessageSquare },
+  { href: "/caos/perfil", label: "Perfil IA", icon: User },
 ];
 
 const studioSubNav = [
   { href: "/studio", label: "Central", icon: Home },
   { href: "/studio/arsenal", label: "Arsenal", icon: Shield },
-  { href: "/studio/agents", label: "Entidades", icon: Cpu },
-  { href: "/studio/themes", label: "Fragmentos", icon: Layers },
-  { href: "/studio/missions", label: "Missões", icon: Map },
+  { href: "/studio/entidades", label: "Entidades", icon: Cpu },
+  { href: "/studio/fragmentos", label: "Fragmentos", icon: Layers },
+  { href: "/studio/missoes", label: "Missões", icon: Map },
 ];
 
 function SidebarNavItem({
@@ -77,7 +77,7 @@ function SidebarSection({
   onClose,
 }: {
   label: string;
-  items: typeof nexusSubNav;
+  items: typeof caosSubNav;
   parentHref: string;
   onClose?: () => void;
 }) {
@@ -171,7 +171,7 @@ export function AppLayout({ children }: LayoutProps) {
           ))}
 
           <div className="pt-3">
-            <SidebarSection label="NEXUS AI" items={nexusSubNav} parentHref="/nexus" />
+            <SidebarSection label="CAOS IA" items={caosSubNav} parentHref="/caos" />
           </div>
           <div className="pt-2">
             <SidebarSection label="Studio" items={studioSubNav} parentHref="/studio" />
@@ -236,7 +236,7 @@ export function AppLayout({ children }: LayoutProps) {
                 <SidebarNavItem key={item.href} item={item} onClick={() => setSidebarOpen(false)} />
               ))}
               <div className="pt-3">
-                <SidebarSection label="NEXUS AI" items={nexusSubNav} parentHref="/nexus" onClose={() => setSidebarOpen(false)} />
+                <SidebarSection label="CAOS IA" items={caosSubNav} parentHref="/caos" onClose={() => setSidebarOpen(false)} />
               </div>
               <div className="pt-2">
                 <SidebarSection label="Studio" items={studioSubNav} parentHref="/studio" onClose={() => setSidebarOpen(false)} />
